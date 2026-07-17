@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Q | Intelligent Queue Management</title>
+    <meta name="description" content="AI-powered Intelligent Queue Management Platform">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
+                            800: '#3730a3', 900: '#312e81', 950: '#1e1b4b',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s cubic-bezier(0.2, 0, 0, 1)',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0, 0, 0.2, 1)',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { font-feature-settings: "cv02", "cv03", "cv04", "cv11"; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .dark .glass { background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(71, 85, 105, 0.5); }
+        *:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
+        .dark *:focus-visible { outline-color: #818cf8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 antialiased">
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- App Root -->
+    <div id="app" class="min-h-screen flex flex-col"></div>
+
+    <script>
+        // ==========================================
+        // 1. STATE MANAGEMENT & MOCK DATA
+        // ==========================================
+        const store = {
+            user: null, 
+            view: 'landing',
+            theme: localStorage.getItem('theme') || 'light',
+            bookingStep: 1,
+            activeBookingId: 1,
+            queue: { ticketNumber: 'A042', status: 'waiting', ahead: 3, eta: 12, currentServing: 'A039', counter: 'Counter 4' },
+            mock: {
+                branches: [
+                    { id: 1, name: 'Sandton City Branch', address: 'Sandton City, Johannesburg', distance: '2.4 km', waitTime: '15 min' },
+                    { id: 2, name: 'Rosebank Mall Branch', address: 'Rosebank Mall, Johannesburg', distance: '5.1 km', waitTime: '8 min' }
+                ],
+                services: [
+                    { id: 1, name: 'Account Opening', time: '25 min', icon: 'briefcase' },
+                    { id: 2, name: 'Loan Consultation', time: '45 min', icon: 'banknote' },
+                    { id: 3, name: 'General Inquiry', time: '10 min', icon: 'help-circle' }
+                ],
+                bookings: [
+                    { id: 1, service: 'Account Opening', branch: 'Sandton City Branch', date: '2026-07-20', time: '10:00 AM', status: 'upcoming', ticket: 'A042' },
+                    { id: 2, service: 'General Inquiry', branch: 'Rosebank Mall Branch', date: '2026-07-15', time: '02:30 PM', status: 'completed', ticket: 'A015' },
+                    { id: 3, service: 'Loan Consultation', branch: 'Sandton City Branch', date: '2026-07-10', time: '11:00 AM', status: 'cancelled', ticket: null }
+                ],
+                notifications: [
+                    { id: 1, text: 'Your turn is approaching. Please proceed to Counter 4.', time: '2 min ago', unread: true, type: 'alert' },
+                    { id: 2, text: 'Booking confirmed for Account Opening on 20 July.', time: '1 hour ago', unread: true, type: 'success' },
+                    { id: 3, text: 'Your feedback for Rosebank Mall Branch has been received.', time: '5 days ago', unread: false, type: 'info' }
+                ]
+            }
+        };
+
+        // ==========================================
+        // 2. UTILITY FUNCTIONS
+        // ==========================================
+        const $ = (selector) => document.querySelector(selector);
+        
+        function toggleTheme() {
+            store.theme = store.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', store.theme);
+            document.documentElement.classList.toggle('dark', store.theme === 'dark');
+            render();
+        }
+
+        function navigate(view) {
+            store.view = view;
+            window.scrollTo(0, 0);
+            render();
+        }
+
+        function showToast(message, type = 'success') {
+            const container = $('#toast-container');
+            const toast = document.createElement('div');
+            const colors = type === 'success' ? 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-100 dark:border-emerald-800' : 
+                           type === 'error' ? 'bg-rose-50 text-rose-900 border-rose-200 dark:bg-rose-950/50 dark:text-rose-100 dark:border-rose-800' :
+                           'bg-slate-50 text-slate-900 border-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700';
+            
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg ${colors} animate-slide-up min-w-[300px]`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="w-5 h-5"></i>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function login(role) {
+            const names = { customer: 'Thabo M.', staff: 'Sarah J. (Counter 4)', manager: 'David K. (Branch Manager)' };
+            store.user = { name: names[role], role };
+            showToast(`Welcome back, ${store.user.name}`);
+            navigate(role === 'customer' ? 'customer-dashboard' : role === 'staff' ? 'counter-dashboard' : 'manager-dashboard');
+        }
+
+        function logout() {
+            store.user = null; store.view = 'landing'; render();
+        }
+
+        // ==========================================
+        // 3. COMPONENT BUILDERS
+        // ==========================================
+        const Components = {
+            Button: (text, onClick, variant = 'primary', icon = null, className = '') => {
+                const base = "inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-[0.98] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
+                const variants = {
+                    primary: "bg-primary-600 text-white hover:bg-primary-700 shadow-sm shadow-primary-600/20",
+                    secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700",
+                    ghost: "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800",
+                    destructive: "bg-rose-600 text-white hover:bg-rose-700"
+                };
+                return `<button onclick="${onClick}" class="${base} ${variants[variant]} ${className}">
+                    ${icon ? `<i data-lucide="${icon}" class="w-4 h-4"></i>` : ''} ${text}
+                </button>`;
+            },
+            Card: (content, className = '') => `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm ${className}">${content}</div>
+            `,
+            Badge: (text, variant = 'default') => {
+                const variants = {
+                    default: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+                    success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+                    warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+                    primary: "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400",
+                    destructive: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400"
+                };
+                return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[variant]}">${text}</span>`;
+            }
+        };
+
+        // ==========================================
+        // 4. VIEW RENDERERS (EXPANDED USER SIDE)
+        // ==========================================
+        const Views = {
+            landing: () => `
+                <div class="flex flex-col min-h-screen">
+                    <header class="fixed top-0 w-full z-40 glass border-b border-slate-200/50 dark:border-slate-800/50">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                            <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('landing')">
+                                <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">Q</div>
+                                <span class="font-bold text-xl tracking-tight">Smart Q</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="${store.theme === 'light' ? 'moon' : 'sun'}" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
+                                </button>
+                                ${Components.Button('Sign In', "navigate('login')", 'secondary')}
+                                ${Components.Button('Get Started', "navigate('login')", 'primary')}
+                            </div>
+                        </div>
+                    </header>
+                    <main class="flex-1 pt-32 pb-20 px-4 max-w-7xl mx-auto w-full text-center">
+                        <div class="max-w-3xl mx-auto animate-slide-up">
+                            ${Components.Badge('Now with AI-Powered Forecasting', 'primary')}
+                            <h1 class="mt-6 text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                                The intelligent way to <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-500">manage queues.</span>
+                            </h1>
+                            <p class="mt-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Transform physical waiting lines into predictable, digital experiences. Built for banks, hospitals, and government departments.
+                            </p>
+                            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                                ${Components.Button('Book an Appointment', "navigate('login')", 'primary', 'calendar', 'px-8 py-3 text-base')}
+                                ${Components.Button('View Live Demo', "login('manager')", 'secondary', 'play-circle', 'px-8 py-3 text-base')}
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            `,
+
+            login: () => `
+                <div class="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950">
+                    <div class="w-full max-w-md animate-slide-up">
+                        <div class="text-center mb-8">
+                            <div class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 shadow-lg shadow-primary-600/20">Q</div>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Welcome to Smart Q</h2>
+                            <p class="text-slate-600 dark:text-slate-400 mt-2">Select a role to experience the platform</p>
+                        </div>
+                        ${Components.Card(`
+                            <div class="p-6 space-y-4">
+                                <button onclick="login('customer')" class="w-full py-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                                    <i data-lucide="user" class="w-4 h-4"></i> Continue as Customer
+                                </button>
+                                <button onclick="login('staff')" class="w-full py-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                                    <i data-lucide="headphones" class="w-4 h-4"></i> Continue as Counter Staff
+                                </button>
+                                <button onclick="login('manager')" class="w-full py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-sm shadow-primary-600/20">
+                                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Continue as Branch Manager
+                                </button>
+                                <div class="pt-4 text-center">
+                                    <button onclick="navigate('landing')" class="text-sm text-slate-500 hover:text-primary-600 transition-colors">← Back to home</button>
+                                </div>
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            `,
+
+            'customer-dashboard': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('customer', `
+                        <div class="space-y-6 animate-fade-in">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Good morning, ${store.user.name}</h1>
+                                    <p class="text-slate-600 dark:text-slate-400">Here's what's happening with your visits.</p>
+                                </div>
+                                ${Components.Button('Book New Appointment', "navigate('booking')", 'primary', 'plus')}
+                            </div>
+
+                            ${store.queue.status !== 'completed' ? `
+                                <div class="grid lg:grid-cols-3 gap-6">
+                                    <div class="lg:col-span-2">
+                                        ${Components.Card(`
+                                            <div class="p-6">
+                                                <div class="flex items-center justify-between mb-6">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                                                            <i data-lucide="ticket" class="w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h3 class="font-semibold text-slate-900 dark:text-white">Active Queue Ticket</h3>
+                                                            <p class="text-sm text-slate-500">Sandton City Branch • Account Opening</p>
+                                                        </div>
+                                                    </div>
+                                                    ${Components.Badge('Waiting', 'warning')}
+                                                </div>
+                                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                                                    <div class="text-center p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                                        <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 font-mono">${store.queue.ticketNumber}</div>
+                                                        <div class="text-xs text-slate-500 mt-1">Your Number</div>
+                                                    </div>
+                                                    <div class="text-center p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                                        <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono">${store.queue.ahead}</div>
+                                                        <div class="text-xs text-slate-500 mt-1">People Ahead</div>
+                                                    </div>
+                                                    <div class="text-center p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                                        <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono">~${store.queue.eta}m</div>
+                                                        <div class="text-xs text-slate-500 mt-1">Est. Wait</div>
+                                                    </div>
+                                                    <div class="text-center p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                                        <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono">${store.queue.currentServing}</div>
+                                                        <div class="text-xs text-slate-500 mt-1">Now Serving</div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex gap-3">
+                                                    ${Components.Button('Track Live', "navigate('queue-tracker')", 'primary', 'map-pin')}
+                                                    ${Components.Button('View Details', "navigate('booking-details')", 'secondary', 'arrow-right')}
+                                                </div>
+                                            </div>
+                                        `)}
+                                    </div>
+                                    <div class="space-y-6">
+                                        ${Components.Card(`
+                                            <div class="p-6">
+                                                <h3 class="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i> AI Insight
+                                                </h3>
+                                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Based on current branch traffic, your wait time may decrease by 5 minutes if you arrive after 10:30 AM.</p>
+                                            </div>
+                                        `)}
+                                        ${Components.Card(`
+                                            <div class="p-6">
+                                                <h3 class="font-semibold text-slate-900 dark:text-white mb-4">Recent Notifications</h3>
+                                                <div class="space-y-4">
+                                                    ${store.mock.notifications.slice(0, 2).map(n => `
+                                                        <div class="flex gap-3 items-start ${n.unread ? 'opacity-100' : 'opacity-60'}">
+                                                            <div class="w-2 h-2 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                                                            <div>
+                                                                <p class="text-sm text-slate-700 dark:text-slate-300">${n.text}</p>
+                                                                <p class="text-xs text-slate-500 mt-1">${n.time}</p>
+                                                            </div>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                                <button onclick="navigate('notifications')" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline mt-4">View all notifications →</button>
+                                            </div>
+                                        `)}
+                                    </div>
+                                </div>
+                            ` : `
+                                ${Components.Card(`
+                                    <div class="p-8 text-center">
+                                        <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i data-lucide="check-circle" class="w-8 h-8 text-emerald-600 dark:text-emerald-400"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Service Completed!</h3>
+                                        <p class="text-slate-600 dark:text-slate-400 mb-6">Thank you for visiting Sandton City Branch.</p>
+                                        ${Components.Button('Leave Feedback', "showToast('Feedback form opened', 'info')", 'primary', 'star')}
+                                    </div>
+                                `)}
+                            `}
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'my-bookings': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('customer', `
+                        <div class="space-y-6 animate-fade-in">
+                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">My Bookings</h1>
+                            
+                            <!-- Tabs -->
+                            <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 pb-1">
+                                ${['Upcoming', 'Past', 'Cancelled'].map((tab, i) => `
+                                    <button class="px-4 py-2 text-sm font-medium border-b-2 transition-colors ${i === 0 ? 'border-primary-600 text-primary-600 dark:text-primary-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
+                                        ${tab}
+                                    </button>
+                                `).join('')}
+                            </div>
+
+                            <div class="space-y-4">
+                                ${store.mock.bookings.filter(b => b.status === 'upcoming' || b.status === 'completed').map(b => `
+                                    ${Components.Card(`
+                                        <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                            <div class="flex items-start gap-4">
+                                                <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                                                    <i data-lucide="${b.service.includes('Account') ? 'briefcase' : 'help-circle'}" class="w-6 h-6 text-slate-600 dark:text-slate-400"></i>
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-semibold text-slate-900 dark:text-white">${b.service}</h3>
+                                                    <p class="text-sm text-slate-500">${b.branch}</p>
+                                                    <div class="flex items-center gap-3 mt-2 text-sm text-slate-600 dark:text-slate-400">
+                                                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${b.date}</span>
+                                                        <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${b.time}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col sm:items-end gap-3">
+                                                ${Components.Badge(b.status === 'upcoming' ? 'Upcoming' : 'Completed', b.status === 'upcoming' ? 'primary' : 'success')}
+                                                ${b.status === 'upcoming' ? `
+                                                    <div class="flex gap-2">
+                                                        ${Components.Button('View', "navigate('booking-details')", 'secondary', 'eye', 'py-1.5 text-xs')}
+                                                        ${Components.Button('Cancel', "showToast('Booking cancelled', 'error')", 'destructive', 'x', 'py-1.5 text-xs')}
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    `)}
+                                `).join('')}
+                            </div>
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'booking-details': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('customer', `
+                        <div class="max-w-2xl mx-auto space-y-6 animate-slide-up">
+                            <button onclick="navigate('my-bookings')" class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Bookings
+                            </button>
+
+                            ${Components.Card(`
+                                <div class="p-6 sm:p-8">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Booking Details</h2>
+                                            <p class="text-slate-500">Reference: #BK-2026-001</p>
+                                        </div>
+                                        ${Components.Badge('Upcoming', 'primary')}
+                                    </div>
+
+                                    <div class="grid sm:grid-cols-2 gap-6 mb-8">
+                                        <div>
+                                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Service</label>
+                                            <p class="text-lg font-medium text-slate-900 dark:text-white mt-1">Account Opening</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Branch</label>
+                                            <p class="text-lg font-medium text-slate-900 dark:text-white mt-1">Sandton City Branch</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</label>
+                                            <p class="text-lg font-medium text-slate-900 dark:text-white mt-1">20 July 2026</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Time</label>
+                                            <p class="text-lg font-medium text-slate-900 dark:text-white mt-1">10:00 AM</p>
+                                        </div>
+                                    </div>
+
+                                    ${store.queue.status !== 'completed' ? `
+                                        <div class="p-4 rounded-lg bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/50 mb-8 flex items-center gap-4">
+                                            <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center shrink-0">
+                                                <span class="font-mono font-bold text-primary-700 dark:text-primary-300 text-xl">${store.queue.ticketNumber}</span>
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-primary-900 dark:text-primary-100">Digital Queue Ticket Issued</p>
+                                                <p class="text-sm text-primary-700 dark:text-primary-300">Show this at the branch or track live.</p>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+
+                                    <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
+                                        ${Components.Button('Track Queue Live', "navigate('queue-tracker')", 'primary', 'map-pin', 'flex-1')}
+                                        ${Components.Button('Reschedule', "showToast('Reschedule flow initiated', 'info')", 'secondary', 'calendar', 'flex-1')}
+                                        ${Components.Button('Cancel Booking', "showToast('Booking cancelled', 'error')", 'destructive', 'x-circle', 'flex-1')}
+                                    </div>
+                                </div>
+                            `)}
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'queue-tracker': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
+                    <div class="w-full max-w-lg animate-slide-up">
+                        <button onclick="navigate('customer-dashboard')" class="mb-6 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+                        </button>
+                        ${Components.Card(`
+                            <div class="p-8 text-center">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-medium mb-6 animate-pulse-slow">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Live Updates Active
+                                </div>
+                                <h2 class="text-slate-500 dark:text-slate-400 font-medium mb-2">Your Queue Number</h2>
+                                <div class="text-7xl font-bold text-slate-900 dark:text-white font-mono tracking-tighter mb-2">${store.queue.ticketNumber}</div>
+                                <p class="text-slate-600 dark:text-slate-400 mb-8">Account Opening • Sandton City</p>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-8">
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                        <div class="text-3xl font-bold text-primary-600 dark:text-primary-400">${store.queue.ahead}</div>
+                                        <div class="text-sm text-slate-500">People Ahead</div>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                        <div class="text-3xl font-bold text-primary-600 dark:text-primary-400">~${store.queue.eta} min</div>
+                                        <div class="text-sm text-slate-500">Estimated Wait</div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 mb-8">
+                                    <div class="flex justify-between text-sm font-medium">
+                                        <span class="text-slate-600 dark:text-slate-400">Progress to Counter ${store.queue.counter}</span>
+                                        <span class="text-primary-600 dark:text-primary-400">${Math.max(0, 100 - (store.queue.ahead * 10))}%</span>
+                                    </div>
+                                    <div class="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-primary-600 to-indigo-500 rounded-full transition-all duration-1000 ease-out" style="width: ${Math.max(0, 100 - (store.queue.ahead * 10))}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 text-left flex gap-3">
+                                    <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-amber-900 dark:text-amber-100">You're almost up!</h4>
+                                        <p class="text-sm text-amber-800 dark:text-amber-200 mt-1">Please make your way to the branch. Your turn is approaching.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            `,
+
+            'notifications': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('customer', `
+                        <div class="max-w-2xl mx-auto space-y-6 animate-fade-in">
+                            <div class="flex items-center justify-between">
+                                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Notifications</h1>
+                                ${Components.Button('Mark all as read', "showToast('All notifications marked as read', 'success')", 'ghost', 'check-check', 'text-xs')}
+                            </div>
+                            <div class="space-y-3">
+                                ${store.mock.notifications.map(n => `
+                                    ${Components.Card(`
+                                        <div class="p-4 flex gap-4 items-start ${n.unread ? 'bg-primary-50/50 dark:bg-primary-900/10 border-primary-100 dark:border-primary-800/30' : ''}">
+                                            <div class="w-10 h-10 rounded-full ${n.type === 'alert' ? 'bg-amber-100 text-amber-600' : n.type === 'success' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'} dark:bg-opacity-20 flex items-center justify-center shrink-0">
+                                                <i data-lucide="${n.type === 'alert' ? 'bell' : n.type === 'success' ? 'check-circle' : 'info'}" class="w-5 h-5"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">${n.text}</p>
+                                                <p class="text-xs text-slate-500 mt-1">${n.time}</p>
+                                            </div>
+                                            ${n.unread ? '<div class="w-2 h-2 rounded-full bg-primary-600 mt-2 shrink-0"></div>' : ''}
+                                        </div>
+                                    `)}
+                                `).join('')}
+                            </div>
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'profile': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('customer', `
+                        <div class="max-w-2xl mx-auto space-y-6 animate-fade-in">
+                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Profile Settings</h1>
+                            ${Components.Card(`
+                                <div class="p-6 space-y-6">
+                                    <div class="flex items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+                                        <div class="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-xl font-bold text-primary-700 dark:text-primary-400">
+                                            ${store.user.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-slate-900 dark:text-white">${store.user.name}</h3>
+                                            <p class="text-sm text-slate-500">Customer Account</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+                                            <input type="text" value="${store.user.name}" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
+                                            <input type="email" value="thabo.m@example.co.za" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
+                                            <input type="tel" value="+27 82 123 4567" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500">
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                                        <h4 class="font-semibold text-slate-900 dark:text-white mb-4">Notification Preferences</h4>
+                                        <div class="space-y-3">
+                                            ${['SMS Updates', 'Email Notifications', 'Push Notifications'].map(pref => `
+                                                <label class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 cursor-pointer">
+                                                    <span class="text-sm text-slate-700 dark:text-slate-300">${pref}</span>
+                                                    <input type="checkbox" checked class="w-4 h-4 text-primary-600 rounded focus:ring-primary-500">
+                                                </label>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-4">
+                                        ${Components.Button('Save Changes', "showToast('Profile updated successfully', 'success')", 'primary', 'save')}
+                                    </div>
+                                </div>
+                            `)}
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'walk-in': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
+                    <div class="w-full max-w-md animate-slide-up">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl mx-auto mb-4 shadow-lg shadow-primary-600/20">Q</div>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Self Check-In</h2>
+                            <p class="text-slate-600 dark:text-slate-400 mt-2">Sandton City Branch</p>
+                        </div>
+                        
+                        ${Components.Card(`
+                            <div class="p-6 space-y-6">
+                                <div class="text-center p-6 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl hover:border-primary-500 dark:hover:border-primary-500 transition-colors cursor-pointer group">
+                                    <i data-lucide="qr-code" class="w-12 h-12 text-slate-400 group-hover:text-primary-600 mx-auto mb-3 transition-colors"></i>
+                                    <p class="font-medium text-slate-900 dark:text-white">Tap to Scan QR Code</p>
+                                    <p class="text-sm text-slate-500 mt-1">Or enter booking reference manually</p>
+                                </div>
+                                
+                                <div class="relative">
+                                    <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-slate-200 dark:border-slate-700"></span></div>
+                                    <div class="relative flex justify-center text-xs uppercase"><span class="bg-white dark:bg-slate-900 px-2 text-slate-500">Or</span></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Booking Reference</label>
+                                    <input type="text" placeholder="e.g., BK-2026-001" class="w-full px-3 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 text-center font-mono text-lg tracking-widest uppercase">
+                                </div>
+
+                                ${Components.Button('Check In & Get Ticket', "store.queue.status='waiting'; store.queue.ahead=5; store.queue.eta=15; showToast('Checked in! Ticket A042 issued.', 'success'); navigate('queue-tracker')", 'primary', 'arrow-right', 'w-full py-4 text-lg')}
+                                
+                                <button onclick="navigate('landing')" class="w-full text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                                    I don't have a booking
+                                </button>
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            `,
+
+            'booking': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('customer', `
+                        <div class="max-w-2xl mx-auto animate-slide-up">
+                            <button onclick="navigate('customer-dashboard')" class="mb-6 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Cancel Booking
+                            </button>
+                            ${Components.Card(`
+                                <div class="p-8">
+                                    <div class="mb-8">
+                                        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Book an Appointment</h2>
+                                        <p class="text-slate-600 dark:text-slate-400">Step ${store.bookingStep} of 4</p>
+                                        <div class="mt-4 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                            <div class="h-full bg-primary-600 rounded-full transition-all duration-500" style="width: ${(store.bookingStep / 4) * 100}%"></div>
+                                        </div>
+                                    </div>
+
+                                    ${store.bookingStep === 1 ? `
+                                        <div class="space-y-4">
+                                            <h3 class="font-semibold text-lg text-slate-900 dark:text-white">Select Branch</h3>
+                                            ${store.mock.branches.map(b => `
+                                                <label class="flex items-center gap-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 cursor-pointer transition-all group">
+                                                    <input type="radio" name="branch" class="w-4 h-4 text-primary-600 focus:ring-primary-500" checked>
+                                                    <div class="flex-1">
+                                                        <div class="font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">${b.name}</div>
+                                                        <div class="text-sm text-slate-500">${b.address} • ${b.distance}</div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <div class="text-sm font-medium text-emerald-600 dark:text-emerald-400">${b.waitTime}</div>
+                                                        <div class="text-xs text-slate-500">current wait</div>
+                                                    </div>
+                                                </label>
+                                            `).join('')}
+                                        </div>
+                                    ` : store.bookingStep === 2 ? `
+                                        <div class="space-y-4">
+                                            <h3 class="font-semibold text-lg text-slate-900 dark:text-white">Select Service</h3>
+                                            ${store.mock.services.map(s => `
+                                                <label class="flex items-start gap-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 cursor-pointer transition-all group">
+                                                    <input type="radio" name="service" class="w-4 h-4 text-primary-600 focus:ring-primary-500 mt-1" checked>
+                                                    <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 transition-colors">
+                                                        <i data-lucide="${s.icon}" class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary-600 dark:group-hover:text-primary-400"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <div class="font-medium text-slate-900 dark:text-white">${s.name}</div>
+                                                        <div class="text-sm text-slate-500 mt-1">Average duration: ${s.time}</div>
+                                                    </div>
+                                                </label>
+                                            `).join('')}
+                                        </div>
+                                    ` : store.bookingStep === 3 ? `
+                                        <div class="space-y-4">
+                                            <h3 class="font-semibold text-lg text-slate-900 dark:text-white">Select Date & Time</h3>
+                                            <div class="grid grid-cols-7 gap-2 text-center text-sm mb-2">
+                                                ${['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => `<div class="text-slate-500 font-medium">${d}</div>`).join('')}
+                                            </div>
+                                            <div class="grid grid-cols-7 gap-2 mb-6">
+                                                ${Array.from({length: 28}, (_, i) => {
+                                                    const day = i + 15;
+                                                    const isDisabled = day < 18;
+                                                    const isSelected = day === 20;
+                                                    return `<button class="aspect-square rounded-lg flex items-center justify-center text-sm font-medium transition-all ${isDisabled ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed' : isSelected ? 'bg-primary-600 text-white shadow-md' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">${day}</button>`;
+                                                }).join('')}
+                                            </div>
+                                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                                                ${['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30'].map((t, i) => `
+                                                    <button class="py-3 px-2 rounded-lg border text-sm font-medium transition-all ${i === 2 ? 'border-primary-600 bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400' : i === 3 ? 'border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed line-through' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-primary-500'}">${t}</button>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    ` : `
+                                        <div class="space-y-6">
+                                            <h3 class="font-semibold text-lg text-slate-900 dark:text-white">Confirm Booking</h3>
+                                            <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 space-y-3 text-sm">
+                                                <div class="flex justify-between"><span class="text-slate-500">Branch</span><span class="font-medium text-slate-900 dark:text-white">Sandton City Branch</span></div>
+                                                <div class="flex justify-between"><span class="text-slate-500">Service</span><span class="font-medium text-slate-900 dark:text-white">Account Opening</span></div>
+                                                <div class="flex justify-between"><span class="text-slate-500">Date & Time</span><span class="font-medium text-slate-900 dark:text-white">20 July 2026, 10:00 AM</span></div>
+                                            </div>
+                                        </div>
+                                    `}
+
+                                    <div class="flex justify-between mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+                                        ${store.bookingStep > 1 ? Components.Button('Back', "store.bookingStep--; render()", 'secondary') : '<div></div>'}
+                                        ${store.bookingStep < 4 ? Components.Button('Continue', "store.bookingStep++; render()", 'primary', 'arrow-right') : Components.Button('Confirm Booking', "store.bookingStep=1; store.queue.status='waiting'; store.queue.ahead=3; store.queue.eta=12; showToast('Booking confirmed successfully!', 'success'); navigate('customer-dashboard')", 'primary', 'check', 'px-8')}
+                                    </div>
+                                </div>
+                            `)}
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'counter-dashboard': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('staff', `
+                        <div class="max-w-4xl mx-auto space-y-6 animate-fade-in">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Counter 4 Dashboard</h1>
+                                    <p class="text-slate-600 dark:text-slate-400">Welcome, ${store.user.name}</p>
+                                </div>
+                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-sm font-medium text-emerald-700 dark:text-emerald-400">Active</span></div>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="md:col-span-2">
+                                    ${Components.Card(`
+                                        <div class="p-8 text-center border-b border-slate-100 dark:border-slate-800">
+                                            <h3 class="text-sm font-medium text-slate-500 uppercase tracking-wider mb-4">Now Serving</h3>
+                                            <div class="text-8xl font-bold text-primary-600 dark:text-primary-400 font-mono tracking-tighter mb-2">${store.queue.currentServing}</div>
+                                            <p class="text-lg text-slate-700 dark:text-slate-300 font-medium">Account Opening</p>
+                                        </div>
+                                        <div class="p-6 grid grid-cols-3 gap-4">
+                                            ${Components.Button('Call Next', "advanceQueue()", 'primary', 'user-plus', 'py-4 text-lg')}
+                                            ${Components.Button('Complete', "completeService()", 'secondary', 'check-circle', 'py-4 text-lg')}
+                                            ${Components.Button('No Show', "noShow()", 'destructive', 'x-circle', 'py-4 text-lg')}
+                                        </div>
+                                    `)}
+                                </div>
+                                <div class="space-y-6">
+                                    ${Components.Card(`
+                                        <div class="p-6">
+                                            <h3 class="font-semibold text-slate-900 dark:text-white mb-4">Queue Overview</h3>
+                                            <div class="space-y-3">
+                                                <div class="flex justify-between items-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                                    <div><div class="font-mono font-bold text-slate-900 dark:text-white">A042</div><div class="text-xs text-slate-500">General Inquiry</div></div>
+                                                    ${Components.Badge('Waiting', 'warning')}
+                                                </div>
+                                                <div class="flex justify-between items-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                                                    <div><div class="font-mono font-bold text-slate-900 dark:text-white">A043</div><div class="text-xs text-slate-500">Loan Consultation</div></div>
+                                                    ${Components.Badge('Waiting', 'warning')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `)}
+                                </div>
+                            </div>
+                        </div>
+                    `)}
+                </div>
+            `,
+
+            'manager-dashboard': () => `
+                <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+                    ${Layouts.appShell('manager', `
+                        <div class="space-y-6 animate-fade-in">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Branch Overview</h1>
+                                    <p class="text-slate-600 dark:text-slate-400">Sandton City Branch • Live Monitoring</p>
+                                </div>
+                                ${Components.Button('Export Report', "showToast('Report downloaded', 'success')", 'secondary', 'download')}
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                ${[ { label: 'Currently Waiting', value: '14', icon: 'users', color: 'blue' }, { label: 'Avg. Wait Time', value: '12m', icon: 'clock', color: 'emerald' }, { label: 'Completed Today', value: '142', icon: 'check-circle', color: 'indigo' }, { label: 'No-Shows', value: '4', icon: 'x-circle', color: 'rose' } ].map(stat => `
+                                    ${Components.Card(`
+                                        <div class="p-5 flex items-start justify-between">
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">${stat.label}</p>
+                                                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-2">${stat.value}</h3>
+                                            </div>
+                                            <div class="p-3 rounded-lg bg-${stat.color}-50 dark:bg-${stat.color}-900/20">
+                                                <i data-lucide="${stat.icon}" class="w-6 h-6 text-${stat.color}-600 dark:text-${stat.color}-400"></i>
+                                            </div>
+                                        </div>
+                                    `)}
+                                `).join('')}
+                            </div>
+                            ${Components.Card(`
+                                <div class="p-6">
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+                                        <h3 class="font-semibold text-slate-900 dark:text-white">AI Operational Insight</h3>
+                                    </div>
+                                    <div class="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 mb-4">
+                                        <p class="text-sm text-amber-900 dark:text-amber-100 font-medium mb-1">Peak Demand Predicted</p>
+                                        <p class="text-sm text-amber-800 dark:text-amber-200/80">Wait times for "Loan Consultation" will increase by 22% between 10:00 - 11:30 AM.</p>
+                                    </div>
+                                    ${Components.Button('Open Counter 5 Proactively', "showToast('Counter 5 opened and staff assigned', 'success')", 'primary', 'plus', 'w-full')}
+                                </div>
+                            `)}
+                        </div>
+                    `)}
+                </div>
+            `
+        };
+
+        // ==========================================
+        // 5. LAYOUTS
+        // ==========================================
+        const Layouts = {
+            appShell: (role, content) => {
+                const navItems = {
+                    customer: [
+                        { id: 'customer-dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
+                        { id: 'my-bookings', icon: 'calendar', label: 'My Bookings' },
+                        { id: 'queue-tracker', icon: 'map-pin', label: 'Track Queue' },
+                        { id: 'notifications', icon: 'bell', label: 'Notifications' },
+                        { id: 'profile', icon: 'user', label: 'Profile' }
+                    ],
+                    staff: [
+                        { id: 'counter-dashboard', icon: 'headphones', label: 'My Counter' },
+                        { id: 'manager-dashboard', icon: 'users', label: 'Branch Queue' }
+                    ],
+                    manager: [
+                        { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Overview' },
+                        { id: 'counter-dashboard', icon: 'users', label: 'Staff Allocation' }
+                    ]
+                };
+
+                return `
+                    <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+                        <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
+                            <div class="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-slate-800">
+                                <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold">Q</div>
+                                <span class="font-bold text-lg text-slate-900 dark:text-white">Smart Q</span>
+                            </div>
+                            <nav class="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
+                                ${navItems[role].map(item => `
+                                    <button onclick="navigate('${item.id}')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${store.view === item.id ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}">
+                                        <i data-lucide="${item.icon}" class="w-5 h-5"></i> ${item.label}
+                                    </button>
+                                `).join('')}
+                            </nav>
+                            <div class="p-4 border-t border-slate-100 dark:border-slate-800">
+                                <div class="flex items-center gap-3 px-3 py-2 mb-2">
+                                    <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300">${store.user.name.charAt(0)}</div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-slate-900 dark:text-white truncate">${store.user.name}</p>
+                                        <p class="text-xs text-slate-500 capitalize">${store.user.role}</p>
+                                    </div>
+                                </div>
+                                <button onclick="logout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-colors">
+                                    <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+                                </button>
+                            </div>
+                        </aside>
+
+                        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+                            <header class="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold">Q</div>
+                                    <span class="font-bold text-lg">Smart Q</span>
+                                </div>
+                                <button onclick="logout()" class="p-2 text-slate-600 dark:text-slate-400"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                            </header>
+                            <main class="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 pb-24 md:pb-8">
+                                ${content}
+                            </main>
+                            
+                            <!-- Mobile Bottom Nav for Customer -->
+                            ${role === 'customer' ? `
+                                <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex justify-around p-2 z-40 pb-safe">
+                                    ${navItems.customer.slice(0, 4).map(item => `
+                                        <button onclick="navigate('${item.id}')" class="flex flex-col items-center gap-1 p-2 rounded-lg w-full ${store.view === item.id ? 'text-primary-600 dark:text-primary-400' : 'text-slate-500 dark:text-slate-400'}">
+                                            <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                                            <span class="text-[10px] font-medium">${item.label}</span>
+                                        </button>
+                                    `).join('')}
+                                </nav>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // ==========================================
+        // 6. CORE LOGIC & SIMULATION
+        // ==========================================
+        function advanceQueue() {
+            if (store.queue.ahead > 0) {
+                store.queue.ahead--; store.queue.eta = Math.max(2, store.queue.eta - 4);
+                store.queue.currentServing = `A0${40 + (4 - store.queue.ahead)}`;
+                showToast('Next customer called', 'success'); render();
+            } else { showToast('Queue is empty', 'info'); }
+        }
+        function completeService() {
+            store.queue.status = 'completed'; store.queue.ahead = 0; store.queue.eta = 0;
+            showToast('Service completed successfully', 'success'); render();
+        }
+        function noShow() {
+            store.queue.ahead = Math.max(0, store.queue.ahead - 1);
+            showToast('Customer marked as No-Show', 'error'); render();
+        }
+
+        // Simulate live queue movement for customer views
+        setInterval(() => {
+            if ((store.view === 'queue-tracker' || store.view === 'customer-dashboard') && store.queue.status === 'waiting') {
+                if (store.queue.ahead > 0 && Math.random() > 0.7) {
+                    store.queue.ahead--; store.queue.eta = Math.max(2, store.queue.eta - 3);
+                    render();
+                }
+            }
+        }, 5000);
+
+        // ==========================================
+        // 7. RENDER ENGINE
+        // ==========================================
+        function render() {
+            const app = $('#app');
+            app.innerHTML = Views[store.view] ? Views[store.view]() : Views.landing();
+            lucide.createIcons();
+            document.documentElement.classList.toggle('dark', store.theme === 'dark');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { render(); });
+    </script>
+</body>
+</html>
