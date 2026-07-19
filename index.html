@@ -58,19 +58,17 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
 
-        /* Premium Components - Optimized Transitions to Prevent Flickering */
         .card {
             background-color: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .dark .card { box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         
@@ -84,7 +82,7 @@
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 14px;
-            transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer; border: 1px solid transparent;
             white-space: nowrap;
         }
@@ -101,77 +99,14 @@
         .btn-error { background: #DC2626; color: white; }
         .btn-error:hover { background: #B91C1C; }
 
-        /* Smooth Progress Bar */
-        .progress-bar {
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        @keyframes queue-flow {
-            0% { transform: translateY(100%); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-400%); opacity: 0; }
-        }
-
+        
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-slide-down { animation: slideDown 0.4s ease-out forwards; }
-        
-        .shimmer-bg {
-            background: linear-gradient(90deg, var(--surface) 0%, var(--bg) 50%, var(--surface) 100%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
 
-        /* Queue Visualization */
-        .queue-track {
-            position: relative;
-            height: 400px;
-            width: 100%;
-            overflow: hidden;
-            border-radius: 24px;
-            background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-            border: 1px solid var(--border);
-        }
-        .queue-node {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #2563EB;
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
-            animation: queue-flow 6s linear infinite;
-        }
-        .queue-node:nth-child(2) { animation-delay: -2s; background: #8B5CF6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
-        .queue-node:nth-child(3) { animation-delay: -4s; background: #EC4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); }
-        
-        .queue-counter {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            background: var(--surface);
-            border: 2px solid #2563EB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 30px rgba(37, 99, 235, 0.2);
-            z-index: 10;
-        }
-
-        /* Ticket Design */
         .digital-ticket {
             background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
             border: 1px solid #E2E8F0;
@@ -198,14 +133,12 @@
         .dark .digital-ticket::before { border-right-color: #334155; }
         .dark .digital-ticket::after { border-left-color: #334155; }
 
-        /* Focus States */
         *:focus-visible {
             outline: 2px solid #2563EB;
             outline-offset: 2px;
             border-radius: 8px;
         }
 
-        /* Mobile Bottom Nav */
         .mobile-nav {
             position: fixed;
             bottom: 0;
@@ -226,17 +159,11 @@
 </head>
 <body class="antialiased selection:bg-accent/20">
 
-    <!-- Toast Container -->
     <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
-    
-    <!-- Modal Container -->
     <div id="modal-container" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-opacity"></div>
 
-    <!-- App Root -->
     <div id="app" class="min-h-screen flex flex-col">
-        <!-- Layout Shell -->
         <div id="layout-shell" class="flex flex-1 overflow-hidden">
-            <!-- Sidebar (Desktop) -->
             <aside id="desktop-sidebar" class="hidden md:flex flex-col w-64 bg-[var(--surface)] border-r border-[var(--border)] z-20">
                 <div class="p-6 flex items-center gap-3 border-b border-[var(--border)]">
                     <div class="w-9 h-9 bg-accent rounded-xl flex items-center justify-center text-white font-bold shadow-glow">Q</div>
@@ -257,9 +184,7 @@
                 </div>
             </aside>
 
-            <!-- Main Content Area -->
             <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                <!-- Mobile Header -->
                 <header class="md:hidden flex items-center justify-between p-4 bg-[var(--surface)] border-b border-[var(--border)] z-20">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white font-bold">Q</div>
@@ -270,10 +195,8 @@
                     </button>
                 </header>
 
-                <!-- Scrollable Content -->
                 <main id="main-content" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 md:pb-8"></main>
                 
-                <!-- Mobile Bottom Nav -->
                 <nav id="mobile-nav" class="mobile-nav md:hidden hidden"></nav>
             </div>
         </div>
@@ -289,7 +212,6 @@
                 view: 'landing',
                 theme: localStorage.getItem('theme') || 'light',
                 bookingStep: 1,
-                forceRender: false,
                 services: [
                     { id: 'svc_1', name: 'General Inquiry', avgTime: 12, icon: 'help-circle', color: 'blue' },
                     { id: 'svc_2', name: 'Account Opening', avgTime: 25, icon: 'briefcase', color: 'indigo' },
@@ -333,9 +255,7 @@
                 
                 let peopleAhead = 0;
                 if (this.state.userTicket) {
-                    if (this.state.userTicket.status === 'serving' || this.state.userTicket.status === 'completed') {
-                        peopleAhead = 0;
-                    } else if (this.state.userTicket.isPriority) {
+                    if (this.state.userTicket.isPriority) {
                         const pos = priorityQueue.findIndex(q => q.id === this.state.userTicket.id);
                         peopleAhead = pos >= 0 ? pos : priorityQueue.length;
                     } else {
@@ -344,40 +264,17 @@
                     }
                 }
 
+                // Realistic ETA math: (People Ahead * Avg Time) / Active Counters
                 const rawEta = (peopleAhead * service.avgTime) / Math.max(1, activeCounters);
-                const eta = Math.max(1, Math.round(rawEta));
+                const minEta = Math.max(5, Math.round((rawEta * 0.9) / 5) * 5);
+                const maxEta = Math.max(10, Math.round((rawEta * 1.1) / 5) * 5);
                 
-                return { peopleAhead, activeCounters, eta };
+                return { peopleAhead, activeCounters, eta: `${minEta}-${maxEta}`, minEta };
             },
 
             tick() {
                 if (['landing', 'login'].includes(this.state.view)) return;
 
-                // 1. Handle User Service Countdown
-                if (this.state.userTicket) {
-                    if (this.state.userTicket.status === 'serving') {
-                        if (this.state.userTicket.serviceTimeLeft > 0) {
-                            this.state.userTicket.serviceTimeLeft--;
-                            TargetedUpdater.updateCountdown(this.state.userTicket.serviceTimeLeft);
-                        } else {
-                            this.completeTicket(this.state.userTicket.id, 'completed');
-                        }
-                    } else if (this.state.userTicket.status === 'waiting') {
-                        const m = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket.isPriority);
-                        if (!this.state.userTicket.displayedEta) {
-                            this.state.userTicket.displayedEta = m.eta;
-                        }
-                        // Smooth ETA decrease: snap down if queue moved faster, otherwise tick down by 1 min
-                        if (m.eta < this.state.userTicket.displayedEta) {
-                            this.state.userTicket.displayedEta = m.eta;
-                        } else {
-                            this.state.userTicket.displayedEta = Math.max(1, this.state.userTicket.displayedEta - 1);
-                        }
-                        TargetedUpdater.updateUserMetrics(m, this.state.userTicket.displayedEta);
-                    }
-                }
-
-                // 2. Simulate Queue Movement & Disruptions
                 const roll = Math.random();
                 let changed = false;
 
@@ -399,6 +296,25 @@
                         target.status = 'open';
                         UI.showToast(`${target.name} reopened. Wait times decreasing.`, 'success');
                         changed = true;
+                    }
+                }
+
+                // Update user ticket state
+                if (this.state.userTicket) {
+                    if (this.state.userTicket.status === 'waiting') {
+                        const m = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket.isPriority);
+                        TargetedUpdater.updateWaitingMetrics(m);
+                    } else if (this.state.userTicket.status === 'serving') {
+                        if (!this.state.userTicket.countdown) {
+                            const svc = this.state.services.find(s => s.id === this.state.userTicket.service);
+                            this.state.userTicket.countdown = svc.avgTime * 60; // seconds
+                        }
+                        this.state.userTicket.countdown = Math.max(0, this.state.userTicket.countdown - 4); // 4s per tick
+                        TargetedUpdater.updateServingCountdown(this.state.userTicket.countdown);
+                        
+                        if (this.state.userTicket.countdown === 0) {
+                            this.completeTicket(this.state.userTicket.id, 'completed');
+                        }
                     }
                 }
 
@@ -444,11 +360,12 @@
                     this.state.userTicket.status = outcome;
                     if (outcome === 'completed') {
                         UI.showToast('Service completed. Thank you!', 'success');
+                        TargetedUpdater.updateUserStatus('completed');
                         setTimeout(() => UI.showFeedbackModal(), 1000);
                     } else {
                         UI.showToast('Ticket marked as No-Show.', 'error');
+                        TargetedUpdater.updateUserStatus('no-show');
                     }
-                    TargetedUpdater.updateUserStatus(outcome);
                 }
                 TargetedUpdater.updateCounters();
                 TargetedUpdater.updateQueueLists();
@@ -460,96 +377,126 @@
         };
 
         // ==========================================
-        // 2. TARGETED DOM UPDATES (Zero Flickering)
+        // 2. TARGETED DOM UPDATES (Prevents Flickering)
         // ==========================================
         const TargetedUpdater = {
-            updateUserMetrics(metrics, displayedEta) {
+            updateWaitingMetrics(metrics) {
                 this.setText('user-ahead', metrics.peopleAhead);
-                this.setText('user-eta', `~${displayedEta}m`);
+                this.setText('user-eta', `~${metrics.eta}m`);
                 this.setText('tracker-ahead', metrics.peopleAhead);
-                this.setText('tracker-eta', `~${displayedEta}m`);
+                this.setText('tracker-eta', `~${metrics.eta}m`);
                 
-                const progress = metrics.peopleAhead === 0 ? 100 : Math.max(5, 100 - (metrics.peopleAhead * 15));
+                const progress = Math.max(0, 100 - (metrics.peopleAhead * 15));
                 this.setStyle('user-progress', 'width', `${progress}%`);
                 this.setText('user-progress-text', `${progress}%`);
                 this.setStyle('tracker-progress', 'width', `${progress}%`);
                 this.setText('tracker-progress-text', `${progress}%`);
             },
+
             updateUserStatus(status, counterName) {
+                const waitingMetrics = document.querySelectorAll('.waiting-metric');
+                const userServingMetric = document.getElementById('user-serving-metric');
+                const trackerServingMetric = document.getElementById('tracker-serving-metric');
+                
+                if (status === 'serving') {
+                    waitingMetrics.forEach(el => el.classList.add('hidden'));
+                    if (userServingMetric) userServingMetric.classList.remove('hidden');
+                    if (trackerServingMetric) trackerServingMetric.classList.remove('hidden');
+                    
+                    const svc = Simulator.state.services.find(s => s.id === Simulator.state.userTicket.service);
+                    Simulator.state.userTicket.countdown = svc.avgTime * 60;
+                    this.updateServingCountdown(Simulator.state.userTicket.countdown);
+                    
+                    this.setStyle('user-progress', 'width', '100%');
+                    this.setText('user-progress-text', '100%');
+                    this.setStyle('tracker-progress', 'width', '100%');
+                    this.setText('tracker-progress-text', '100%');
+                } else {
+                    waitingMetrics.forEach(el => el.classList.remove('hidden'));
+                    if (userServingMetric) userServingMetric.classList.add('hidden');
+                    if (trackerServingMetric) trackerServingMetric.classList.add('hidden');
+                }
+                
                 const badge = document.getElementById('user-status-badge');
                 if (badge) {
                     badge.textContent = status === 'serving' ? 'Now Serving' : status === 'completed' ? 'Completed' : 'Waiting';
                     badge.className = `px-3 py-1 rounded-full text-xs font-bold ${status === 'serving' ? 'bg-success/10 text-success' : status === 'completed' ? 'bg-accent/10 text-accent' : 'bg-warning/10 text-warning'}`;
                 }
-                
-                const countdownEls = ['user-service-countdown', 'tracker-service-countdown'];
-                countdownEls.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        if (status === 'serving') {
-                            el.classList.remove('hidden');
-                            const service = Simulator.state.services.find(s => s.id === Simulator.state.userTicket.service);
-                            Simulator.state.userTicket.serviceTimeLeft = service.avgTime;
-                            this.updateCountdown(Simulator.state.userTicket.serviceTimeLeft);
-                        } else {
-                            el.classList.add('hidden');
+                if (counterName) this.setText('user-counter', counterName);
+            },
+
+            updateServingCountdown(seconds) {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+                this.setText('user-countdown', timeStr);
+                this.setText('tracker-countdown', timeStr);
+            },
+
+            updateCounters() {
+                Simulator.state.counters.forEach(c => {
+                    const statusEl = document.getElementById(`counter-${c.id}-status`);
+                    const ticketEl = document.getElementById(`counter-${c.id}-ticket`);
+                    const barEl = document.getElementById(`counter-${c.id}-bar`);
+                    
+                    const load = c.status === 'open' ? (c.currentTicket ? 85 : 20) : 0;
+                    const statusText = c.status === 'open' ? 'Active' : 'On Break';
+                    
+                    if (statusEl && statusEl.textContent !== statusText) {
+                        statusEl.textContent = statusText;
+                        statusEl.className = `text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'break' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'}`;
+                    }
+                    if (ticketEl && ticketEl.textContent !== (c.currentTicket || '--')) {
+                        ticketEl.textContent = c.currentTicket || '--';
+                    }
+                    if (barEl) {
+                        const targetWidth = `${load}%`;
+                        if (barEl.style.width !== targetWidth) {
+                            barEl.style.width = targetWidth;
+                            barEl.className = `h-full rounded-full transition-all duration-1000 ${c.status === 'break' ? 'bg-warning' : load > 70 ? 'bg-error' : 'bg-accent'}`;
                         }
                     }
                 });
-                
-                if (counterName) this.setText('user-counter', counterName);
             },
-            updateCountdown(minutes) {
-                const timeStr = `${minutes}:00`;
-                this.setText('user-countdown-time', timeStr);
-                this.setText('tracker-countdown-time', timeStr);
-            },
-            updateCounters() {
-                Simulator.state.counters.forEach(c => {
-                    this.setText(`counter-${c.id}-status`, c.status === 'open' ? 'Active' : 'On Break');
-                    this.setText(`counter-${c.id}-ticket`, c.currentTicket || '--');
-                    const bar = document.getElementById(`counter-${c.id}-bar`);
-                    if (bar) {
-                        const load = c.status === 'open' ? (c.currentTicket ? 85 : 20) : 0;
-                        bar.style.width = `${load}%`;
-                        bar.className = `h-full rounded-full progress-bar ${c.status === 'break' ? 'bg-warning' : load > 70 ? 'bg-error' : 'bg-accent'}`;
-                    }
-                });
-            },
+
             updateQueueLists() {
                 const staffList = document.getElementById('staff-queue-list');
-                if (staffList) {
-                    const myCounter = Simulator.state.counters.find(c => c.id === 'c_2');
-                    const queue = Simulator.state.queue.filter(q => q.service === myCounter.service && q.status === 'waiting');
-                    const newHtml = queue.length === 0 ? '<p class="text-sm text-[var(--text-secondary)] text-center py-8">Queue is empty</p>' : queue.map((q, i) => `
-                        <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] ${q.isPriority ? 'ring-1 ring-warning/50' : ''}">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center font-mono font-bold text-sm">${q.number}</div>
-                                <div>
-                                    <div class="text-sm font-semibold flex items-center gap-1">${q.isPriority ? '<i data-lucide="star" class="w-3 h-3 text-warning fill-current"></i>' : ''} Customer ${100+i}</div>
-                                    <div class="text-xs text-[var(--text-secondary)]">Waiting ~${(i+1)*25}m</div>
-                                </div>
+                if (!staffList) return;
+                
+                const myCounter = Simulator.state.counters.find(c => c.id === 'c_2');
+                const queue = Simulator.state.queue.filter(q => q.service === myCounter.service && q.status === 'waiting');
+                
+                const signature = queue.map(q => q.id + q.number).join(',');
+                if (staffList.dataset.signature === signature) return;
+                staffList.dataset.signature = signature;
+
+                const newHTML = queue.length === 0 ? '<p class="text-sm text-[var(--text-secondary)] text-center py-8">Queue is empty</p>' : queue.map((q, i) => `
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] ${q.isPriority ? 'ring-1 ring-warning/50' : ''}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center font-mono font-bold text-sm">${q.number}</div>
+                            <div>
+                                <div class="text-sm font-semibold flex items-center gap-1">${q.isPriority ? '<i data-lucide="star" class="w-3 h-3 text-warning fill-current"></i>' : ''} Customer ${100+i}</div>
+                                <div class="text-xs text-[var(--text-secondary)]">Waiting ~${(i+1)*25}m</div>
                             </div>
-                            ${q.isPriority ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/10 text-warning">PRIORITY</span>' : ''}
                         </div>
-                    `).join('');
-                    
-                    // Prevent flickering by only updating if content actually changed
-                    if (staffList.dataset.hash !== newHtml) {
-                        staffList.innerHTML = newHtml;
-                        staffList.dataset.hash = newHtml;
-                        lucide.createIcons();
-                    }
-                }
+                        ${q.isPriority ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/10 text-warning">PRIORITY</span>' : ''}
+                    </div>
+                `).join('');
+                
+                staffList.innerHTML = newHTML;
+                lucide.createIcons({ nodes: [staffList] });
             },
+
             updateStats() {
                 const waiting = Simulator.state.queue.filter(q => q.status === 'waiting').length;
                 this.setText('stat-waiting', waiting);
             },
+
             setText(id, text) {
                 const el = document.getElementById(id);
                 if (el && el.textContent !== String(text)) el.textContent = text;
             },
+
             setStyle(id, prop, val) {
                 const el = document.getElementById(id);
                 if (el && el.style[prop] !== val) el.style[prop] = val;
@@ -569,7 +516,7 @@
                 el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-soft animate-slide-down ${colors[type]}`;
                 el.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5 shrink-0"></i><p class="text-sm font-medium">${message}</p>`;
                 container.appendChild(el);
-                lucide.createIcons();
+                lucide.createIcons({ nodes: [el] });
                 setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-10px)'; setTimeout(() => el.remove(), 300); }, 4000);
             },
 
@@ -590,7 +537,7 @@
                         <button onclick="UI.closeModal(); Simulator.state.userTicket = null; UI.navigate('customer-dashboard');" class="btn btn-primary w-full py-3">Submit Feedback</button>
                     </div>
                 `;
-                lucide.createIcons();
+                lucide.createIcons({ nodes: [modal] });
             },
 
             rateService: (stars) => {
@@ -611,13 +558,11 @@
                 document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
                 const icon = document.getElementById('theme-icon-mobile');
                 if (icon) icon.setAttribute('data-lucide', Simulator.state.theme === 'light' ? 'moon' : 'sun');
-                lucide.createIcons();
+                lucide.createIcons({ nodes: [icon] });
             },
 
             navigate: (view) => {
-                if (Simulator.state.view === view) return;
                 Simulator.state.view = view;
-                Simulator.state.forceRender = true;
                 window.scrollTo(0, 0);
                 Renderer.renderLayout();
                 Renderer.renderView();
@@ -678,18 +623,12 @@
                         </button>
                     `).join('');
 
-                    lucide.createIcons();
+                    lucide.createIcons({ nodes: [sidebar, mobileNav] });
                 }
             },
 
             renderView: () => {
                 const main = document.getElementById('main-content');
-                // Prevent unnecessary re-renders that cause flickering
-                if (main.dataset.currentView === Simulator.state.view && !Simulator.state.forceRender) return;
-                
-                main.dataset.currentView = Simulator.state.view;
-                Simulator.state.forceRender = false;
-
                 const views = {
                     landing: Views.landing,
                     login: Views.login,
@@ -703,7 +642,7 @@
                 };
                 
                 main.innerHTML = `<div class="animate-fade-in max-w-6xl mx-auto w-full">${(views[Simulator.state.view] || Views.landing)()}</div>`;
-                lucide.createIcons();
+                lucide.createIcons({ nodes: [main] });
             }
         };
 
@@ -713,7 +652,6 @@
         const Views = {
             landing: () => `
                 <div class="flex flex-col min-h-screen relative overflow-hidden">
-                    <!-- Hero -->
                     <section class="relative flex-1 flex flex-col items-center justify-center px-4 py-20 md:py-32">
                         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent -z-10"></div>
                         
@@ -738,24 +676,8 @@
                                 </button>
                             </div>
                         </div>
-
-                        <!-- Live Queue Visualization -->
-                        <div class="w-full max-w-4xl mx-auto animate-slide-up" style="animation-delay: 0.2s;">
-                            <div class="queue-track">
-                                <div class="queue-counter">
-                                    <i data-lucide="check-circle" class="w-8 h-8 text-accent"></i>
-                                </div>
-                                <div class="queue-node"></div>
-                                <div class="queue-node"></div>
-                                <div class="queue-node"></div>
-                                <div class="absolute bottom-8 left-0 right-0 text-center">
-                                    <p class="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest">Live Queue Flow</p>
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
-                    <!-- Features -->
                     <section class="px-4 py-20 bg-[var(--surface)] border-y border-[var(--border)]">
                         <div class="max-w-6xl mx-auto">
                             <div class="text-center mb-16">
@@ -780,23 +702,6 @@
                         </div>
                     </section>
 
-                    <!-- Sectors -->
-                    <section class="px-4 py-20">
-                        <div class="max-w-6xl mx-auto text-center">
-                            <h2 class="text-3xl sm:text-4xl font-bold mb-4">Trusted Across Industries</h2>
-                            <p class="text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto">Deployed in high-volume environments where every second counts.</p>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                ${['Building 2', 'Landmark', 'Heart', 'Graduation Cap', 'Shopping Bag', 'Scale', 'Plane', 'Hospital'].map((icon, i) => `
-                                    <div class="card p-6 flex flex-col items-center justify-center gap-3 card-hover">
-                                        <i data-lucide="${['building-2', 'landmark', 'heart', 'graduation-cap', 'shopping-bag', 'scale', 'plane', 'hospital'][i]}" class="w-8 h-8 text-[var(--text-secondary)]"></i>
-                                        <span class="text-sm font-semibold text-[var(--text-secondary)]">${['Banking', 'Government', 'Healthcare', 'Education', 'Retail', 'Legal', 'Transport', 'Clinics'][i]}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Footer -->
                     <footer class="px-4 py-12 border-t border-[var(--border)] bg-[var(--surface)]">
                         <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                             <div class="flex items-center gap-2">
@@ -804,11 +709,6 @@
                                 <span class="font-bold text-lg">Smart Q</span>
                             </div>
                             <p class="text-sm text-[var(--text-secondary)]">© 2026 Smart Q Technologies. Enterprise Queue Intelligence.</p>
-                            <div class="flex gap-6 text-sm text-[var(--text-secondary)]">
-                                <a href="#" class="hover:text-accent transition-colors">Privacy</a>
-                                <a href="#" class="hover:text-accent transition-colors">Terms</a>
-                                <a href="#" class="hover:text-accent transition-colors">Security</a>
-                            </div>
                         </div>
                     </footer>
                 </div>
@@ -855,9 +755,8 @@
             customerDashboard: () => {
                 const s = Simulator.state;
                 const hasActiveTicket = s.userTicket && !['completed', 'no-show'].includes(s.userTicket.status);
-                const metrics = hasActiveTicket ? s.calculateMetrics(s.userTicket.service, s.userTicket.isPriority) : { peopleAhead: 0, eta: 0 };
-                const displayedEta = hasActiveTicket ? (s.userTicket.displayedEta || metrics.eta) : 0;
-                const progress = hasActiveTicket ? (metrics.peopleAhead === 0 ? 100 : Math.max(5, 100 - (metrics.peopleAhead * 15))) : 0;
+                const metrics = hasActiveTicket ? s.calculateMetrics(s.userTicket.service, s.userTicket.isPriority) : { peopleAhead: 0, eta: '0-0', minEta: 0 };
+                const progress = Math.max(0, 100 - (metrics.peopleAhead * 15));
 
                 return `
                     <div class="space-y-8">
@@ -890,13 +789,13 @@
                                             <p class="text-[var(--text-secondary)]">Sandton City Branch</p>
                                         </div>
 
-                                        <div class="grid grid-cols-3 gap-4 mb-8">
-                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)]">
+                                        <div class="grid grid-cols-3 gap-4 mb-8" id="user-metrics-grid">
+                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)] waiting-metric">
                                                 <div class="text-2xl font-bold" id="user-ahead">${metrics.peopleAhead}</div>
                                                 <div class="text-xs text-[var(--text-secondary)] font-medium mt-1">Ahead</div>
                                             </div>
-                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)]">
-                                                <div class="text-2xl font-bold" id="user-eta">~${displayedEta}m</div>
+                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)] waiting-metric">
+                                                <div class="text-2xl font-bold" id="user-eta">~${metrics.eta}m</div>
                                                 <div class="text-xs text-[var(--text-secondary)] font-medium mt-1">Est. Wait</div>
                                             </div>
                                             <div class="text-center p-4 rounded-xl bg-[var(--bg)]">
@@ -905,10 +804,10 @@
                                             </div>
                                         </div>
 
-                                        <div id="user-service-countdown" class="hidden mb-8 p-4 rounded-xl bg-accent/10 border border-accent/20 text-center">
-                                            <p class="text-sm font-bold text-accent">Service in progress</p>
-                                            <p class="text-3xl font-bold text-accent font-mono mt-1" id="user-countdown-time">${s.userTicket.serviceTimeLeft || 0}:00</p>
-                                            <p class="text-xs text-[var(--text-secondary)] mt-1">remaining</p>
+                                        <div class="hidden text-center p-6 rounded-xl bg-success/10 border border-success/20 mb-8" id="user-serving-metric">
+                                            <div class="text-xs font-bold text-success uppercase tracking-widest mb-2">Service In Progress</div>
+                                            <div class="text-4xl font-bold font-mono text-success" id="user-countdown">25:00</div>
+                                            <div class="text-sm text-[var(--text-secondary)] mt-2">Please remain at the counter</div>
                                         </div>
 
                                         <div class="space-y-2">
@@ -917,7 +816,7 @@
                                                 <span class="text-accent" id="user-progress-text">${progress}%</span>
                                             </div>
                                             <div class="h-2 bg-[var(--bg)] rounded-full overflow-hidden">
-                                                <div id="user-progress" class="h-full bg-accent rounded-full progress-bar" style="width: ${progress}%"></div>
+                                                <div id="user-progress" class="h-full bg-accent rounded-full transition-all duration-1000" style="width: ${progress}%"></div>
                                             </div>
                                         </div>
 
@@ -983,8 +882,7 @@
                 if (!s.userTicket) return `<div class="text-center py-20"><p class="text-[var(--text-secondary)] mb-4">No active ticket.</p><button onclick="UI.navigate('customer-dashboard')" class="btn btn-primary">Go to Dashboard</button></div>`;
                 
                 const metrics = s.calculateMetrics(s.userTicket.service, s.userTicket.isPriority);
-                const displayedEta = s.userTicket.displayedEta || metrics.eta;
-                const progress = metrics.peopleAhead === 0 ? 100 : Math.max(5, 100 - (metrics.peopleAhead * 15));
+                const progress = Math.max(0, 100 - (metrics.peopleAhead * 15));
                 const isServing = s.userTicket.status === 'serving';
 
                 return `
@@ -1003,21 +901,21 @@
                             <div class="text-7xl sm:text-8xl font-bold font-mono tracking-tighter mb-2" id="tracker-number">${s.userTicket.number}</div>
                             <p class="text-lg font-medium text-[var(--text-secondary)] mb-8">${s.services.find(sv => sv.id === s.userTicket.service).name}</p>
 
-                            <div class="grid grid-cols-2 gap-4 mb-8">
-                                <div class="p-6 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+                            <div class="grid grid-cols-2 gap-4 mb-8" id="tracker-metrics-grid">
+                                <div class="p-6 rounded-2xl bg-[var(--bg)] border border-[var(--border)] waiting-metric">
                                     <div class="text-4xl font-bold text-accent font-mono" id="tracker-ahead">${metrics.peopleAhead}</div>
                                     <div class="text-sm font-medium text-[var(--text-secondary)] mt-1">People Ahead</div>
                                 </div>
-                                <div class="p-6 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
-                                    <div class="text-4xl font-bold text-accent font-mono" id="tracker-eta">~${displayedEta}m</div>
+                                <div class="p-6 rounded-2xl bg-[var(--bg)] border border-[var(--border)] waiting-metric">
+                                    <div class="text-4xl font-bold text-accent font-mono" id="tracker-eta">~${metrics.eta}m</div>
                                     <div class="text-sm font-medium text-[var(--text-secondary)] mt-1">Estimated Wait</div>
                                 </div>
                             </div>
 
-                            <div id="tracker-service-countdown" class="hidden mb-8 p-6 rounded-2xl bg-accent/10 border border-accent/20 text-center">
-                                <p class="text-sm font-bold text-accent uppercase tracking-widest">Service in Progress</p>
-                                <p class="text-5xl font-bold text-accent font-mono mt-2" id="tracker-countdown-time">${s.userTicket.serviceTimeLeft || 0}:00</p>
-                                <p class="text-sm text-[var(--text-secondary)] mt-2">Please remain at the counter</p>
+                            <div class="hidden p-6 rounded-2xl bg-success/10 border border-success/20 mb-8 text-center" id="tracker-serving-metric">
+                                <div class="text-xs font-bold text-success uppercase tracking-widest mb-2">Service In Progress</div>
+                                <div class="text-5xl font-bold font-mono text-success" id="tracker-countdown">25:00</div>
+                                <div class="text-sm text-[var(--text-secondary)] mt-2">Please remain at the counter</div>
                             </div>
 
                             <div class="space-y-3 mb-8">
@@ -1026,7 +924,7 @@
                                     <span class="text-accent" id="tracker-progress-text">${progress}%</span>
                                 </div>
                                 <div class="h-3 bg-[var(--bg)] rounded-full overflow-hidden">
-                                    <div id="tracker-progress" class="h-full bg-gradient-to-r from-accent to-purple-600 rounded-full progress-bar" style="width: ${progress}%"></div>
+                                    <div id="tracker-progress" class="h-full bg-gradient-to-r from-accent to-purple-600 rounded-full transition-all duration-1000" style="width: ${progress}%"></div>
                                 </div>
                             </div>
 
@@ -1241,7 +1139,7 @@
                                         <h3 class="font-bold">Upcoming Queue (${queue.length} waiting)</h3>
                                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent/10 text-accent">LIVE</span>
                                     </div>
-                                    <div id="staff-queue-list" class="space-y-3 max-h-64 overflow-y-auto pr-2" data-hash="">
+                                    <div id="staff-queue-list" class="space-y-3 max-h-64 overflow-y-auto pr-2">
                                         ${queue.length === 0 ? '<p class="text-sm text-[var(--text-secondary)] text-center py-8">Queue is empty</p>' : ''}
                                         ${queue.map((q, i) => `
                                             <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] ${q.isPriority ? 'ring-1 ring-warning/50' : ''}">
@@ -1350,7 +1248,7 @@
                                                     <span class="text-sm font-bold" id="counter-${c.id}-ticket">${c.currentTicket || '--'}</span>
                                                 </div>
                                                 <div class="h-2 bg-[var(--bg)] rounded-full overflow-hidden">
-                                                    <div id="counter-${c.id}-bar" class="h-full rounded-full progress-bar ${c.status === 'break' ? 'bg-warning' : load > 70 ? 'bg-error' : 'bg-accent'}" style="width: ${load}%"></div>
+                                                    <div id="counter-${c.id}-bar" class="h-full rounded-full transition-all duration-1000 ${c.status === 'break' ? 'bg-warning' : load > 70 ? 'bg-error' : 'bg-accent'}" style="width: ${load}%"></div>
                                                 </div>
                                             </div>
                                         `;
@@ -1456,8 +1354,7 @@
             
             if (role === 'customer') {
                 Simulator.state.userTicket = { 
-                    id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, isPriority: false,
-                    displayedEta: null, serviceTimeLeft: 0
+                    id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, isPriority: false
                 };
             }
             
@@ -1485,7 +1382,7 @@
             const newId = 't_' + Math.floor(Math.random() * 1000);
             Simulator.state.userTicket = {
                 id: newId, number: 'A' + Math.floor(Math.random() * 900 + 100), service: 'svc_1', 
-                status: 'waiting', counter: null, isPriority: false, displayedEta: null, serviceTimeLeft: 0
+                status: 'waiting', counter: null, isPriority: false
             };
             Simulator.state.queue.push(Simulator.state.userTicket);
             UI.showToast('Walk-in ticket issued successfully!', 'success');
@@ -1495,15 +1392,13 @@
         Simulator.confirmBooking = () => {
             Simulator.state.bookingStep = 1;
             Simulator.state.userTicket = {
-                id: 't_new', number: 'A115', service: 'svc_2', status: 'waiting', counter: null, isPriority: false,
-                displayedEta: null, serviceTimeLeft: 0
+                id: 't_new', number: 'A115', service: 'svc_2', status: 'waiting', counter: null, isPriority: false
             };
             Simulator.state.queue.push(Simulator.state.userTicket);
             UI.showToast('Appointment booked and queue joined!', 'success');
             UI.navigate('customer-dashboard');
         };
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
             Simulator.startSimulation();
