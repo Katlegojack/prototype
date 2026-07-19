@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Q | Intelligent Queue Management</title>
-    <meta name="description" content="Enterprise AI-powered queue management platform">
+    <title>Smart Q | The Operating System for Physical Spaces</title>
+    <meta name="description" content="Enterprise AI-powered queue management platform for banks, hospitals, and government.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,25 +18,22 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        brand: {
-                            50: '#f0f4ff', 100: '#e0eaff', 200: '#c7d6fe', 300: '#a5b8fc',
-                            400: '#8195f8', 500: '#6375f1', 600: '#4f55e5', 700: '#4342ca',
-                            800: '#3736a3', 900: '#312f81', 950: '#1e1d4b',
-                        }
+                        bg: { light: '#FAFAFA', dark: '#09090B' },
+                        surface: { light: '#FFFFFF', dark: '#18181B' },
+                        border: { light: '#E4E4E7', dark: '#27272A' },
+                        text: { primary: { light: '#09090B', dark: '#FAFAFA' }, secondary: { light: '#71717A', dark: '#A1A1AA' } },
+                        accent: { DEFAULT: '#2563EB', hover: '#1D4ED8', light: '#EFF6FF', dark: '#1E3A8A' },
+                        success: { DEFAULT: '#059669', light: '#ECFDF5', dark: '#064E3B' },
+                        warning: { DEFAULT: '#D97706', light: '#FFFBEB', dark: '#78350F' },
+                        error: { DEFAULT: '#DC2626', light: '#FEF2F2', dark: '#7F1D1D' }
                     },
-                    animation: {
-                        'fade-in': 'fadeIn 0.4s cubic-bezier(0.2, 0, 0, 1)',
-                        'slide-up': 'slideUp 0.5s cubic-bezier(0, 0, 0.2, 1)',
-                        'pulse-soft': 'pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'shimmer': 'shimmer 2s linear infinite',
-                    },
-                    keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        pulseSoft: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.7' } },
-                        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } }
+                    boxShadow: {
+                        'soft': '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)',
+                        'soft-dark': '0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+                        'glow': '0 0 20px rgba(37, 99, 235, 0.15)',
+                        'glow-dark': '0 0 20px rgba(37, 99, 235, 0.3)'
                     }
                 }
             }
@@ -44,199 +41,365 @@
     </script>
 
     <style>
-        body { font-feature-settings: "cv02", "cv03", "cv04", "cv11"; -webkit-tap-highlight-color: transparent; }
-        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); }
-        .dark .glass { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(148, 163, 184, 0.4); border-radius: 20px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(71, 85, 105, 0.5); }
-        *:focus-visible { outline: 2px solid #4f55e5; outline-offset: 2px; }
-        .dark *:focus-visible { outline-color: #8195f8; }
-        
-        /* Timeline connector */
-        .timeline-line::before {
-            content: ''; position: absolute; top: 24px; bottom: 0; left: 15px; width: 2px;
-            background: #e2e8f0; z-index: 0;
+        :root {
+            --bg: #FAFAFA; --surface: #FFFFFF; --border: #E4E4E7; 
+            --text-primary: #09090B; --text-secondary: #71717A;
         }
-        .dark .timeline-line::before { background: #334155; }
-        .timeline-line-complete::before { background: #4f55e5; }
+        .dark {
+            --bg: #09090B; --surface: #18181B; --border: #27272A; 
+            --text-primary: #FAFAFA; --text-secondary: #A1A1AA;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: var(--text-primary); 
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+        /* Premium Components */
+        .card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dark .card { box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+            border-color: var(--text-secondary);
+        }
+        .dark .card-hover:hover { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 14px;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: #2563EB; color: white; box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2); }
+        .btn-primary:hover { background: #1D4ED8; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3); }
+        .btn-secondary { background: var(--surface); color: var(--text-primary); border-color: var(--border); }
+        .btn-secondary:hover { background: var(--bg); border-color: var(--text-secondary); }
+        .btn-ghost { background: transparent; color: var(--text-secondary); }
+        .btn-ghost:hover { background: var(--bg); color: var(--text-primary); }
+        .dark .btn-ghost:hover { background: var(--surface); }
+        .btn-success { background: #059669; color: white; }
+        .btn-success:hover { background: #047857; }
+        .btn-error { background: #DC2626; color: white; }
+        .btn-error:hover { background: #B91C1C; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes queue-flow {
+            0% { transform: translateY(100%); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-400%); opacity: 0; }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-down { animation: slideDown 0.4s ease-out forwards; }
+        
+        .shimmer-bg {
+            background: linear-gradient(90deg, var(--surface) 0%, var(--bg) 50%, var(--surface) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* Queue Visualization */
+        .queue-track {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 24px;
+            background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+            border: 1px solid var(--border);
+        }
+        .queue-node {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #2563EB;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+            animation: queue-flow 6s linear infinite;
+        }
+        .queue-node:nth-child(2) { animation-delay: -2s; background: #8B5CF6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+        .queue-node:nth-child(3) { animation-delay: -4s; background: #EC4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.4); }
+        
+        .queue-counter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 2px solid #2563EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.2);
+            z-index: 10;
+        }
+
+        /* Ticket Design */
+        .digital-ticket {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border: 1px solid #E2E8F0;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .dark .digital-ticket {
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            border: 1px solid #334155;
+        }
+        .digital-ticket::before, .digital-ticket::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--bg);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .digital-ticket::before { left: -12px; border-right: 1px solid var(--border); }
+        .digital-ticket::after { right: -12px; border-left: 1px solid var(--border); }
+        .dark .digital-ticket::before { border-right-color: #334155; }
+        .dark .digital-ticket::after { border-left-color: #334155; }
+
+        /* Focus States */
+        *:focus-visible {
+            outline: 2px solid #2563EB;
+            outline-offset: 2px;
+            border-radius: 8px;
+        }
+
+        /* Mobile Bottom Nav */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            z-index: 50;
+            padding: 8px 0;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+        }
+        .dark .mobile-nav {
+            background: rgba(24, 24, 27, 0.8);
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 antialiased selection:bg-brand-200 dark:selection:bg-brand-900">
+<body class="antialiased selection:bg-accent/20">
 
-    <div id="toast-container" class="fixed top-4 right-4 z-[60] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
-    <div id="modal-container" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm transition-opacity"></div>
-    <div id="app" class="min-h-screen flex flex-col"></div>
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
+    
+    <!-- Modal Container -->
+    <div id="modal-container" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-opacity"></div>
+
+    <!-- App Root -->
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Layout Shell -->
+        <div id="layout-shell" class="flex flex-1 overflow-hidden">
+            <!-- Sidebar (Desktop) -->
+            <aside id="desktop-sidebar" class="hidden md:flex flex-col w-64 bg-[var(--surface)] border-r border-[var(--border)] z-20">
+                <div class="p-6 flex items-center gap-3 border-b border-[var(--border)]">
+                    <div class="w-9 h-9 bg-accent rounded-xl flex items-center justify-center text-white font-bold shadow-glow">Q</div>
+                    <span class="font-bold text-lg tracking-tight">Smart Q</span>
+                </div>
+                <nav id="sidebar-nav" class="flex-1 p-4 space-y-1 overflow-y-auto"></nav>
+                <div class="p-4 border-t border-[var(--border)]">
+                    <div class="flex items-center gap-3 px-3 py-2 mb-3">
+                        <div class="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center text-sm font-bold text-accent" id="user-avatar">U</div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold truncate" id="user-name">User</p>
+                            <p class="text-xs text-[var(--text-secondary)] capitalize" id="user-role">Role</p>
+                        </div>
+                    </div>
+                    <button onclick="Simulator.logout()" class="btn btn-ghost w-full justify-start text-error hover:bg-error/10">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+                <!-- Mobile Header -->
+                <header class="md:hidden flex items-center justify-between p-4 bg-[var(--surface)] border-b border-[var(--border)] z-20">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white font-bold">Q</div>
+                        <span class="font-bold text-lg">Smart Q</span>
+                    </div>
+                    <button onclick="UI.toggleTheme()" class="btn btn-ghost p-2">
+                        <i data-lucide="moon" class="w-5 h-5" id="theme-icon-mobile"></i>
+                    </button>
+                </header>
+
+                <!-- Scrollable Content -->
+                <main id="main-content" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 md:pb-8"></main>
+                
+                <!-- Mobile Bottom Nav -->
+                <nav id="mobile-nav" class="mobile-nav md:hidden hidden"></nav>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ==========================================
-        // 1. REALISTIC SIMULATION ENGINE
+        // 1. STATE & SIMULATION ENGINE
         // ==========================================
         const Simulator = {
             state: {
                 currentUser: null,
                 view: 'landing',
                 theme: localStorage.getItem('theme') || 'light',
-                isQueuePaused: false,
-                pauseReason: '',
-                lastUpdateMessage: '',
-                
-                // Core Entities
+                bookingStep: 1,
                 services: [
                     { id: 'svc_1', name: 'General Inquiry', avgTime: 12, icon: 'help-circle', color: 'blue' },
                     { id: 'svc_2', name: 'Account Opening', avgTime: 25, icon: 'briefcase', color: 'indigo' },
                     { id: 'svc_3', name: 'Loan Consultation', avgTime: 45, icon: 'banknote', color: 'emerald' }
                 ],
                 branches: [
-                    { id: 'b_1', name: 'Sandton City Branch', address: 'Sandton City, Johannesburg', open: '08:00', close: '17:00' },
-                    { id: 'b_2', name: 'Rosebank Mall Branch', address: 'Rosebank Mall, Johannesburg', open: '09:00', close: '18:00' }
+                    { id: 'b_1', name: 'Sandton City Branch', address: 'Sandton City, Johannesburg', open: '08:00', close: '17:00', wait: 14 },
+                    { id: 'b_2', name: 'Rosebank Mall Branch', address: 'Rosebank Mall, Johannesburg', open: '09:00', close: '18:00', wait: 8 }
                 ],
                 counters: [
                     { id: 'c_1', name: 'Counter 1', branch: 'b_1', service: 'svc_1', status: 'open', currentTicket: 'A104' },
                     { id: 'c_2', name: 'Counter 2', branch: 'b_1', service: 'svc_2', status: 'open', currentTicket: 'A105' },
-                    { id: 'c_3', name: 'Counter 3', branch: 'b_1', service: 'svc_2', status: 'break', currentTicket: null }, // Simulates disruption
-                    { id: 'c_4', name: 'Priority Counter', branch: 'b_1', service: 'any', status: 'open', currentTicket: 'P012' }
+                    { id: 'c_3', name: 'Counter 3', branch: 'b_1', service: 'svc_2', status: 'break', currentTicket: null },
+                    { id: 'c_4', name: 'Priority', branch: 'b_1', service: 'any', status: 'open', currentTicket: 'P012' }
                 ],
-                // Queue: position 0 is being served, 1 is next, etc.
                 queue: [
-                    { id: 't_104', number: 'A104', service: 'svc_1', status: 'serving', counter: 'c_1', isPriority: false, waitTime: 0 },
-                    { id: 't_105', number: 'A105', service: 'svc_2', status: 'serving', counter: 'c_2', isPriority: false, waitTime: 0 },
-                    { id: 't_106', number: 'A106', service: 'svc_2', status: 'waiting', counter: null, isPriority: false, waitTime: 0 },
-                    { id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, isPriority: false, waitTime: 0 },
-                    { id: 't_108', number: 'A108', service: 'svc_2', status: 'waiting', counter: null, isPriority: false, waitTime: 0 },
-                    { id: 't_109', number: 'A109', service: 'svc_2', status: 'waiting', counter: null, isPriority: false, waitTime: 0 },
-                    { id: 't_110', number: 'A110', service: 'svc_2', status: 'waiting', counter: null, isPriority: false, waitTime: 0 },
-                    { id: 't_p01', number: 'P012', service: 'svc_2', status: 'waiting', counter: null, isPriority: true, waitTime: 0 }
+                    { id: 't_104', number: 'A104', service: 'svc_1', status: 'serving', counter: 'c_1', isPriority: false },
+                    { id: 't_105', number: 'A105', service: 'svc_2', status: 'serving', counter: 'c_2', isPriority: false },
+                    { id: 't_106', number: 'A106', service: 'svc_2', status: 'waiting', counter: null, isPriority: false },
+                    { id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, isPriority: false },
+                    { id: 't_108', number: 'A108', service: 'svc_2', status: 'waiting', counter: null, isPriority: false },
+                    { id: 't_p01', number: 'P012', service: 'svc_2', status: 'waiting', counter: null, isPriority: true }
                 ],
-                
-                // User specific
-                userTicket: null, // { id, number, service, status, position, eta, joinedAt }
+                userTicket: null,
                 bookings: [
                     { id: 'bk_1', service: 'Account Opening', branch: 'Sandton City Branch', date: '2026-07-22', time: '10:00 AM', status: 'upcoming' },
                     { id: 'bk_2', service: 'General Inquiry', branch: 'Rosebank Mall Branch', date: '2026-07-15', time: '02:30 PM', status: 'completed' }
                 ],
                 notifications: [
-                    { id: 'n_1', text: 'Counter 3 is currently on break. Your wait time has increased by ~25 mins.', time: '2 min ago', unread: true, type: 'warning' },
-                    { id: 'n_2', text: 'Your booking for Account Opening on 22 July is confirmed.', time: '1 hour ago', unread: false, type: 'success' }
-                ],
-                analytics: {
-                    dailyVolume: 142,
-                    avgWaitTime: 18,
-                    completionRate: 94,
-                    noShowRate: 4,
-                    peakHour: '10:00 - 11:30'
-                }
+                    { id: 'n_1', text: 'Counter 3 is on break. ETA updated.', time: '2m ago', unread: true, type: 'warning' },
+                    { id: 'n_2', text: 'Booking confirmed for 22 July.', time: '1h ago', unread: false, type: 'success' }
+                ]
             },
 
-            // The Mathematical Heart of the Simulation
             calculateMetrics(serviceId, isPriority) {
                 const service = this.state.services.find(s => s.id === serviceId);
-                const relevantCounters = this.state.counters.filter(c => 
-                    c.branch === 'b_1' && c.status === 'open' && (c.service === serviceId || c.service === 'any')
-                );
-                const activeCounterCount = Math.max(1, relevantCounters.length);
-                
-                // Filter queue for this service
+                const activeCounters = this.state.counters.filter(c => c.branch === 'b_1' && c.status === 'open' && (c.service === serviceId || c.service === 'any')).length;
                 const serviceQueue = this.state.queue.filter(q => q.service === serviceId && q.status === 'waiting');
                 const priorityQueue = serviceQueue.filter(q => q.isPriority);
                 const normalQueue = serviceQueue.filter(q => !q.isPriority);
                 
-                let position = 0;
                 let peopleAhead = 0;
-
                 if (this.state.userTicket) {
                     if (this.state.userTicket.isPriority) {
-                        position = priorityQueue.findIndex(q => q.id === this.state.userTicket.id);
-                        peopleAhead = position >= 0 ? position : priorityQueue.length;
+                        const pos = priorityQueue.findIndex(q => q.id === this.state.userTicket.id);
+                        peopleAhead = pos >= 0 ? pos : priorityQueue.length;
                     } else {
-                        // Normal users wait behind all priority users + normal users ahead of them
-                        position = normalQueue.findIndex(q => q.id === this.state.userTicket.id);
-                        peopleAhead = (position >= 0 ? position : normalQueue.length) + priorityQueue.length;
+                        const pos = normalQueue.findIndex(q => q.id === this.state.userTicket.id);
+                        peopleAhead = (pos >= 0 ? pos : normalQueue.length) + priorityQueue.length;
                     }
                 }
 
-                // Math: (People Ahead * Avg Service Time) / Active Counters
-                // Add 10% buffer for realism, round to nearest 5 minutes for human credibility
-                const rawEta = (peopleAhead * service.avgTime) / activeCounterCount;
-                const buffer = rawEta * 0.15;
-                const minEta = Math.max(5, Math.round((rawEta - buffer) / 5) * 5);
-                const maxEta = Math.max(10, Math.round((rawEta + buffer) / 5) * 5);
+                const rawEta = (peopleAhead * service.avgTime) / Math.max(1, activeCounters);
+                const minEta = Math.max(5, Math.round((rawEta * 0.85) / 5) * 5);
+                const maxEta = Math.max(10, Math.round((rawEta * 1.15) / 5) * 5);
                 
-                const totalServiceDuration = service.avgTime;
-
-                return { peopleAhead, activeCounterCount, etaRange: `${minEta}-${maxEta}`, minEta, maxEta, totalServiceDuration, priorityQueueLength: priorityQueue.length };
+                return { peopleAhead, activeCounters, eta: `${minEta}-${maxEta}`, minEta };
             },
 
-            // Simulates time passing and random events
             tick() {
-                if (this.state.view === 'landing' || this.state.view === 'login') return;
-                if (this.state.isQueuePaused) return;
+                if (['landing', 'login'].includes(this.state.view)) return;
 
-                // Randomly advance queue or trigger events
                 const roll = Math.random();
-                
-                // 15% chance a counter finishes and calls next
+                let changed = false;
+
                 if (roll < 0.15) {
                     this.advanceQueue();
-                } 
-                // 5% chance of a disruption (counter goes on break)
-                else if (roll > 0.95) {
+                    changed = true;
+                } else if (roll > 0.95) {
                     const openCounters = this.state.counters.filter(c => c.status === 'open');
                     if (openCounters.length > 1) {
                         const target = openCounters[Math.floor(Math.random() * openCounters.length)];
                         target.status = 'break';
-                        this.state.lastUpdateMessage = `${target.name} went on break. Wait times adjusted.`;
-                        this.triggerNotification(`⚠️ ${target.name} is temporarily unavailable. ETA updated.`, 'warning');
-                        this.recalculateAndRender();
+                        UI.showToast(`${target.name} is on break. ETA adjusted.`, 'warning');
+                        changed = true;
                     }
-                }
-                // 5% chance of recovery
-                else if (roll > 0.90 && roll <= 0.95) {
+                } else if (roll > 0.90) {
                     const breakCounters = this.state.counters.filter(c => c.status === 'break');
                     if (breakCounters.length > 0) {
                         const target = breakCounters[0];
                         target.status = 'open';
-                        this.state.lastUpdateMessage = `${target.name} is back online. Wait times decreasing!`;
-                        this.triggerNotification(`✅ ${target.name} has reopened. Your wait time decreased!`, 'success');
-                        this.recalculateAndRender();
+                        UI.showToast(`${target.name} reopened. Wait times decreasing.`, 'success');
+                        changed = true;
                     }
                 }
 
-                // If user is waiting, decrement ETA slightly to show "live" feel
                 if (this.state.userTicket && this.state.userTicket.status === 'waiting') {
-                    const metrics = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket.isPriority);
-                    if (metrics.minEta > 5) {
-                        // Smooth visual decrement without breaking the math model
-                        this.state.userTicket.etaDisplay = `${Math.max(5, metrics.minEta - 1)}-${metrics.maxEta} mins`;
-                    }
-                    UI.renderCurrentView();
+                    const m = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket.isPriority);
+                    TargetedUpdater.updateUserMetrics(m);
+                }
+
+                if (changed) {
+                    TargetedUpdater.updateCounters();
+                    TargetedUpdater.updateQueueLists();
+                    TargetedUpdater.updateStats();
                 }
             },
 
             advanceQueue() {
-                // Find first waiting ticket for an open counter
                 for (const counter of this.state.counters) {
                     if (counter.status === 'open' && !counter.currentTicket) {
-                        // Prioritize priority tickets
-                        let nextTicket = this.state.queue.find(q => q.service === counter.service && q.status === 'waiting' && q.isPriority);
-                        if (!nextTicket) {
-                            nextTicket = this.state.queue.find(q => q.service === counter.service && q.status === 'waiting' && !q.isPriority);
-                        }
+                        let next = this.state.queue.find(q => q.service === counter.service && q.status === 'waiting' && q.isPriority);
+                        if (!next) next = this.state.queue.find(q => q.service === counter.service && q.status === 'waiting' && !q.isPriority);
                         
-                        if (nextTicket) {
-                            nextTicket.status = 'serving';
-                            nextTicket.counter = counter.id;
-                            counter.currentTicket = nextTicket.number;
+                        if (next) {
+                            next.status = 'serving';
+                            next.counter = counter.id;
+                            counter.currentTicket = next.number;
                             
-                            // If this is the user's ticket, update state
-                            if (this.state.userTicket && this.state.userTicket.id === nextTicket.id) {
+                            if (this.state.userTicket && this.state.userTicket.id === next.id) {
                                 this.state.userTicket.status = 'serving';
                                 this.state.userTicket.counter = counter.name;
-                                this.triggerNotification(`🔔 Your turn! Please proceed to ${counter.name}.`, 'success');
+                                UI.showToast(`Your turn! Proceed to ${counter.name}`, 'success');
+                                TargetedUpdater.updateUserStatus('serving', counter.name);
                             }
-                            this.recalculateAndRender();
-                            return; // One action per tick
+                            return;
                         }
                     }
                 }
@@ -248,975 +411,961 @@
 
                 const counter = this.state.counters.find(c => c.id === ticket.counter);
                 if (counter) counter.currentTicket = null;
-
-                ticket.status = outcome; // 'completed' or 'no-show'
+                ticket.status = outcome;
                 
                 if (this.state.userTicket && this.state.userTicket.id === ticketId) {
                     this.state.userTicket.status = outcome;
                     if (outcome === 'completed') {
-                        this.triggerNotification('Service completed. Thank you!', 'success');
-                        setTimeout(() => UI.showFeedbackModal(), 1500);
+                        UI.showToast('Service completed. Thank you!', 'success');
+                        setTimeout(() => UI.showFeedbackModal(), 1000);
                     } else {
-                        this.triggerNotification('Ticket marked as No-Show.', 'error');
+                        UI.showToast('Ticket marked as No-Show.', 'error');
                     }
+                    TargetedUpdater.updateUserStatus(outcome);
                 }
-                this.recalculateAndRender();
-            },
-
-            recalculateAndRender() {
-                if (this.state.userTicket && this.state.userTicket.status === 'waiting') {
-                    const m = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket.isPriority);
-                    this.state.userTicket.position = m.peopleAhead + 1;
-                    this.state.userTicket.etaDisplay = m.etaRange;
-                }
-                UI.renderCurrentView();
-            },
-
-            triggerNotification(text, type = 'info') {
-                const newNotif = { id: 'n_' + Date.now(), text, time: 'Just now', unread: true, type };
-                this.state.notifications.unshift(newNotif);
-                UI.showToast(text, type);
-                UI.renderCurrentView(); // Update notification badge
+                TargetedUpdater.updateCounters();
+                TargetedUpdater.updateQueueLists();
             },
 
             startSimulation() {
-                setInterval(() => this.tick(), 4000); // Tick every 4 seconds
+                setInterval(() => this.tick(), 4000);
             }
         };
 
         // ==========================================
-        // 2. UI COMPONENT GENERATORS
+        // 2. TARGETED DOM UPDATES (Performance)
+        // ==========================================
+        const TargetedUpdater = {
+            updateUserMetrics(metrics) {
+                this.setText('user-ahead', metrics.peopleAhead);
+                this.setText('user-eta', `~${metrics.eta}m`);
+                const progress = Math.max(0, 100 - (metrics.peopleAhead * 15));
+                this.setStyle('user-progress', 'width', `${progress}%`);
+                this.setText('user-progress-text', `${progress}%`);
+            },
+            updateUserStatus(status, counterName) {
+                const badge = document.getElementById('user-status-badge');
+                if (badge) {
+                    badge.textContent = status === 'serving' ? 'Now Serving' : status === 'completed' ? 'Completed' : 'Waiting';
+                    badge.className = `px-3 py-1 rounded-full text-xs font-bold ${status === 'serving' ? 'bg-success/10 text-success' : status === 'completed' ? 'bg-accent/10 text-accent' : 'bg-warning/10 text-warning'}`;
+                }
+                if (counterName) this.setText('user-counter', counterName);
+            },
+            updateCounters() {
+                Simulator.state.counters.forEach(c => {
+                    this.setText(`counter-${c.id}-status`, c.status === 'open' ? 'Active' : 'On Break');
+                    this.setText(`counter-${c.id}-ticket`, c.currentTicket || '--');
+                    const bar = document.getElementById(`counter-${c.id}-bar`);
+                    if (bar) {
+                        const load = c.status === 'open' ? (c.currentTicket ? 85 : 20) : 0;
+                        bar.style.width = `${load}%`;
+                        bar.className = `h-full rounded-full transition-all duration-1000 ${c.status === 'break' ? 'bg-warning' : load > 70 ? 'bg-error' : 'bg-accent'}`;
+                    }
+                });
+            },
+            updateQueueLists() {
+                const staffList = document.getElementById('staff-queue-list');
+                if (staffList) {
+                    const myCounter = Simulator.state.counters.find(c => c.id === 'c_2');
+                    const queue = Simulator.state.queue.filter(q => q.service === myCounter.service && q.status === 'waiting');
+                    staffList.innerHTML = queue.length === 0 ? '<p class="text-sm text-[var(--text-secondary)] text-center py-8">Queue is empty</p>' : queue.map((q, i) => `
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] ${q.isPriority ? 'ring-1 ring-warning/50' : ''}">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center font-mono font-bold text-sm">${q.number}</div>
+                                <div>
+                                    <div class="text-sm font-semibold flex items-center gap-1">${q.isPriority ? '<i data-lucide="star" class="w-3 h-3 text-warning fill-current"></i>' : ''} Customer ${100+i}</div>
+                                    <div class="text-xs text-[var(--text-secondary)]">Waiting ~${(i+1)*25}m</div>
+                                </div>
+                            </div>
+                            ${q.isPriority ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/10 text-warning">PRIORITY</span>' : ''}
+                        </div>
+                    `).join('');
+                    lucide.createIcons();
+                }
+            },
+            updateStats() {
+                const waiting = Simulator.state.queue.filter(q => q.status === 'waiting').length;
+                this.setText('stat-waiting', waiting);
+            },
+            setText(id, text) {
+                const el = document.getElementById(id);
+                if (el && el.textContent !== String(text)) el.textContent = text;
+            },
+            setStyle(id, prop, val) {
+                const el = document.getElementById(id);
+                if (el) el.style[prop] = val;
+            }
+        };
+
+        // ==========================================
+        // 3. UI UTILITIES
         // ==========================================
         const UI = {
             showToast: (message, type = 'info') => {
                 const container = document.getElementById('toast-container');
                 const el = document.createElement('div');
-                const styles = {
-                    success: 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/80 dark:text-emerald-100 dark:border-emerald-800',
-                    error: 'bg-rose-50 text-rose-900 border-rose-200 dark:bg-rose-950/80 dark:text-rose-100 dark:border-rose-800',
-                    warning: 'bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-950/80 dark:text-amber-100 dark:border-amber-800',
-                    info: 'bg-brand-50 text-brand-900 border-brand-200 dark:bg-brand-950/80 dark:text-brand-100 dark:border-brand-800'
-                };
+                const colors = { success: 'bg-success/10 text-success border-success/20', error: 'bg-error/10 text-error border-error/20', warning: 'bg-warning/10 text-warning border-warning/20', info: 'bg-accent/10 text-accent border-accent/20' };
                 const icons = { success: 'check-circle', error: 'x-circle', warning: 'alert-triangle', info: 'info' };
                 
-                el.className = `pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-lg shadow-slate-200/50 dark:shadow-none ${styles[type]} animate-slide-up`;
-                el.innerHTML = `
-                    <i data-lucide="${icons[type]}" class="w-5 h-5 mt-0.5 shrink-0"></i>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium leading-snug">${message}</p>
-                    </div>
-                `;
+                el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-soft animate-slide-down ${colors[type]}`;
+                el.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5 shrink-0"></i><p class="text-sm font-medium">${message}</p>`;
                 container.appendChild(el);
                 lucide.createIcons();
-                setTimeout(() => {
-                    el.style.opacity = '0'; el.style.transform = 'translateY(-10px) scale(0.95)';
-                    setTimeout(() => el.remove(), 300);
-                }, 4000);
+                setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-10px)'; setTimeout(() => el.remove(), 300); }, 4000);
             },
 
             showFeedbackModal: () => {
                 const modal = document.getElementById('modal-container');
                 modal.classList.remove('hidden');
+                modal.classList.add('flex');
                 modal.innerHTML = `
-                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-md p-6 animate-slide-up">
-                        <div class="text-center mb-6">
-                            <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i data-lucide="check-circle" class="w-8 h-8 text-emerald-600 dark:text-emerald-400"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Service Completed</h3>
-                            <p class="text-slate-600 dark:text-slate-400 mt-2">How was your experience at Sandton City Branch?</p>
+                    <div class="card p-8 w-full max-w-md animate-slide-up text-center">
+                        <div class="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="check-circle" class="w-8 h-8 text-success"></i>
                         </div>
-                        <div class="flex justify-center gap-2 mb-6" id="star-rating">
-                            ${[1,2,3,4,5].map(i => `<button onclick="UI.rateService(${i})" class="p-2 text-slate-300 hover:text-amber-400 transition-colors"><i data-lucide="star" class="w-8 h-8 fill-current"></i></button>`).join('')}
+                        <h3 class="text-2xl font-bold mb-2">Service Completed</h3>
+                        <p class="text-[var(--text-secondary)] mb-8">How was your experience at Sandton City Branch?</p>
+                        <div class="flex justify-center gap-2 mb-8" id="star-rating">
+                            ${[1,2,3,4,5].map(i => `<button onclick="UI.rateService(${i})" class="p-2 text-[var(--border)] hover:text-warning transition-colors"><i data-lucide="star" class="w-8 h-8 fill-current"></i></button>`).join('')}
                         </div>
-                        <textarea placeholder="Any additional comments? (Optional)" class="w-full p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm mb-4 focus:ring-2 focus:ring-brand-500 outline-none resize-none" rows="3"></textarea>
-                        <button onclick="UI.closeModal(); Simulator.state.userTicket = null; UI.navigate('customer-dashboard');" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-medium transition-all active:scale-[0.98]">Submit Feedback</button>
+                        <button onclick="UI.closeModal(); Simulator.state.userTicket = null; UI.navigate('customer-dashboard');" class="btn btn-primary w-full py-3">Submit Feedback</button>
                     </div>
                 `;
                 lucide.createIcons();
             },
 
             rateService: (stars) => {
-                const btns = document.querySelectorAll('#star-rating button');
-                btns.forEach((btn, idx) => {
-                    btn.className = idx < stars ? 'p-2 text-amber-400 transition-colors' : 'p-2 text-slate-300 hover:text-amber-400 transition-colors';
+                document.querySelectorAll('#star-rating button').forEach((btn, idx) => {
+                    btn.className = idx < stars ? 'p-2 text-warning transition-colors' : 'p-2 text-[var(--border)] hover:text-warning transition-colors';
                 });
             },
 
             closeModal: () => {
-                document.getElementById('modal-container').classList.add('hidden');
-            },
-
-            navigate: (view) => {
-                Simulator.state.view = view;
-                window.scrollTo(0, 0);
-                UI.renderCurrentView();
+                const modal = document.getElementById('modal-container');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             },
 
             toggleTheme: () => {
                 Simulator.state.theme = Simulator.state.theme === 'light' ? 'dark' : 'light';
                 localStorage.setItem('theme', Simulator.state.theme);
                 document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
-                UI.renderCurrentView();
+                const icon = document.getElementById('theme-icon-mobile');
+                if (icon) icon.setAttribute('data-lucide', Simulator.state.theme === 'light' ? 'moon' : 'sun');
+                lucide.createIcons();
             },
 
-            // --- Reusable Components ---
-            Button: (text, onClick, variant = 'primary', icon = null, className = '') => {
-                const base = "inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.97] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
-                const variants = {
-                    primary: "bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-600/20",
-                    secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700",
-                    ghost: "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800",
-                    destructive: "bg-rose-600 text-white hover:bg-rose-700 shadow-sm shadow-rose-600/20",
-                    success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-600/20"
-                };
-                return `<button onclick="${onClick}" class="${base} ${variants[variant]} ${className}">
-                    ${icon ? `<i data-lucide="${icon}" class="w-4 h-4"></i>` : ''} ${text}
-                </button>`;
+            navigate: (view) => {
+                Simulator.state.view = view;
+                window.scrollTo(0, 0);
+                Renderer.renderLayout();
+                Renderer.renderView();
+            }
+        };
+
+        // ==========================================
+        // 4. RENDERER
+        // ==========================================
+        const Renderer = {
+            renderLayout: () => {
+                const s = Simulator.state;
+                const isAuth = !!s.currentUser;
+                const sidebar = document.getElementById('desktop-sidebar');
+                const mobileNav = document.getElementById('mobile-nav');
+                
+                sidebar.classList.toggle('hidden', !isAuth);
+                mobileNav.classList.toggle('hidden', !isAuth || s.currentUser.role !== 'customer');
+
+                if (isAuth) {
+                    document.getElementById('user-name').textContent = s.currentUser.name;
+                    document.getElementById('user-role').textContent = s.currentUser.role;
+                    document.getElementById('user-avatar').textContent = s.currentUser.name.charAt(0);
+
+                    const navItems = {
+                        customer: [
+                            { id: 'customer-dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
+                            { id: 'booking-wizard', icon: 'calendar-plus', label: 'Book' },
+                            { id: 'queue-tracker', icon: 'map-pin', label: 'Tracker' },
+                            { id: 'my-bookings', icon: 'list', label: 'Bookings' }
+                        ],
+                        staff: [
+                            { id: 'counter-dashboard', icon: 'headphones', label: 'My Counter' },
+                            { id: 'manager-dashboard', icon: 'users', label: 'Branch Queue' }
+                        ],
+                        manager: [
+                            { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Overview' },
+                            { id: 'counter-dashboard', icon: 'users', label: 'Staff Allocation' }
+                        ],
+                        admin: [
+                            { id: 'admin-dashboard', icon: 'shield', label: 'System Admin' },
+                            { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Analytics' }
+                        ]
+                    };
+
+                    const items = navItems[s.currentUser.role] || navItems.customer;
+                    
+                    document.getElementById('sidebar-nav').innerHTML = items.map(item => `
+                        <button onclick="UI.navigate('${item.id}')" class="btn w-full justify-start ${s.view === item.id ? 'bg-accent/10 text-accent' : 'btn-ghost'}">
+                            <i data-lucide="${item.icon}" class="w-5 h-5"></i> ${item.label}
+                        </button>
+                    `).join('');
+
+                    mobileNav.innerHTML = items.map(item => `
+                        <button onclick="UI.navigate('${item.id}')" class="flex flex-col items-center gap-1 p-2 w-full ${s.view === item.id ? 'text-accent' : 'text-[var(--text-secondary)]'}">
+                            <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                            <span class="text-[10px] font-bold">${item.label}</span>
+                        </button>
+                    `).join('');
+
+                    lucide.createIcons();
+                }
             },
 
-            Card: (content, className = '') => `
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm ${className}">${content}</div>
-            `,
-
-            Badge: (text, variant = 'default') => {
-                const v = {
-                    default: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-                    success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-                    warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-                    primary: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400",
-                    destructive: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-                    info: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
-                };
-                return `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold tracking-wide ${v[variant]}">${text}</span>`;
-            },
-
-            // --- View Renderers ---
-            renderCurrentView: () => {
-                const app = document.getElementById('app');
+            renderView: () => {
+                const main = document.getElementById('main-content');
                 const views = {
                     landing: Views.landing,
                     login: Views.login,
                     'customer-dashboard': Views.customerDashboard,
-                    'booking-wizard': Views.bookingWizard,
                     'queue-tracker': Views.queueTracker,
+                    'booking-wizard': Views.bookingWizard,
                     'my-bookings': Views.myBookings,
                     'counter-dashboard': Views.counterDashboard,
                     'manager-dashboard': Views.managerDashboard,
                     'admin-dashboard': Views.adminDashboard
                 };
                 
-                const renderer = views[Simulator.state.view] || Views.landing;
-                app.innerHTML = renderer();
+                main.innerHTML = `<div class="animate-fade-in max-w-6xl mx-auto w-full">${(views[Simulator.state.view] || Views.landing)()}</div>`;
                 lucide.createIcons();
-                document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
             }
         };
 
         // ==========================================
-        // 3. VIEW DEFINITIONS
+        // 5. VIEWS
         // ==========================================
         const Views = {
             landing: () => `
                 <div class="flex flex-col min-h-screen relative overflow-hidden">
-                    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-100/40 via-slate-50 to-slate-50 dark:from-brand-950/30 dark:via-slate-950 dark:to-slate-950 -z-10"></div>
-                    <header class="fixed top-0 w-full z-40 glass border-b border-slate-200/50 dark:border-slate-800/50">
-                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-600/20">Q</div>
-                                <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Smart Q</span>
+                    <!-- Hero -->
+                    <section class="relative flex-1 flex flex-col items-center justify-center px-4 py-20 md:py-32">
+                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent -z-10"></div>
+                        
+                        <div class="text-center max-w-4xl mx-auto mb-16 animate-slide-up">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold mb-6 border border-accent/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+                                ENTERPRISE QUEUE INTELLIGENCE
                             </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="UI.toggleTheme()" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                    <i data-lucide="${Simulator.state.theme === 'light' ? 'moon' : 'sun'}" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
-                                </button>
-                                ${UI.Button('Sign In', "UI.navigate('login')", 'secondary')}
-                                ${UI.Button('Get Started', "UI.navigate('login')", 'primary')}
-                            </div>
-                        </div>
-                    </header>
-                    <main class="flex-1 pt-32 pb-20 px-4 max-w-7xl mx-auto w-full text-center">
-                        <div class="max-w-3xl mx-auto animate-slide-up">
-                            ${UI.Badge('Enterprise Queue Intelligence v2.0', 'primary')}
-                            <h1 class="mt-6 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-                                The intelligent way to <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-500">manage waiting.</span>
+                            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
+                                The operating system for <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-600">physical spaces.</span>
                             </h1>
-                            <p class="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
-                                Transform chaotic physical lines into predictable, calm digital experiences. 
+                            <p class="text-lg sm:text-xl text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto mb-10">
+                                Transform chaotic waiting lines into predictable, intelligent digital experiences. 
                                 Built for banks, hospitals, and government departments at national scale.
                             </p>
-                            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                                ${UI.Button('Book an Appointment', "UI.navigate('login')", 'primary', 'calendar', 'px-8 py-4 text-base')}
-                                ${UI.Button('View Live Demo', "Simulator.login('manager')", 'secondary', 'play-circle', 'px-8 py-4 text-base')}
+                            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <button onclick="UI.navigate('login')" class="btn btn-primary px-8 py-3.5 text-base shadow-glow">
+                                    Book an Appointment <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="Simulator.login('manager')" class="btn btn-secondary px-8 py-3.5 text-base">
+                                    <i data-lucide="play-circle" class="w-4 h-4"></i> View Live Demo
+                                </button>
                             </div>
-                            
-                            <div class="mt-20 grid sm:grid-cols-3 gap-6 text-left">
-                                ${[ 
-                                    { icon: 'clock', title: 'Predictable ETAs', desc: 'Mathematically derived wait times based on live counter capacity and service duration.' },
-                                    { icon: 'shield-check', title: 'Enterprise Resilience', desc: 'Role-based access, POPIA-compliant data handling, and offline-first fallbacks.' },
-                                    { icon: 'bar-chart-3', title: 'Live Capacity Analytics', desc: 'Real-time dashboards for managers to dynamically allocate staff during peak hours.' }
+                        </div>
+
+                        <!-- Live Queue Visualization -->
+                        <div class="w-full max-w-4xl mx-auto animate-slide-up" style="animation-delay: 0.2s;">
+                            <div class="queue-track">
+                                <div class="queue-counter">
+                                    <i data-lucide="check-circle" class="w-8 h-8 text-accent"></i>
+                                </div>
+                                <div class="queue-node"></div>
+                                <div class="queue-node"></div>
+                                <div class="queue-node"></div>
+                                <div class="absolute bottom-8 left-0 right-0 text-center">
+                                    <p class="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest">Live Queue Flow</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Features -->
+                    <section class="px-4 py-20 bg-[var(--surface)] border-y border-[var(--border)]">
+                        <div class="max-w-6xl mx-auto">
+                            <div class="text-center mb-16">
+                                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Engineered for Enterprise</h2>
+                                <p class="text-[var(--text-secondary)] max-w-2xl mx-auto">Every component is designed for reliability, scalability, and operational excellence.</p>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-8">
+                                ${[
+                                    { icon: 'brain', title: 'AI-Powered Forecasting', desc: 'Mathematically derived wait times based on live counter capacity, service duration, and historical trends.' },
+                                    { icon: 'shield-check', title: 'POPIA Compliant', desc: 'Enterprise-grade security, role-based access control, and comprehensive audit logging out of the box.' },
+                                    { icon: 'zap', title: 'Real-Time Synchronization', desc: 'Instant updates across customer devices, staff counters, and public displays with zero latency.' }
                                 ].map(f => `
-                                    <div class="p-6 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                                        <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center mb-4">
-                                            <i data-lucide="${f.icon}" class="w-6 h-6 text-brand-600 dark:text-brand-400"></i>
+                                    <div class="card p-8 card-hover">
+                                        <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
+                                            <i data-lucide="${f.icon}" class="w-6 h-6 text-accent"></i>
                                         </div>
-                                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">${f.title}</h3>
-                                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">${f.desc}</p>
+                                        <h3 class="text-xl font-bold mb-3">${f.title}</h3>
+                                        <p class="text-[var(--text-secondary)] leading-relaxed">${f.desc}</p>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
-                    </main>
+                    </section>
+
+                    <!-- Sectors -->
+                    <section class="px-4 py-20">
+                        <div class="max-w-6xl mx-auto text-center">
+                            <h2 class="text-3xl sm:text-4xl font-bold mb-4">Trusted Across Industries</h2>
+                            <p class="text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto">Deployed in high-volume environments where every second counts.</p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                ${['Building 2', 'Landmark', 'Heart', 'Graduation Cap', 'Shopping Bag', 'Scale', 'Plane', 'Hospital'].map((icon, i) => `
+                                    <div class="card p-6 flex flex-col items-center justify-center gap-3 card-hover">
+                                        <i data-lucide="${['building-2', 'landmark', 'heart', 'graduation-cap', 'shopping-bag', 'scale', 'plane', 'hospital'][i]}" class="w-8 h-8 text-[var(--text-secondary)]"></i>
+                                        <span class="text-sm font-semibold text-[var(--text-secondary)]">${['Banking', 'Government', 'Healthcare', 'Education', 'Retail', 'Legal', 'Transport', 'Clinics'][i]}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Footer -->
+                    <footer class="px-4 py-12 border-t border-[var(--border)] bg-[var(--surface)]">
+                        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white font-bold">Q</div>
+                                <span class="font-bold text-lg">Smart Q</span>
+                            </div>
+                            <p class="text-sm text-[var(--text-secondary)]">© 2026 Smart Q Technologies. Enterprise Queue Intelligence.</p>
+                            <div class="flex gap-6 text-sm text-[var(--text-secondary)]">
+                                <a href="#" class="hover:text-accent transition-colors">Privacy</a>
+                                <a href="#" class="hover:text-accent transition-colors">Terms</a>
+                                <a href="#" class="hover:text-accent transition-colors">Security</a>
+                            </div>
+                        </div>
+                    </footer>
                 </div>
             `,
 
             login: () => `
-                <div class="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950">
-                    <div class="w-full max-w-md animate-slide-up">
+                <div class="min-h-[80vh] flex items-center justify-center p-4">
+                    <div class="card p-8 w-full max-w-md animate-slide-up">
                         <div class="text-center mb-8">
-                            <div class="w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 shadow-xl shadow-brand-600/20">Q</div>
-                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Welcome to Smart Q</h2>
-                            <p class="text-slate-600 dark:text-slate-400 mt-2">Select a role to experience the platform</p>
+                            <div class="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 shadow-glow">Q</div>
+                            <h2 class="text-2xl font-bold">Welcome to Smart Q</h2>
+                            <p class="text-[var(--text-secondary)] mt-2">Select a role to experience the platform</p>
                         </div>
-                        ${UI.Card(`
-                            <div class="p-6 space-y-3">
-                                <button onclick="Simulator.login('customer')" class="w-full py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold transition-all flex items-center justify-center gap-3 group">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="user" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i></div>
-                                    <div class="text-left"><div class="text-slate-900 dark:text-white">Customer</div><div class="text-xs text-slate-500 font-normal">Book, track, and manage visits</div></div>
-                                </button>
-                                <button onclick="Simulator.login('staff')" class="w-full py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold transition-all flex items-center justify-center gap-3 group">
-                                    <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="headphones" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i></div>
-                                    <div class="text-left"><div class="text-slate-900 dark:text-white">Counter Staff</div><div class="text-xs text-slate-500 font-normal">Serve customers and manage queue</div></div>
-                                </button>
-                                <button onclick="Simulator.login('manager')" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-all flex items-center justify-center gap-3 shadow-lg shadow-brand-600/20 group">
-                                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="bar-chart-2" class="w-4 h-4 text-white"></i></div>
-                                    <div class="text-left"><div class="text-white">Branch Manager</div><div class="text-xs text-brand-100 font-normal">Monitor analytics and capacity</div></div>
-                                </button>
-                                <div class="pt-4 text-center border-t border-slate-100 dark:border-slate-800 mt-4">
-                                    <button onclick="UI.navigate('landing')" class="text-sm text-slate-500 hover:text-brand-600 dark:hover:text-brand-400 transition-colors font-medium">← Back to home</button>
+                        <div class="space-y-3">
+                            <button onclick="Simulator.login('customer')" class="btn btn-secondary w-full justify-start p-4">
+                                <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center"><i data-lucide="user" class="w-5 h-5 text-accent"></i></div>
+                                <div class="text-left">
+                                    <div class="font-bold">Customer</div>
+                                    <div class="text-xs text-[var(--text-secondary)] font-normal">Book, track, and manage visits</div>
                                 </div>
-                            </div>
-                        `)}
+                            </button>
+                            <button onclick="Simulator.login('staff')" class="btn btn-secondary w-full justify-start p-4">
+                                <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center"><i data-lucide="headphones" class="w-5 h-5 text-purple-600"></i></div>
+                                <div class="text-left">
+                                    <div class="font-bold">Counter Staff</div>
+                                    <div class="text-xs text-[var(--text-secondary)] font-normal">Serve customers and manage queue</div>
+                                </div>
+                            </button>
+                            <button onclick="Simulator.login('manager')" class="btn btn-primary w-full justify-start p-4">
+                                <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center"><i data-lucide="bar-chart-2" class="w-5 h-5 text-white"></i></div>
+                                <div class="text-left">
+                                    <div class="font-bold">Branch Manager</div>
+                                    <div class="text-xs text-white/70 font-normal">Monitor analytics and capacity</div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <button onclick="UI.navigate('landing')" class="text-sm text-[var(--text-secondary)] hover:text-accent transition-colors font-medium">← Back to home</button>
+                        </div>
                     </div>
                 </div>
             `,
 
             customerDashboard: () => {
                 const s = Simulator.state;
-                const hasActiveTicket = s.userTicket && s.userTicket.status !== 'completed' && s.userTicket.status !== 'no-show';
-                
-                return Layouts.appShell('customer', `
-                    <div class="space-y-6 animate-fade-in max-w-5xl mx-auto">
+                const hasActiveTicket = s.userTicket && !['completed', 'no-show'].includes(s.userTicket.status);
+                const metrics = hasActiveTicket ? s.calculateMetrics(s.userTicket.service, s.userTicket.isPriority) : { peopleAhead: 0, eta: '0-0', minEta: 0 };
+                const progress = Math.max(0, 100 - (metrics.peopleAhead * 15));
+
+                return `
+                    <div class="space-y-8">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Good morning, ${s.currentUser.name}</h1>
-                                <p class="text-slate-600 dark:text-slate-400">Here is your queue and booking overview.</p>
+                                <h1 class="text-2xl font-bold">Good morning, ${s.currentUser.name}</h1>
+                                <p class="text-[var(--text-secondary)]">Here is your queue and booking overview.</p>
                             </div>
-                            ${UI.Button('Book Appointment', "UI.navigate('booking-wizard')", 'primary', 'plus')}
+                            <button onclick="UI.navigate('booking-wizard')" class="btn btn-primary">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Book Appointment
+                            </button>
                         </div>
 
                         ${hasActiveTicket ? `
-                            <div class="grid lg:grid-cols-3 gap-6">
+                            <div class="grid lg:grid-cols-3 gap-8">
                                 <div class="lg:col-span-2">
-                                    ${UI.Card(`
-                                        <div class="p-6 sm:p-8">
-                                            <div class="flex items-center justify-between mb-6">
-                                                <div class="flex items-center gap-4">
-                                                    <div class="w-12 h-12 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
-                                                        <i data-lucide="ticket" class="w-6 h-6 text-brand-600 dark:text-brand-400"></i>
-                                                    </div>
-                                                    <div>
-                                                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Active Queue Ticket</h3>
-                                                        <p class="text-sm text-slate-500">Sandton City • ${s.services.find(sv => sv.id === s.userTicket.service).name}</p>
-                                                    </div>
-                                                </div>
-                                                ${UI.Badge(s.userTicket.status === 'serving' ? 'Now Serving' : 'Waiting', s.userTicket.status === 'serving' ? 'success' : 'warning')}
+                                    <div class="digital-ticket p-8">
+                                        <div class="flex items-center justify-between mb-8">
+                                            <div>
+                                                <p class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-1">Active Queue Ticket</p>
+                                                <h3 class="text-lg font-bold">${s.services.find(sv => sv.id === s.userTicket.service).name}</h3>
                                             </div>
-                                            
-                                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                                                <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                                                    <div class="text-3xl font-bold text-brand-600 dark:text-brand-400 font-mono tracking-tight">${s.userTicket.number}</div>
-                                                    <div class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Your Number</div>
-                                                </div>
-                                                <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                                                    <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">${s.userTicket.position - 1}</div>
-                                                    <div class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">People Ahead</div>
-                                                </div>
-                                                <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                                                    <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">~${s.userTicket.etaDisplay}</div>
-                                                    <div class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Est. Wait</div>
-                                                </div>
-                                                <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                                                    <div class="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">${s.userTicket.counter || 'TBD'}</div>
-                                                    <div class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Counter</div>
-                                                </div>
+                                            <span id="user-status-badge" class="px-3 py-1 rounded-full text-xs font-bold ${s.userTicket.status === 'serving' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'}">
+                                                ${s.userTicket.status === 'serving' ? 'Now Serving' : 'Waiting'}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="text-center mb-8">
+                                            <div class="text-6xl sm:text-7xl font-bold font-mono tracking-tighter mb-2" id="user-ticket-number">${s.userTicket.number}</div>
+                                            <p class="text-[var(--text-secondary)]">Sandton City Branch</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 gap-4 mb-8">
+                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)]">
+                                                <div class="text-2xl font-bold" id="user-ahead">${metrics.peopleAhead}</div>
+                                                <div class="text-xs text-[var(--text-secondary)] font-medium mt-1">Ahead</div>
                                             </div>
-
-                                            ${s.lastUpdateMessage ? `
-                                                <div class="mb-6 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3 animate-pulse-soft">
-                                                    <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
-                                                    <p class="text-sm text-amber-900 dark:text-amber-100 font-medium">${s.lastUpdateMessage}</p>
-                                                </div>
-                                            ` : ''}
-
-                                            <div class="flex flex-wrap gap-3">
-                                                ${UI.Button('Track Live Progress', "UI.navigate('queue-tracker')", 'primary', 'map-pin')}
-                                                ${UI.Button('Reschedule', "UI.navigate('my-bookings')", 'secondary', 'calendar')}
+                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)]">
+                                                <div class="text-2xl font-bold" id="user-eta">~${metrics.eta}m</div>
+                                                <div class="text-xs text-[var(--text-secondary)] font-medium mt-1">Est. Wait</div>
+                                            </div>
+                                            <div class="text-center p-4 rounded-xl bg-[var(--bg)]">
+                                                <div class="text-2xl font-bold" id="user-counter">${s.userTicket.counter || 'TBD'}</div>
+                                                <div class="text-xs text-[var(--text-secondary)] font-medium mt-1">Counter</div>
                                             </div>
                                         </div>
-                                    `)}
+
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between text-sm font-medium">
+                                                <span class="text-[var(--text-secondary)]">Progress</span>
+                                                <span class="text-accent" id="user-progress-text">${progress}%</span>
+                                            </div>
+                                            <div class="h-2 bg-[var(--bg)] rounded-full overflow-hidden">
+                                                <div id="user-progress" class="h-full bg-accent rounded-full transition-all duration-1000" style="width: ${progress}%"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-3 mt-8">
+                                            <button onclick="UI.navigate('queue-tracker')" class="btn btn-primary flex-1">Track Live</button>
+                                            <button onclick="UI.navigate('my-bookings')" class="btn btn-secondary flex-1">Reschedule</button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="space-y-6">
-                                    ${UI.Card(`
-                                        <div class="p-6">
-                                            <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i> AI Insight
-                                            </h3>
-                                            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-                                                Based on current branch traffic, your wait time is stable. Counter 3 is on break, but Counter 2 is clearing the queue efficiently.
-                                            </p>
-                                            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-2">
-                                                <div class="bg-emerald-500 h-2 rounded-full" style="width: 75%"></div>
-                                            </div>
-                                            <p class="text-xs text-slate-500 text-right">Queue Health: Good (75/100)</p>
+                                    <div class="card p-6">
+                                        <h3 class="font-bold mb-4 flex items-center gap-2">
+                                            <i data-lucide="sparkles" class="w-4 h-4 text-warning"></i> AI Insight
+                                        </h3>
+                                        <p class="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed">
+                                            Based on current branch traffic, your wait time is stable. Counter 3 is on break, but Counter 2 is clearing the queue efficiently.
+                                        </p>
+                                        <div class="w-full bg-[var(--bg)] rounded-full h-2 mb-2">
+                                            <div class="bg-success h-2 rounded-full" style="width: 75%"></div>
                                         </div>
-                                    `)}
+                                        <p class="text-xs text-[var(--text-secondary)] text-right">Queue Health: Good (75/100)</p>
+                                    </div>
 
-                                    ${UI.Card(`
-                                        <div class="p-6">
-                                            <div class="flex items-center justify-between mb-4">
-                                                <h3 class="font-bold text-slate-900 dark:text-white">Notifications</h3>
-                                                <span class="text-xs font-semibold text-brand-600 dark:text-brand-400 cursor-pointer" onclick="UI.showToast('All marked as read', 'success')">Mark all read</span>
-                                            </div>
-                                            <div class="space-y-4">
-                                                ${s.notifications.slice(0, 3).map(n => `
-                                                    <div class="flex gap-3 items-start ${n.unread ? 'opacity-100' : 'opacity-60'}">
-                                                        <div class="w-2 h-2 rounded-full ${n.unread ? 'bg-brand-600' : 'bg-transparent'} mt-2 shrink-0"></div>
-                                                        <div>
-                                                            <p class="text-sm text-slate-700 dark:text-slate-300 leading-snug">${n.text}</p>
-                                                            <p class="text-xs text-slate-500 mt-1">${n.time}</p>
-                                                        </div>
-                                                    </div>
-                                                `).join('')}
-                                            </div>
+                                    <div class="card p-6">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="font-bold">Notifications</h3>
+                                            <button class="text-xs font-bold text-accent" onclick="UI.showToast('All marked as read', 'success')">Mark all read</button>
                                         </div>
-                                    `)}
+                                        <div class="space-y-4">
+                                            ${s.notifications.slice(0, 3).map(n => `
+                                                <div class="flex gap-3 items-start ${n.unread ? 'opacity-100' : 'opacity-60'}">
+                                                    <div class="w-2 h-2 rounded-full ${n.unread ? 'bg-accent' : 'bg-transparent'} mt-2 shrink-0"></div>
+                                                    <div>
+                                                        <p class="text-sm leading-snug">${n.text}</p>
+                                                        <p class="text-xs text-[var(--text-secondary)] mt-1">${n.time}</p>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ` : `
-                            ${UI.Card(`
-                                <div class="p-10 text-center">
-                                    <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <i data-lucide="check-circle" class="w-10 h-10 text-emerald-600 dark:text-emerald-400"></i>
-                                    </div>
-                                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">No Active Queue</h3>
-                                    <p class="text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">You are all caught up. Book a new appointment or walk in to get a new ticket.</p>
-                                    <div class="flex flex-col sm:flex-row justify-center gap-3">
-                                        ${UI.Button('Book New Appointment', "UI.navigate('booking-wizard')", 'primary', 'calendar')}
-                                        ${UI.Button('Simulate Walk-in', "Simulator.joinWalkIn()", 'secondary', 'qr-code')}
-                                    </div>
+                            <div class="card p-12 text-center">
+                                <div class="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i data-lucide="check-circle" class="w-10 h-10 text-success"></i>
                                 </div>
-                            `)}
+                                <h3 class="text-2xl font-bold mb-2">No Active Queue</h3>
+                                <p class="text-[var(--text-secondary)] mb-8 max-w-md mx-auto">You are all caught up. Book a new appointment or walk in to get a new ticket.</p>
+                                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                                    <button onclick="UI.navigate('booking-wizard')" class="btn btn-primary">Book New Appointment</button>
+                                    <button onclick="Simulator.joinWalkIn()" class="btn btn-secondary">Simulate Walk-in</button>
+                                </div>
+                            </div>
                         `}
                     </div>
-                `);
+                `;
             },
 
             queueTracker: () => {
                 const s = Simulator.state;
-                if (!s.userTicket) return `<div class="p-8 text-center">No active ticket. ${UI.Button('Go to Dashboard', "UI.navigate('customer-dashboard')", 'primary')}</div>`;
+                if (!s.userTicket) return `<div class="text-center py-20"><p class="text-[var(--text-secondary)] mb-4">No active ticket.</p><button onclick="UI.navigate('customer-dashboard')" class="btn btn-primary">Go to Dashboard</button></div>`;
                 
+                const metrics = s.calculateMetrics(s.userTicket.service, s.userTicket.isPriority);
+                const progress = Math.max(0, 100 - (metrics.peopleAhead * 15));
                 const isServing = s.userTicket.status === 'serving';
-                const isCompleted = s.userTicket.status === 'completed';
-                
-                return Layouts.appShell('customer', `
-                    <div class="max-w-2xl mx-auto animate-slide-up space-y-6">
-                        <button onclick="UI.navigate('customer-dashboard')" class="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+
+                return `
+                    <div class="max-w-2xl mx-auto space-y-8">
+                        <button onclick="UI.navigate('customer-dashboard')" class="btn btn-ghost">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
                         </button>
 
-                        ${UI.Card(`
-                            <div class="p-6 sm:p-8">
-                                <div class="text-center mb-8">
-                                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-bold mb-6 ${isServing ? 'animate-pulse-soft' : ''}">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 
-                                        ${isServing ? 'Now Serving' : 'Live Updates Active'}
-                                    </div>
-                                    <h2 class="text-slate-500 dark:text-slate-400 font-medium mb-2">Your Queue Number</h2>
-                                    <div class="text-7xl sm:text-8xl font-bold text-slate-900 dark:text-white font-mono tracking-tighter mb-2">${s.userTicket.number}</div>
-                                    <p class="text-lg text-slate-600 dark:text-slate-400 font-medium">${s.services.find(sv => sv.id === s.userTicket.service).name}</p>
-                                </div>
-
-                                ${!isCompleted ? `
-                                    <div class="grid grid-cols-2 gap-4 mb-8">
-                                        <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center">
-                                            <div class="text-4xl font-bold text-brand-600 dark:text-brand-400 font-mono">${Math.max(0, s.userTicket.position - 1)}</div>
-                                            <div class="text-sm font-medium text-slate-500 mt-1">People Ahead</div>
-                                        </div>
-                                        <div class="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-center">
-                                            <div class="text-4xl font-bold text-brand-600 dark:text-brand-400 font-mono">~${s.userTicket.etaDisplay}</div>
-                                            <div class="text-sm font-medium text-slate-500 mt-1">Estimated Wait</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Visual Timeline -->
-                                    <div class="relative timeline-line pl-2 space-y-8 mb-8">
-                                        ${[
-                                            { label: 'Ticket Issued', time: '10:00 AM', done: true },
-                                            { label: 'Waiting in Queue', time: s.userTicket.position > 1 ? 'In progress' : 'Done', done: s.userTicket.position <= 1 },
-                                            { label: '5 Minutes Away', time: s.userTicket.position <= 2 ? 'In progress' : 'Pending', done: s.userTicket.position <= 2 },
-                                            { label: 'Proceed to Counter', time: isServing ? 'Now' : 'Pending', done: isServing, highlight: isServing }
-                                        ].map((step, idx) => `
-                                            <div class="relative flex items-start gap-4 z-10">
-                                                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 ${step.done ? 'bg-brand-600 border-brand-600 text-white' : step.highlight ? 'bg-white dark:bg-slate-900 border-brand-600 text-brand-600 animate-pulse' : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-400'}">
-                                                    ${step.done ? '<i data-lucide="check" class="w-4 h-4"></i>' : '<div class="w-2 h-2 rounded-full bg-current"></div>'}
-                                                </div>
-                                                <div class="pt-1">
-                                                    <p class="font-semibold text-slate-900 dark:text-white ${step.highlight ? 'text-brand-600 dark:text-brand-400' : ''}">${step.label}</p>
-                                                    <p class="text-sm text-slate-500">${step.time}</p>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                ` : `
-                                    <div class="text-center py-8">
-                                        <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-4">Service Completed Successfully</p>
-                                        ${UI.Button('Rate Your Experience', "UI.showFeedbackModal()", 'primary', 'star')}
-                                    </div>
-                                `}
+                        <div class="card p-8 text-center">
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 text-success text-sm font-bold mb-8 ${isServing ? 'animate-pulse' : ''}">
+                                <span class="w-2 h-2 rounded-full bg-success"></span> 
+                                ${isServing ? 'Now Serving' : 'Live Updates Active'}
                             </div>
-                        `)}
+                            
+                            <h2 class="text-[var(--text-secondary)] font-medium mb-2">Your Queue Number</h2>
+                            <div class="text-7xl sm:text-8xl font-bold font-mono tracking-tighter mb-2" id="tracker-number">${s.userTicket.number}</div>
+                            <p class="text-lg font-medium text-[var(--text-secondary)] mb-8">${s.services.find(sv => sv.id === s.userTicket.service).name}</p>
+
+                            <div class="grid grid-cols-2 gap-4 mb-8">
+                                <div class="p-6 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+                                    <div class="text-4xl font-bold text-accent font-mono" id="tracker-ahead">${metrics.peopleAhead}</div>
+                                    <div class="text-sm font-medium text-[var(--text-secondary)] mt-1">People Ahead</div>
+                                </div>
+                                <div class="p-6 rounded-2xl bg-[var(--bg)] border border-[var(--border)]">
+                                    <div class="text-4xl font-bold text-accent font-mono" id="tracker-eta">~${metrics.eta}m</div>
+                                    <div class="text-sm font-medium text-[var(--text-secondary)] mt-1">Estimated Wait</div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 mb-8">
+                                <div class="flex justify-between text-sm font-medium">
+                                    <span class="text-[var(--text-secondary)]">Progress to Counter</span>
+                                    <span class="text-accent" id="tracker-progress-text">${progress}%</span>
+                                </div>
+                                <div class="h-3 bg-[var(--bg)] rounded-full overflow-hidden">
+                                    <div id="tracker-progress" class="h-full bg-gradient-to-r from-accent to-purple-600 rounded-full transition-all duration-1000" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+
+                            ${!isServing ? `
+                                <div class="p-4 rounded-xl bg-warning/10 border border-warning/20 text-left flex gap-3">
+                                    <i data-lucide="info" class="w-5 h-5 text-warning shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-warning">You're almost up!</h4>
+                                        <p class="text-sm text-[var(--text-secondary)] mt-1">Please make your way to the branch. Your turn is approaching.</p>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="p-4 rounded-xl bg-success/10 border border-success/20 text-left flex gap-3">
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-success shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-success">Proceed to Counter</h4>
+                                        <p class="text-sm text-[var(--text-secondary)] mt-1">Please approach <span class="font-bold text-success" id="tracker-counter">${s.userTicket.counter || 'TBD'}</span> now.</p>
+                                    </div>
+                                </div>
+                            `}
+                        </div>
                     </div>
-                `);
+                `;
             },
 
             bookingWizard: () => {
-                const step = Simulator.state.bookingStep || 1;
-                return Layouts.appShell('customer', `
-                    <div class="max-w-2xl mx-auto animate-slide-up">
-                        <button onclick="UI.navigate('customer-dashboard')" class="mb-6 flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                const step = Simulator.state.bookingStep;
+                return `
+                    <div class="max-w-2xl mx-auto">
+                        <button onclick="UI.navigate('customer-dashboard')" class="btn btn-ghost mb-6">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i> Cancel Booking
                         </button>
                         
-                        ${UI.Card(`
-                            <div class="p-6 sm:p-8">
-                                <div class="mb-8">
-                                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Book an Appointment</h2>
-                                    <div class="flex items-center gap-4 mt-4">
-                                        ${[1, 2, 3, 4].map(i => `
-                                            <div class="flex-1 flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i <= step ? 'bg-brand-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}">${i}</div>
-                                                ${i < 4 ? `<div class="flex-1 h-1 rounded-full ${i < step ? 'bg-brand-600' : 'bg-slate-100 dark:bg-slate-800'}"></div>` : ''}
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                    <p class="text-sm text-slate-500 mt-3 text-center">
-                                        ${step === 1 ? 'Select your nearest branch' : step === 2 ? 'Choose the service you need' : step === 3 ? 'Pick an available date' : 'Select a time slot'}
-                                    </p>
+                        <div class="card p-6 sm:p-8">
+                            <div class="mb-8">
+                                <h2 class="text-2xl font-bold mb-6">Book an Appointment</h2>
+                                <div class="flex items-center gap-2">
+                                    ${[1, 2, 3, 4].map(i => `
+                                        <div class="flex-1 flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i <= step ? 'bg-accent text-white' : 'bg-[var(--bg)] text-[var(--text-secondary)]'}">${i}</div>
+                                            ${i < 4 ? `<div class="flex-1 h-1 rounded-full ${i < step ? 'bg-accent' : 'bg-[var(--bg)]'}"></div>` : ''}
+                                        </div>
+                                    `).join('')}
                                 </div>
+                            </div>
 
+                            <div class="min-h-[300px]">
                                 ${step === 1 ? `
+                                    <h3 class="text-lg font-bold mb-4">Select Branch</h3>
                                     <div class="space-y-3">
                                         ${Simulator.state.branches.map(b => `
-                                            <label class="flex items-center gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 cursor-pointer transition-all group bg-slate-50/50 dark:bg-slate-800/30">
-                                                <input type="radio" name="branch" class="w-5 h-5 text-brand-600 focus:ring-brand-500" checked>
+                                            <label class="card p-4 flex items-center gap-4 cursor-pointer card-hover border-2 ${b.id === 'b_1' ? 'border-accent' : 'border-transparent'}">
+                                                <input type="radio" name="branch" class="w-5 h-5 text-accent focus:ring-accent" ${b.id === 'b_1' ? 'checked' : ''}>
                                                 <div class="flex-1">
-                                                    <div class="font-semibold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${b.name}</div>
-                                                    <div class="text-sm text-slate-500 flex items-center gap-2 mt-1">
+                                                    <div class="font-bold">${b.name}</div>
+                                                    <div class="text-sm text-[var(--text-secondary)] flex items-center gap-2 mt-1">
                                                         <i data-lucide="map-pin" class="w-3 h-3"></i> ${b.address}
                                                     </div>
                                                 </div>
                                                 <div class="text-right">
-                                                    <div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">8-12 min</div>
-                                                    <div class="text-xs text-slate-500">current wait</div>
+                                                    <div class="text-sm font-bold text-success">${b.wait}m</div>
+                                                    <div class="text-xs text-[var(--text-secondary)]">current wait</div>
                                                 </div>
                                             </label>
                                         `).join('')}
                                     </div>
                                 ` : step === 2 ? `
-                                    <div class="space-y-3">
+                                    <h3 class="text-lg font-bold mb-4">Select Service</h3>
+                                    <div class="grid sm:grid-cols-2 gap-4">
                                         ${Simulator.state.services.map(svc => `
-                                            <label class="flex items-start gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 cursor-pointer transition-all group bg-slate-50/50 dark:bg-slate-800/30">
-                                                <input type="radio" name="service" class="w-5 h-5 text-brand-600 focus:ring-brand-500 mt-1" checked>
-                                                <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 group-hover:border-brand-500 transition-colors">
-                                                    <i data-lucide="${svc.icon}" class="w-6 h-6 text-slate-600 dark:text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400"></i>
+                                            <label class="card p-6 flex flex-col items-center text-center cursor-pointer card-hover border-2 ${svc.id === 'svc_2' ? 'border-accent' : 'border-transparent'}">
+                                                <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-4">
+                                                    <i data-lucide="${svc.icon}" class="w-7 h-7 text-accent"></i>
                                                 </div>
-                                                <div class="flex-1">
-                                                    <div class="font-semibold text-slate-900 dark:text-white">${svc.name}</div>
-                                                    <div class="text-sm text-slate-500 mt-1 flex items-center gap-2">
-                                                        <i data-lucide="clock" class="w-3 h-3"></i> Avg. duration: ${svc.avgTime} minutes
-                                                    </div>
+                                                <div class="font-bold mb-1">${svc.name}</div>
+                                                <div class="text-sm text-[var(--text-secondary)] flex items-center gap-1">
+                                                    <i data-lucide="clock" class="w-3 h-3"></i> ~${svc.avgTime} mins
                                                 </div>
                                             </label>
                                         `).join('')}
                                     </div>
                                 ` : step === 3 ? `
-                                    <div class="space-y-6">
-                                        <div class="grid grid-cols-7 gap-2 text-center text-sm font-medium text-slate-500 mb-2">
-                                            ${['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => `<div>${d}</div>`).join('')}
-                                        </div>
-                                        <div class="grid grid-cols-7 gap-2">
-                                            ${Array.from({length: 31}, (_, i) => {
-                                                const day = i + 1;
-                                                const isPast = day < 18;
-                                                const isSelected = day === 22;
-                                                const isFull = day === 25; // Simulate capacity
-                                                return `
-                                                    <button class="aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-medium transition-all relative
-                                                        ${isPast ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed' : 
-                                                          isSelected ? 'bg-brand-600 text-white shadow-lg shadow-brand-600/20' : 
-                                                          isFull ? 'text-slate-400 cursor-not-allowed line-through' :
-                                                          'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'}">
-                                                        ${day}
-                                                        ${isFull ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full"></span>' : ''}
-                                                    </button>
-                                                `;
-                                            }).join('')}
-                                        </div>
-                                        <p class="text-xs text-slate-500 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Fully booked due to counter capacity</p>
+                                    <h3 class="text-lg font-bold mb-4">Select Date</h3>
+                                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-[var(--text-secondary)] mb-2">
+                                        ${['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => `<div>${d}</div>`).join('')}
+                                    </div>
+                                    <div class="grid grid-cols-7 gap-2">
+                                        ${Array.from({length: 31}, (_, i) => {
+                                            const day = i + 1;
+                                            const isPast = day < 18;
+                                            const isSelected = day === 22;
+                                            const isFull = day === 25;
+                                            return `
+                                                <button class="aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-bold transition-all
+                                                    ${isPast ? 'text-[var(--border)] cursor-not-allowed' : 
+                                                      isSelected ? 'bg-accent text-white shadow-glow' : 
+                                                      isFull ? 'text-[var(--text-secondary)] cursor-not-allowed line-through' :
+                                                      'text-[var(--text-primary)] hover:bg-[var(--bg)]'}">
+                                                    ${day}
+                                                </button>
+                                            `;
+                                        }).join('')}
                                     </div>
                                 ` : `
-                                    <div class="space-y-4">
-                                        <h3 class="font-semibold text-lg text-slate-900 dark:text-white">Available Time Slots</h3>
-                                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                                            ${['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00'].map((t, i) => `
-                                                <button class="py-3 px-2 rounded-xl border text-sm font-semibold transition-all ${i === 2 ? 'border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400 ring-1 ring-brand-600' : i === 4 ? 'border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed bg-slate-50 dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-brand-500 dark:hover:border-brand-500 hover:bg-slate-50 dark:hover:bg-slate-800'}">
-                                                    ${t}
-                                                    ${i === 4 ? '<div class="text-[10px] mt-1">Full</div>' : ''}
-                                                </button>
-                                            `).join('')}
-                                        </div>
+                                    <h3 class="text-lg font-bold mb-4">Select Time</h3>
+                                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                                        ${['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30'].map((t, i) => `
+                                            <button class="py-3 px-2 rounded-xl border text-sm font-bold transition-all
+                                                ${i === 2 ? 'border-accent bg-accent/10 text-accent ring-1 ring-accent' : 
+                                                  i === 4 ? 'border-[var(--border)] text-[var(--border)] cursor-not-allowed bg-[var(--bg)]' :
+                                                  'border-[var(--border)] hover:border-accent hover:bg-accent/5'}">
+                                                ${t}
+                                            </button>
+                                        `).join('')}
                                     </div>
                                 `}
+                            </div>
 
-                                <div class="flex justify-between mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-                                    ${step > 1 ? UI.Button('Back', "Simulator.state.bookingStep--; UI.renderCurrentView()", 'secondary') : '<div></div>'}
-                                    ${step < 4 ? UI.Button('Continue', "Simulator.state.bookingStep++; UI.renderCurrentView()", 'primary', 'arrow-right') : UI.Button('Confirm Booking', "Simulator.confirmBooking()", 'success', 'check', 'px-8')}
+                            <div class="flex justify-between mt-8 pt-6 border-t border-[var(--border)]">
+                                ${step > 1 ? `<button onclick="Simulator.state.bookingStep--; Renderer.renderView();" class="btn btn-secondary">Back</button>` : '<div></div>'}
+                                ${step < 4 ? `<button onclick="Simulator.state.bookingStep++; Renderer.renderView();" class="btn btn-primary">Continue <i data-lucide="arrow-right" class="w-4 h-4"></i></button>` : `<button onclick="Simulator.confirmBooking()" class="btn btn-success px-8">Confirm Booking <i data-lucide="check" class="w-4 h-4"></i></button>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            myBookings: () => `
+                <div class="space-y-6">
+                    <h1 class="text-2xl font-bold">My Bookings</h1>
+                    
+                    <div class="flex gap-2 border-b border-[var(--border)] pb-1 mb-6">
+                        ${['Upcoming', 'Past', 'Cancelled'].map((tab, i) => `
+                            <button class="px-4 py-2 text-sm font-bold border-b-2 transition-colors ${i === 0 ? 'border-accent text-accent' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}">
+                                ${tab}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="space-y-4">
+                        ${Simulator.state.bookings.filter(b => b.status !== 'cancelled').map(b => `
+                            <div class="card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-hover">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-[var(--bg)] flex items-center justify-center shrink-0">
+                                        <i data-lucide="${b.service.includes('Account') ? 'briefcase' : 'help-circle'}" class="w-6 h-6 text-[var(--text-secondary)]"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold">${b.service}</h3>
+                                        <p class="text-sm text-[var(--text-secondary)]">${b.branch}</p>
+                                        <div class="flex items-center gap-3 mt-2 text-sm text-[var(--text-secondary)]">
+                                            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${b.date}</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${b.time}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col sm:items-end gap-3">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold ${b.status === 'upcoming' ? 'bg-accent/10 text-accent' : 'bg-success/10 text-success'}">
+                                        ${b.status === 'upcoming' ? 'Upcoming' : 'Completed'}
+                                    </span>
+                                    ${b.status === 'upcoming' ? `
+                                        <div class="flex gap-2">
+                                            <button onclick="UI.navigate('queue-tracker')" class="btn btn-secondary py-1.5 text-xs">View</button>
+                                            <button onclick="UI.showToast('Booking cancelled', 'error')" class="btn btn-ghost py-1.5 text-xs text-error hover:bg-error/10">Cancel</button>
+                                        </div>
+                                    ` : ''}
                                 </div>
                             </div>
-                        `)}
+                        `).join('')}
                     </div>
-                `);
-            },
+                </div>
+            `,
 
             counterDashboard: () => {
                 const s = Simulator.state;
-                const myCounter = s.counters.find(c => c.id === 'c_2'); // Simulating staff is on c_2
-                const queueForCounter = s.queue.filter(q => q.service === myCounter.service && q.status === 'waiting');
-                
-                return Layouts.appShell('staff', `
-                    <div class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+                const myCounter = s.counters.find(c => c.id === 'c_2');
+                const queue = s.queue.filter(q => q.service === myCounter.service && q.status === 'waiting');
+
+                return `
+                    <div class="space-y-8">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">${myCounter.name} Dashboard</h1>
-                                <p class="text-slate-600 dark:text-slate-400">Welcome, ${s.currentUser.name}</p>
+                                <h1 class="text-2xl font-bold">${myCounter.name} Dashboard</h1>
+                                <p class="text-[var(--text-secondary)]">Welcome, ${s.currentUser.name}</p>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span class="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Active & Serving</span>
+                            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 text-success text-sm font-bold">
+                                <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span> Active & Serving
                             </div>
                         </div>
 
-                        <div class="grid lg:grid-cols-3 gap-6">
-                            <div class="lg:col-span-2 space-y-6">
-                                ${UI.Card(`
-                                    <div class="p-8 text-center border-b border-slate-100 dark:border-slate-800">
-                                        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Now Serving</h3>
-                                        ${myCounter.currentTicket ? `
-                                            <div class="text-8xl sm:text-9xl font-bold text-brand-600 dark:text-brand-400 font-mono tracking-tighter mb-2 animate-pulse-soft">${myCounter.currentTicket}</div>
-                                            <p class="text-xl text-slate-700 dark:text-slate-300 font-semibold">${s.services.find(sv => sv.id === myCounter.service).name}</p>
-                                            <p class="text-sm text-slate-500 mt-2">Serving time: ~${s.services.find(sv => sv.id === myCounter.service).avgTime} mins</p>
-                                        ` : `
-                                            <div class="text-4xl font-bold text-slate-300 dark:text-slate-700 font-mono mb-2">--</div>
-                                            <p class="text-slate-500">No active customer</p>
-                                        `}
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2 space-y-8">
+                                <div class="card p-8 text-center">
+                                    <h3 class="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-6">Now Serving</h3>
+                                    <div class="text-8xl sm:text-9xl font-bold text-accent font-mono tracking-tighter mb-4" id="counter-c_2-ticket">${myCounter.currentTicket || '--'}</div>
+                                    <p class="text-xl font-semibold text-[var(--text-secondary)]">${s.services.find(sv => sv.id === myCounter.service).name}</p>
+                                    
+                                    <div class="grid grid-cols-3 gap-4 mt-10">
+                                        <button onclick="Simulator.advanceQueue()" class="btn btn-primary py-5 text-lg font-bold">
+                                            <i data-lucide="user-plus" class="w-5 h-5"></i> Call Next
+                                        </button>
+                                        <button onclick="Simulator.completeTicket('t_105', 'completed')" class="btn btn-success py-5 text-lg font-bold">
+                                            <i data-lucide="check-circle" class="w-5 h-5"></i> Complete
+                                        </button>
+                                        <button onclick="Simulator.completeTicket('t_105', 'no-show')" class="btn btn-error py-5 text-lg font-bold">
+                                            <i data-lucide="x-circle" class="w-5 h-5"></i> No Show
+                                        </button>
                                     </div>
-                                    <div class="p-6 grid grid-cols-3 gap-4">
-                                        ${UI.Button('Call Next', "Simulator.advanceQueue()", 'primary', 'user-plus', 'py-5 text-lg font-bold')}
-                                        ${UI.Button('Complete', "Simulator.completeTicket('t_105', 'completed')", 'success', 'check-circle', 'py-5 text-lg font-bold')}
-                                        ${UI.Button('No Show', "Simulator.completeTicket('t_105', 'no-show')", 'destructive', 'x-circle', 'py-5 text-lg font-bold')}
-                                    </div>
-                                `)}
+                                </div>
 
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-between">
-                                            <span>Upcoming Queue (${queueForCounter.length} waiting)</span>
-                                            ${UI.Badge('Live', 'primary')}
-                                        </h3>
-                                        <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar pr-2">
-                                            ${queueForCounter.length === 0 ? '<p class="text-sm text-slate-500 text-center py-4">Queue is empty</p>' : ''}
-                                            ${queueForCounter.map((q, idx) => `
-                                                <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 ${q.isPriority ? 'ring-1 ring-amber-400 bg-amber-50/50 dark:bg-amber-900/10' : ''}">
-                                                    <div class="flex items-center gap-4">
-                                                        <div class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center font-mono font-bold text-slate-900 dark:text-white">
-                                                            ${q.number}
-                                                        </div>
-                                                        <div>
-                                                            <div class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                                                                ${q.isPriority ? '<i data-lucide="star" class="w-3 h-3 text-amber-500 fill-current"></i>' : ''}
-                                                                Customer ${100 + idx}
-                                                            </div>
-                                                            <div class="text-xs text-slate-500">Waiting for ~${(idx + 1) * 25} mins</div>
-                                                        </div>
-                                                    </div>
-                                                    ${q.isPriority ? UI.Badge('Priority', 'warning') : UI.Badge('Standard', 'default')}
-                                                </div>
-                                            `).join('')}
-                                        </div>
+                                <div class="card p-6">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="font-bold">Upcoming Queue (${queue.length} waiting)</h3>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent/10 text-accent">LIVE</span>
                                     </div>
-                                `)}
+                                    <div id="staff-queue-list" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                                        ${queue.length === 0 ? '<p class="text-sm text-[var(--text-secondary)] text-center py-8">Queue is empty</p>' : ''}
+                                        ${queue.map((q, i) => `
+                                            <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] ${q.isPriority ? 'ring-1 ring-warning/50' : ''}">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-10 h-10 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center font-mono font-bold text-sm">${q.number}</div>
+                                                    <div>
+                                                        <div class="text-sm font-semibold flex items-center gap-1">${q.isPriority ? '<i data-lucide="star" class="w-3 h-3 text-warning fill-current"></i>' : ''} Customer ${100+i}</div>
+                                                        <div class="text-xs text-[var(--text-secondary)]">Waiting ~${(i+1)*25}m</div>
+                                                    </div>
+                                                </div>
+                                                ${q.isPriority ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/10 text-warning">PRIORITY</span>' : ''}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="space-y-6">
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold text-slate-900 dark:text-white mb-4">Counter Status</h3>
-                                        <div class="space-y-3">
-                                            <button onclick="Simulator.toggleCounterStatus('c_2', 'open')" class="w-full flex items-center justify-between p-3 rounded-lg border ${myCounter.status === 'open' ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800' : 'border-slate-200 dark:border-slate-700'}">
-                                                <span class="font-medium text-sm">Open for Service</span>
-                                                ${myCounter.status === 'open' ? '<i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>' : ''}
-                                            </button>
-                                            <button onclick="Simulator.toggleCounterStatus('c_2', 'break')" class="w-full flex items-center justify-between p-3 rounded-lg border ${myCounter.status === 'break' ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' : 'border-slate-200 dark:border-slate-700'}">
-                                                <span class="font-medium text-sm">On Break / Paused</span>
-                                                ${myCounter.status === 'break' ? '<i data-lucide="pause-circle" class="w-5 h-5 text-amber-600"></i>' : ''}
-                                            </button>
-                                        </div>
+                                <div class="card p-6">
+                                    <h3 class="font-bold mb-4">Counter Status</h3>
+                                    <div class="space-y-3">
+                                        <button onclick="Simulator.toggleCounterStatus('c_2', 'open')" class="btn w-full justify-between ${myCounter.status === 'open' ? 'bg-success/10 text-success border-success/20' : 'btn-secondary'}">
+                                            <span>Open for Service</span>
+                                            ${myCounter.status === 'open' ? '<i data-lucide="check-circle" class="w-5 h-5"></i>' : ''}
+                                        </button>
+                                        <button onclick="Simulator.toggleCounterStatus('c_2', 'break')" class="btn w-full justify-between ${myCounter.status === 'break' ? 'bg-warning/10 text-warning border-warning/20' : 'btn-secondary'}">
+                                            <span>On Break / Paused</span>
+                                            ${myCounter.status === 'break' ? '<i data-lucide="pause-circle" class="w-5 h-5"></i>' : ''}
+                                        </button>
                                     </div>
-                                `)}
+                                </div>
                                 
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold text-slate-900 dark:text-white mb-4">Today\'s Stats</h3>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div class="text-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
-                                                <div class="text-3xl font-bold text-emerald-700 dark:text-emerald-400">24</div>
-                                                <div class="text-xs font-semibold text-emerald-600/70 dark:text-emerald-400/70 uppercase mt-1">Completed</div>
-                                            </div>
-                                            <div class="text-center p-4 rounded-xl bg-brand-50 dark:bg-brand-900/20">
-                                                <div class="text-3xl font-bold text-brand-700 dark:text-brand-400">18m</div>
-                                                <div class="text-xs font-semibold text-brand-600/70 dark:text-brand-400/70 uppercase mt-1">Avg Wait</div>
-                                            </div>
+                                <div class="card p-6">
+                                    <h3 class="font-bold mb-4">Today's Stats</h3>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center p-4 rounded-xl bg-success/10">
+                                            <div class="text-3xl font-bold text-success">24</div>
+                                            <div class="text-xs font-bold text-success/70 uppercase mt-1">Completed</div>
+                                        </div>
+                                        <div class="text-center p-4 rounded-xl bg-accent/10">
+                                            <div class="text-3xl font-bold text-accent">18m</div>
+                                            <div class="text-xs font-bold text-accent/70 uppercase mt-1">Avg Wait</div>
                                         </div>
                                     </div>
-                                `)}
+                                </div>
                             </div>
                         </div>
                     </div>
-                `);
+                `;
             },
 
             managerDashboard: () => {
                 const s = Simulator.state;
-                return Layouts.appShell('manager', `
-                    <div class="space-y-6 animate-fade-in max-w-6xl mx-auto">
+                const waiting = s.queue.filter(q => q.status === 'waiting').length;
+
+                return `
+                    <div class="space-y-8">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Branch Operations Overview</h1>
-                                <p class="text-slate-600 dark:text-slate-400">Sandton City Branch • Live Monitoring</p>
+                                <h1 class="text-2xl font-bold">Branch Operations Overview</h1>
+                                <p class="text-[var(--text-secondary)]">Sandton City Branch • Live Monitoring</p>
                             </div>
                             <div class="flex gap-2">
-                                ${UI.Button('Export Daily Report', "UI.showToast('PDF Report downloaded', 'success')", 'secondary', 'download')}
-                                ${UI.Button('Open Counter 3', "Simulator.toggleCounterStatus('c_3', 'open')", 'primary', 'plus')}
+                                <button onclick="UI.showToast('PDF Report downloaded', 'success')" class="btn btn-secondary"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
+                                <button onclick="Simulator.toggleCounterStatus('c_3', 'open')" class="btn btn-primary"><i data-lucide="plus" class="w-4 h-4"></i> Open Counter 3</button>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             ${[ 
-                                { label: 'Currently Waiting', value: s.queue.filter(q => q.status === 'waiting').length, trend: '+2', icon: 'users', color: 'blue' },
-                                { label: 'Avg. Wait Time', value: '18m', trend: '-3m', icon: 'clock', color: 'emerald' },
-                                { label: 'Completed Today', value: s.analytics.dailyVolume, trend: '+12%', icon: 'check-circle', color: 'indigo' },
-                                { label: 'No-Show Rate', value: s.analytics.noShowRate + '%', trend: '-1%', icon: 'x-circle', color: 'rose' }
+                                { label: 'Currently Waiting', value: waiting, id: 'stat-waiting', icon: 'users', color: 'accent' },
+                                { label: 'Avg. Wait Time', value: '18m', icon: 'clock', color: 'success' },
+                                { label: 'Completed Today', value: 142, icon: 'check-circle', color: 'accent' },
+                                { label: 'No-Show Rate', value: '4%', icon: 'x-circle', color: 'error' }
                             ].map(stat => `
-                                ${UI.Card(`
-                                    <div class="p-5 flex items-start justify-between">
-                                        <div>
-                                            <p class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">${stat.label}</p>
-                                            <h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-2">${stat.value}</h3>
-                                            <p class="text-xs font-bold text-${stat.color}-600 dark:text-${stat.color}-400 mt-2 flex items-center gap-1">
-                                                <i data-lucide="${stat.trend.includes('+') ? 'trending-up' : 'trending-down'}" class="w-3 h-3"></i>
-                                                ${stat.trend} vs yesterday
-                                            </p>
-                                        </div>
-                                        <div class="p-3 rounded-xl bg-${stat.color}-50 dark:bg-${stat.color}-900/20">
-                                            <i data-lucide="${stat.icon}" class="w-6 h-6 text-${stat.color}-600 dark:text-${stat.color}-400"></i>
-                                        </div>
+                                <div class="card p-5 flex items-start justify-between">
+                                    <div>
+                                        <p class="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider">${stat.label}</p>
+                                        <h3 class="text-3xl font-bold mt-2" id="${stat.id}">${stat.value}</h3>
                                     </div>
-                                `)}
+                                    <div class="p-3 rounded-xl bg-${stat.color}/10">
+                                        <i data-lucide="${stat.icon}" class="w-6 h-6 text-${stat.color}"></i>
+                                    </div>
+                                </div>
                             `).join('')}
                         </div>
 
-                        <div class="grid lg:grid-cols-3 gap-6">
-                            <div class="lg:col-span-2">
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <div class="flex items-center justify-between mb-6">
-                                            <h3 class="font-bold text-slate-900 dark:text-white">Live Counter Utilisation</h3>
-                                            ${UI.Badge('Real-time', 'primary')}
-                                        </div>
-                                        <div class="space-y-6">
-                                            ${s.counters.filter(c => c.branch === 'b_1').map(c => {
-                                                const load = c.status === 'open' ? Math.floor(Math.random() * 40) + 60 : 0;
-                                                return `
-                                                    <div>
-                                                        <div class="flex justify-between items-center mb-2">
-                                                            <div class="flex items-center gap-3">
-                                                                <span class="font-semibold text-slate-900 dark:text-white">${c.name}</span>
-                                                                ${c.status === 'break' ? UI.Badge('On Break', 'warning') : UI.Badge('Active', 'success')}
-                                                                ${c.currentTicket ? `<span class="text-sm font-mono text-slate-500">Serving: ${c.currentTicket}</span>` : ''}
-                                                            </div>
-                                                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">${c.status === 'open' ? load : 0}% Capacity</span>
-                                                        </div>
-                                                        <div class="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                                            <div class="h-full rounded-full transition-all duration-1000 ${c.status === 'break' ? 'bg-amber-400 w-0' : load > 80 ? 'bg-rose-500' : 'bg-brand-600'}" style="width: ${c.status === 'break' ? 0 : load}%"></div>
-                                                        </div>
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2 card p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="font-bold">Live Counter Utilisation</h3>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent/10 text-accent">REAL-TIME</span>
+                                </div>
+                                <div class="space-y-6">
+                                    ${s.counters.filter(c => c.branch === 'b_1').map(c => {
+                                        const load = c.status === 'open' ? (c.currentTicket ? 85 : 20) : 0;
+                                        return `
+                                            <div>
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="font-bold">${c.name}</span>
+                                                        <span class="text-xs font-bold px-2 py-0.5 rounded-full ${c.status === 'break' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'}" id="counter-${c.id}-status">
+                                                            ${c.status === 'open' ? 'Active' : 'On Break'}
+                                                        </span>
                                                     </div>
-                                                `;
-                                            }).join('')}
-                                        </div>
-                                    </div>
-                                `)}
+                                                    <span class="text-sm font-bold" id="counter-${c.id}-ticket">${c.currentTicket || '--'}</span>
+                                                </div>
+                                                <div class="h-2 bg-[var(--bg)] rounded-full overflow-hidden">
+                                                    <div id="counter-${c.id}-bar" class="h-full rounded-full transition-all duration-1000 ${c.status === 'break' ? 'bg-warning' : load > 70 ? 'bg-error' : 'bg-accent'}" style="width: ${load}%"></div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
                             </div>
 
                             <div class="space-y-6">
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <div class="flex items-center gap-2 mb-4">
-                                            <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
-                                            <h3 class="font-bold text-slate-900 dark:text-white">AI Operational Insight</h3>
-                                        </div>
-                                        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 mb-4">
-                                            <p class="text-sm font-bold text-amber-900 dark:text-amber-100 mb-1">Peak Demand Predicted</p>
-                                            <p class="text-sm text-amber-800 dark:text-amber-200/80 leading-relaxed">Wait times for "Account Opening" will increase by 22% between 10:00 - 11:30 AM based on historical booking data.</p>
-                                        </div>
-                                        ${UI.Button('Pre-emptively Open Counter 3', "Simulator.toggleCounterStatus('c_3', 'open'); UI.showToast('Counter 3 opened. ETA recalculated.', 'success')", 'primary', 'plus', 'w-full')}
+                                <div class="card p-6">
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <i data-lucide="sparkles" class="w-5 h-5 text-warning"></i>
+                                        <h3 class="font-bold">AI Operational Insight</h3>
                                     </div>
-                                `)}
+                                    <div class="p-4 rounded-xl bg-warning/10 border border-warning/20 mb-4">
+                                        <p class="text-sm font-bold text-warning mb-1">Peak Demand Predicted</p>
+                                        <p class="text-sm text-[var(--text-secondary)] leading-relaxed">Wait times for "Account Opening" will increase by 22% between 10:00 - 11:30 AM.</p>
+                                    </div>
+                                    <button onclick="Simulator.toggleCounterStatus('c_3', 'open'); UI.showToast('Counter 3 opened. ETA recalculated.', 'success')" class="btn btn-primary w-full">
+                                        <i data-lucide="plus" class="w-4 h-4"></i> Pre-emptively Open Counter 3
+                                    </button>
+                                </div>
 
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold text-slate-900 dark:text-white mb-4">Service Performance</h3>
-                                        <div class="space-y-4">
-                                            ${s.services.map(sv => `
-                                                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-                                                    <div class="flex items-center gap-3">
-                                                        <div class="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
-                                                            <i data-lucide="${sv.icon}" class="w-4 h-4 text-slate-600 dark:text-slate-400"></i>
-                                                        </div>
-                                                        <div>
-                                                            <div class="text-sm font-semibold text-slate-900 dark:text-white">${sv.name}</div>
-                                                            <div class="text-xs text-slate-500">Target: ${sv.avgTime}m</div>
-                                                        </div>
+                                <div class="card p-6">
+                                    <h3 class="font-bold mb-4">Service Performance</h3>
+                                    <div class="space-y-4">
+                                        ${s.services.map(sv => `
+                                            <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--bg)]">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center">
+                                                        <i data-lucide="${sv.icon}" class="w-4 h-4 text-[var(--text-secondary)]"></i>
                                                     </div>
-                                                    <div class="text-right">
-                                                        <div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">${sv.avgTime + 2}m</div>
-                                                        <div class="text-xs text-slate-500">Actual Avg</div>
+                                                    <div>
+                                                        <div class="text-sm font-bold">${sv.name}</div>
+                                                        <div class="text-xs text-[var(--text-secondary)]">Target: ${sv.avgTime}m</div>
                                                     </div>
                                                 </div>
-                                            `).join('')}
-                                        </div>
+                                                <div class="text-right">
+                                                    <div class="text-sm font-bold text-success">${sv.avgTime + 2}m</div>
+                                                    <div class="text-xs text-[var(--text-secondary)]">Actual Avg</div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
                                     </div>
-                                `)}
+                                </div>
                             </div>
                         </div>
                     </div>
-                `);
+                `;
             },
 
-            myBookings: () => `
-                ${Layouts.appShell('customer', `
-                    <div class="max-w-4xl mx-auto space-y-6 animate-fade-in">
-                        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">My Bookings</h1>
-                        
-                        <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 pb-1 mb-6">
-                            ${['Upcoming', 'Past', 'Cancelled'].map((tab, i) => `
-                                <button class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${i === 0 ? 'border-brand-600 text-brand-600 dark:text-brand-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
-                                    ${tab}
-                                </button>
-                            `).join('')}
-                        </div>
-
-                        <div class="space-y-4">
-                            ${Simulator.state.bookings.filter(b => b.status === 'upcoming' || b.status === 'completed').map(b => `
-                                ${UI.Card(`
-                                    <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                        <div class="flex items-start gap-4">
-                                            <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                                                <i data-lucide="${b.service.includes('Account') ? 'briefcase' : 'help-circle'}" class="w-6 h-6 text-slate-600 dark:text-slate-400"></i>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-bold text-slate-900 dark:text-white">${b.service}</h3>
-                                                <p class="text-sm text-slate-500">${b.branch}</p>
-                                                <div class="flex items-center gap-3 mt-2 text-sm text-slate-600 dark:text-slate-400">
-                                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${b.date}</span>
-                                                    <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${b.time}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-col sm:items-end gap-3">
-                                            ${UI.Badge(b.status === 'upcoming' ? 'Upcoming' : 'Completed', b.status === 'upcoming' ? 'primary' : 'success')}
-                                            ${b.status === 'upcoming' ? `
-                                                <div class="flex gap-2">
-                                                    ${UI.Button('View', "UI.navigate('queue-tracker')", 'secondary', 'eye', 'py-1.5 text-xs')}
-                                                    ${UI.Button('Cancel', "UI.showToast('Booking cancelled', 'error')", 'destructive', 'x', 'py-1.5 text-xs')}
-                                                </div>
-                                            ` : ''}
-                                        </div>
-                                    </div>
-                                `)}
-                            `).join('')}
-                        </div>
-                    </div>
-                `)}
-            `,
-
             adminDashboard: () => `
-                ${Layouts.appShell('admin', `
-                    <div class="space-y-6 animate-fade-in max-w-6xl mx-auto">
-                        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">System Administration</h1>
-                        
-                        <div class="grid md:grid-cols-3 gap-6">
-                            ${UI.Card(`
-                                <div class="p-6">
-                                    <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-brand-600"></i> Branches</h3>
-                                    <p class="text-sm text-slate-500 mb-4">Manage locations, operating hours, and regional settings.</p>
-                                    <div class="space-y-2">
-                                        ${Simulator.state.branches.map(b => `<div class="flex justify-between text-sm p-2 rounded bg-slate-50 dark:bg-slate-800"><span class="font-medium">${b.name}</span> ${UI.Badge('Active', 'success')}</div>`).join('')}
-                                    </div>
-                                    ${UI.Button('Add Branch', "UI.showToast('Add branch modal opened', 'info')", 'secondary', 'plus', 'w-full mt-4')}
+                <div class="space-y-8">
+                    <h1 class="text-2xl font-bold">System Administration</h1>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="card p-6">
+                            <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-accent"></i> Branches</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mb-4">Manage locations, operating hours, and regional settings.</p>
+                            <div class="space-y-2">
+                                ${Simulator.state.branches.map(b => `<div class="flex justify-between text-sm p-2 rounded-lg bg-[var(--bg)]"><span class="font-bold">${b.name}</span> <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-success/10 text-success">ACTIVE</span></div>`).join('')}
+                            </div>
+                            <button onclick="UI.showToast('Add branch modal opened', 'info')" class="btn btn-secondary w-full mt-4"><i data-lucide="plus" class="w-4 h-4"></i> Add Branch</button>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-accent"></i> Services</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mb-4">Configure service types, average durations, and priority rules.</p>
+                            <div class="space-y-2">
+                                ${Simulator.state.services.map(s => `<div class="flex justify-between text-sm p-2 rounded-lg bg-[var(--bg)]"><span class="font-bold">${s.name}</span> <span class="text-[var(--text-secondary)]">${s.avgTime}m</span></div>`).join('')}
+                            </div>
+                            <button onclick="UI.showToast('Service config opened', 'info')" class="btn btn-secondary w-full mt-4"><i data-lucide="settings" class="w-4 h-4"></i> Configure</button>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="shield" class="w-5 h-5 text-accent"></i> Platform Health</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-[var(--text-secondary)]">API Latency</span>
+                                    <span class="text-sm font-bold text-success">24ms</span>
                                 </div>
-                            `)}
-                            ${UI.Card(`
-                                <div class="p-6">
-                                    <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-brand-600"></i> Services</h3>
-                                    <p class="text-sm text-slate-500 mb-4">Configure service types, average durations, and priority rules.</p>
-                                    <div class="space-y-2">
-                                        ${Simulator.state.services.map(s => `<div class="flex justify-between text-sm p-2 rounded bg-slate-50 dark:bg-slate-800"><span class="font-medium">${s.name}</span> <span class="text-slate-500">${s.avgTime}m</span></div>`).join('')}
-                                    </div>
-                                    ${UI.Button('Configure Services', "UI.showToast('Service config opened', 'info')", 'secondary', 'settings', 'w-full mt-4')}
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-[var(--text-secondary)]">Uptime</span>
+                                    <span class="text-sm font-bold text-success">99.99%</span>
                                 </div>
-                            `)}
-                            ${UI.Card(`
-                                <div class="p-6">
-                                    <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="shield" class="w-5 h-5 text-brand-600"></i> Platform Health</h3>
-                                    <div class="space-y-4">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm text-slate-600 dark:text-slate-400">API Latency</span>
-                                            <span class="text-sm font-bold text-emerald-600">24ms</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm text-slate-600 dark:text-slate-400">Uptime</span>
-                                            <span class="text-sm font-bold text-emerald-600">99.99%</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm text-slate-600 dark:text-slate-400">Active Sessions</span>
-                                            <span class="text-sm font-bold text-brand-600">1,240</span>
-                                        </div>
-                                    </div>
-                                    ${UI.Button('View Audit Logs', "UI.showToast('Audit logs loaded', 'info')", 'secondary', 'file-text', 'w-full mt-4')}
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-[var(--text-secondary)]">Active Sessions</span>
+                                    <span class="text-sm font-bold text-accent">1,240</span>
                                 </div>
-                            `)}
+                            </div>
+                            <button onclick="UI.showToast('Audit logs loaded', 'info')" class="btn btn-secondary w-full mt-4"><i data-lucide="file-text" class="w-4 h-4"></i> View Audit Logs</button>
                         </div>
                     </div>
-                `)}
+                </div>
             `
         };
 
         // ==========================================
-        // 4. LAYOUT SHELL
-        // ==========================================
-        const Layouts = {
-            appShell: (role, content) => {
-                const navItems = {
-                    customer: [
-                        { id: 'customer-dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
-                        { id: 'booking-wizard', icon: 'calendar-plus', label: 'Book' },
-                        { id: 'queue-tracker', icon: 'map-pin', label: 'Tracker' },
-                        { id: 'my-bookings', icon: 'list', label: 'Bookings' }
-                    ],
-                    staff: [
-                        { id: 'counter-dashboard', icon: 'headphones', label: 'My Counter' },
-                        { id: 'manager-dashboard', icon: 'users', label: 'Branch Queue' }
-                    ],
-                    manager: [
-                        { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Overview' },
-                        { id: 'counter-dashboard', icon: 'users', label: 'Staff Allocation' }
-                    ],
-                    admin: [
-                        { id: 'admin-dashboard', icon: 'shield', label: 'System Admin' },
-                        { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Analytics' }
-                    ]
-                };
-
-                const currentNav = navItems[role] || navItems.customer;
-
-                return `
-                    <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
-                        <!-- Desktop Sidebar -->
-                        <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-20">
-                            <div class="p-6 flex items-center gap-3 border-b border-slate-100 dark:border-slate-800">
-                                <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-brand-600/20">Q</div>
-                                <span class="font-bold text-lg text-slate-900 dark:text-white">Smart Q</span>
-                            </div>
-                            <nav class="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
-                                ${currentNav.map(item => `
-                                    <button onclick="UI.navigate('${item.id}')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${Simulator.state.view === item.id ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}">
-                                        <i data-lucide="${item.icon}" class="w-5 h-5"></i> ${item.label}
-                                    </button>
-                                `).join('')}
-                            </nav>
-                            <div class="p-4 border-t border-slate-100 dark:border-slate-800">
-                                <div class="flex items-center gap-3 px-3 py-2 mb-3">
-                                    <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-300">
-                                        ${Simulator.state.currentUser.name.charAt(0)}
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate">${Simulator.state.currentUser.name}</p>
-                                        <p class="text-xs text-slate-500 capitalize">${Simulator.state.currentUser.role}</p>
-                                    </div>
-                                </div>
-                                <button onclick="Simulator.logout()" class="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-colors">
-                                    <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
-                                </button>
-                            </div>
-                        </aside>
-
-                        <!-- Main Content Area -->
-                        <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                            <!-- Mobile Header -->
-                            <header class="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-20">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold">Q</div>
-                                    <span class="font-bold text-lg">Smart Q</span>
-                                </div>
-                                <button onclick="Simulator.logout()" class="p-2 text-slate-600 dark:text-slate-400"><i data-lucide="log-out" class="w-5 h-5"></i></button>
-                            </header>
-
-                            <!-- Scrollable Content -->
-                            <main class="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 pb-24 md:pb-8">
-                                ${content}
-                            </main>
-                            
-                            <!-- Mobile Bottom Nav -->
-                            ${role === 'customer' ? `
-                                <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 flex justify-around p-2 z-30 pb-safe">
-                                    ${currentNav.map(item => `
-                                        <button onclick="UI.navigate('${item.id}')" class="flex flex-col items-center gap-1 p-2 rounded-xl w-full ${Simulator.state.view === item.id ? 'text-brand-600 dark:text-brand-400' : 'text-slate-500 dark:text-slate-400'}">
-                                            <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-                                            <span class="text-[10px] font-bold">${item.label}</span>
-                                        </button>
-                                    `).join('')}
-                                </nav>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            }
-        };
-
-        // ==========================================
-        // 5. CONTROLLER & INITIALIZATION
+        // 6. CONTROLLER & INITIALIZATION
         // ==========================================
         Simulator.login = (role) => {
             const names = { customer: 'Thabo M.', staff: 'Sarah J.', manager: 'David K.', admin: 'System Admin' };
@@ -1225,10 +1374,8 @@
             UI.showToast(`Welcome, ${Simulator.state.currentUser.name}`, 'success');
             
             if (role === 'customer') {
-                // Simulate an active ticket for demo purposes
                 Simulator.state.userTicket = { 
-                    id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, 
-                    position: 4, etaDisplay: '45-55', joinedAt: new Date() 
+                    id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, isPriority: false
                 };
             }
             
@@ -1246,10 +1393,9 @@
             const counter = Simulator.state.counters.find(c => c.id === counterId);
             if (counter) {
                 counter.status = status;
-                const msg = status === 'open' ? `${counter.name} is now open. Wait times decreasing.` : `${counter.name} is on break. Wait times adjusted.`;
-                Simulator.state.lastUpdateMessage = msg;
-                Simulator.triggerNotification(msg, status === 'open' ? 'success' : 'warning');
-                Simulator.recalculateAndRender();
+                const msg = status === 'open' ? `${counter.name} is now open.` : `${counter.name} is on break.`;
+                UI.showToast(msg, status === 'open' ? 'success' : 'warning');
+                TargetedUpdater.updateCounters();
             }
         };
 
@@ -1257,30 +1403,29 @@
             const newId = 't_' + Math.floor(Math.random() * 1000);
             Simulator.state.userTicket = {
                 id: newId, number: 'A' + Math.floor(Math.random() * 900 + 100), service: 'svc_1', 
-                status: 'waiting', counter: null, position: 6, etaDisplay: '30-40', joinedAt: new Date()
+                status: 'waiting', counter: null, isPriority: false
             };
             Simulator.state.queue.push(Simulator.state.userTicket);
-            Simulator.triggerNotification('Walk-in ticket issued successfully!', 'success');
+            UI.showToast('Walk-in ticket issued successfully!', 'success');
             UI.navigate('queue-tracker');
         };
 
         Simulator.confirmBooking = () => {
             Simulator.state.bookingStep = 1;
             Simulator.state.userTicket = {
-                id: 't_new', number: 'A115', service: 'svc_2', status: 'waiting', counter: null,
-                position: 5, etaDisplay: '50-60', joinedAt: new Date()
+                id: 't_new', number: 'A115', service: 'svc_2', status: 'waiting', counter: null, isPriority: false
             };
             Simulator.state.queue.push(Simulator.state.userTicket);
-            Simulator.triggerNotification('Appointment booked and queue joined!', 'success');
+            UI.showToast('Appointment booked and queue joined!', 'success');
             UI.navigate('customer-dashboard');
         };
 
-        // Start the simulation heartbeat
-        Simulator.startSimulation();
-
-        // Initial Render
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            UI.renderCurrentView();
+            document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
+            Simulator.startSimulation();
+            Renderer.renderLayout();
+            Renderer.renderView();
         });
     </script>
 </body>
