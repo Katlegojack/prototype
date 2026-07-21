@@ -1,422 +1,629 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart Q | Enterprise Queue Intelligence</title>
+    <meta name="description" content="The operating system for physical waiting. AI-powered queue management for enterprise.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://unpkg.com/lucide@latest">
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-down': 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-soft': 'pulseSoft 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 7s ease-in-out infinite',
+                        'shimmer': 'shimmer 2.5s linear infinite',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-12px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '0.75', transform: 'scale(0.97)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-14px)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.92)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        }
+                    }
                 }
             }
         }
     </script>
+
     <style>
         :root {
-            --bg: #FAFAFA;
-            --surface: #FFFFFF;
-            --border: rgba(0, 0, 0, 0.06);
-            --text-primary: #09090B;
-            --text-secondary: #71717A;
-            --accent: #2563EB;
-            --accent-hover: #1D4ED8;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
+            --brand: #4f46e5;
+            --brand-light: #eef2ff;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
         }
+
         .dark {
-            --bg: #09090B;
-            --surface: #18181B;
-            --border: rgba(255, 255, 255, 0.08);
-            --text-primary: #FAFAFA;
-            --text-secondary: #A1A1AA;
-            --accent: #3B82F6;
-            --accent-hover: #60A5FA;
-            --success: #34D399;
-            --warning: #FBBF24;
-            --error: #F87171;
+            --brand: #818cf8;
+            --brand-light: #1e1b4b;
+            --surface: #0f172a;
+            --surface-alt: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            --border: #1e293b;
+            --border-light: #334155;
         }
+
         body {
-            background-color: var(--bg);
-            color: var(--text-primary);
             font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: -0.01em;
         }
-        .surface { background-color: var(--surface); }
-        .border-subtle { border-color: var(--border); }
-        .text-primary { color: var(--text-primary); }
-        .text-secondary { color: var(--text-secondary); }
-        .bg-accent { background-color: var(--accent); }
-        .text-accent { color: var(--accent); }
-        
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 3px; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        
-        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .animate-pulse-dot { animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        
-        .btn-primary {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            background-color: var(--text-primary);
-            color: var(--bg);
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: opacity 0.2s;
+
+        *:focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px;
+            border-radius: 8px;
         }
-        .btn-primary:hover { opacity: 0.9; }
-        
-        .btn-secondary {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-            background-color: var(--surface);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
+
+        .glass-subtle {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
         }
-        .btn-secondary:hover { background-color: var(--bg); }
-        
-        .btn-accent {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            background-color: var(--accent);
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
+        .dark .glass-subtle {
+            background: rgba(15, 23, 42, 0.75);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
         }
-        .btn-accent:hover { background-color: var(--accent-hover); }
+
+        .card-hover {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.04);
+        }
+        .dark .card-hover:hover {
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4), 0 4px 12px -4px rgba(0, 0, 0, 0.25);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .dark .hero-glow {
+            opacity: 0.18;
+        }
+
+        [data-live] {
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(148, 163, 184, 0.25);
+            border-radius: 20px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(71, 85, 105, 0.5);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="antialiased selection:bg-blue-100 dark:selection:bg-blue-900/50 selection:text-blue-900 dark:selection:text-blue-100">
+<body class="bg-[var(--surface-alt)] text-[var(--text-primary)] transition-colors duration-300 antialiased">
 
-    <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
-    <div id="modal-container" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none max-w-sm w-full"></div>
+    <div id="modal-container" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4 bg-slate-900/50 dark:bg-slate-950/70 backdrop-blur-sm transition-opacity"></div>
 
-    <!-- LANDING PAGE -->
-    <section id="landing-page" class="min-h-screen flex flex-col">
-        <header class="fixed top-0 w-full z-50 surface border-b border-subtle backdrop-blur-md bg-opacity-80">
-            <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-[var(--text-primary)] rounded-md flex items-center justify-center text-[var(--bg)] font-bold text-sm">Q</div>
-                    <span class="font-bold text-lg tracking-tight">Smart Q</span>
-                </div>
-                <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-secondary">
-                    <a href="#capabilities" class="hover:text-primary transition-colors">Capabilities</a>
-                    <a href="#intelligence" class="hover:text-primary transition-colors">Intelligence</a>
-                    <a href="#enterprise" class="hover:text-primary transition-colors">Enterprise</a>
+    <!-- ========================================== -->
+    <!-- LANDING PAGE                              -->
+    <!-- ========================================== -->
+    <section id="landing-page" class="min-h-screen flex flex-col bg-[var(--surface)]">
+        <!-- Nav -->
+        <header class="fixed top-0 w-full z-50 glass-subtle">
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand-600/20 transition-transform group-hover:scale-105">Q</div>
+                    <span class="font-bold text-xl tracking-tight text-[var(--text-primary)]">Smart Q</span>
+                </a>
+                <nav class="hidden md:flex items-center gap-10 text-sm font-medium text-[var(--text-secondary)]">
+                    <a href="#features" class="hover:text-[var(--text-primary)] transition-colors duration-200">Product</a>
+                    <a href="#ai" class="hover:text-[var(--text-primary)] transition-colors duration-200">AI Intelligence</a>
+                    <a href="#testimonials" class="hover:text-[var(--text-primary)] transition-colors duration-200">Customers</a>
+                    <a href="#pricing" class="hover:text-[var(--text-primary)] transition-colors duration-200">Pricing</a>
                 </nav>
-                <div class="flex items-center gap-4">
-                    <button onclick="App.toggleTheme()" class="p-2 rounded-md hover:bg-[var(--bg)] transition-colors text-secondary">
-                        <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
-                        <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                <div class="flex items-center gap-3">
+                    <button onclick="App.toggleTheme()" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
+                        <i data-lucide="moon" class="w-4.5 h-4.5 text-[var(--text-secondary)] hidden dark:block"></i>
+                        <i data-lucide="sun" class="w-4.5 h-4.5 text-[var(--text-secondary)] dark:hidden"></i>
                     </button>
-                    <button onclick="App.login('customer')" class="text-sm font-medium text-secondary hover:text-primary transition-colors hidden sm:block">Sign in</button>
-                    <button onclick="App.login('manager')" class="btn-primary">Get started</button>
+                    <button onclick="App.login('customer')" class="hidden sm:inline-flex px-4 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">Sign In</button>
+                    <button onclick="App.login('manager')" class="px-5 py-2.5 text-sm font-semibold bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-sm active:scale-[0.97]">
+                        Get Started
+                    </button>
                 </div>
             </div>
         </header>
 
+        <!-- Hero -->
         <main class="flex-1 pt-16">
-            <!-- Hero -->
-            <section class="relative overflow-hidden border-b border-subtle">
-                <div class="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
-                <div class="relative max-w-6xl mx-auto px-6 pt-32 pb-24 text-center">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-subtle surface text-xs font-medium text-secondary mb-8">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-dot"></span>
-                        Enterprise Queue Intelligence
-                    </div>
-                    <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
-                        The infrastructure for<br>physical waiting.
-                    </h1>
-                    <p class="text-lg md:text-xl text-secondary max-w-2xl mx-auto leading-relaxed mb-10">
-                        Smart Q replaces chaotic lines with mathematical precision. A unified platform for booking, live tracking, and operational control across thousands of service points.
-                    </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <button onclick="App.login('manager')" class="btn-primary px-6 py-3 text-base">Request a demo</button>
-                        <button onclick="App.login('customer')" class="btn-secondary px-6 py-3 text-base">View platform</button>
-                    </div>
-                </div>
-            </section>
+            <div class="relative overflow-hidden">
+                <div class="hero-glow w-[600px] h-[600px] bg-brand-400 -top-40 -right-40"></div>
+                <div class="hero-glow w-[500px] h-[500px] bg-indigo-300 bottom-20 -left-40" style="opacity:0.08;"></div>
 
-            <!-- Logos -->
-            <section class="border-b border-subtle py-16">
-                <div class="max-w-6xl mx-auto px-6">
-                    <p class="text-center text-xs font-semibold uppercase tracking-widest text-secondary mb-10">Trusted by leading institutions</p>
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center opacity-50">
-                        <div class="text-center text-xl font-bold tracking-tight">Standard Bank</div>
-                        <div class="text-center text-xl font-bold tracking-tight">Netcare</div>
-                        <div class="text-center text-xl font-bold tracking-tight">City of Joburg</div>
-                        <div class="text-center text-xl font-bold tracking-tight">Discovery</div>
-                        <div class="text-center text-xl font-bold tracking-tight">Woolworths</div>
-                        <div class="text-center text-xl font-bold tracking-tight">Home Affairs</div>
-                    </div>
-                </div>
-            </section>
+                <div class="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-20 lg:py-28">
+                    <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+                        <div class="animate-slide-up">
+                            <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 text-xs font-semibold mb-8 border border-brand-200/60 dark:border-brand-800/40 tracking-wide">
+                                <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                                Enterprise Queue Intelligence
+                            </div>
+                            <h1 class="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-[var(--text-primary)] leading-[1.08]">
+                                The operating system for
+                                <span class="gradient-text">physical waiting.</span>
+                            </h1>
+                            <p class="mt-6 text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed max-w-lg">
+                                Transform chaotic physical lines into predictable, calm digital experiences. Purpose-built for banks, hospitals, and government at national scale.
+                            </p>
+                            <div class="mt-10 flex flex-wrap gap-3.5">
+                                <button onclick="App.login('manager')" class="px-6 py-3.5 text-sm font-semibold bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/15 active:scale-[0.97] flex items-center gap-2">
+                                    Start Free Trial
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="App.login('customer')" class="px-6 py-3.5 text-sm font-semibold bg-white dark:bg-slate-800 text-[var(--text-primary)] border border-[var(--border)] rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-[0.97] flex items-center gap-2">
+                                    <i data-lucide="play-circle" class="w-4 h-4"></i> View Live Demo
+                                </button>
+                            </div>
+                            <div class="mt-10 flex items-center gap-6 text-sm text-[var(--text-tertiary)]">
+                                <span class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> No credit card</span>
+                                <span class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> SOC 2 compliant</span>
+                                <span class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> 14-day trial</span>
+                            </div>
+                        </div>
 
-            <!-- Capabilities -->
-            <section id="capabilities" class="border-b border-subtle py-24">
-                <div class="max-w-6xl mx-auto px-6">
-                    <div class="max-w-2xl mb-16">
-                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">Built for scale. Designed for clarity.</h2>
-                        <p class="text-lg text-secondary leading-relaxed">A complete operational platform replacing fragmented queue systems with a unified, intelligent infrastructure.</p>
-                    </div>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--border)] border border-subtle rounded-xl overflow-hidden">
-                        <div class="surface p-8">
-                            <div class="w-10 h-10 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center mb-6">
-                                <i data-lucide="calendar-check" class="w-5 h-5"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">Intelligent Booking</h3>
-                            <p class="text-sm text-secondary leading-relaxed">Multi-step scheduling with live branch capacity, service duration estimates, and automated confirmations.</p>
-                        </div>
-                        <div class="surface p-8">
-                            <div class="w-10 h-10 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center mb-6">
-                                <i data-lucide="map-pin" class="w-5 h-5"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">Live Queue Tracking</h3>
-                            <p class="text-sm text-secondary leading-relaxed">Real-time progress, dynamic ETA updates, and push notifications keep customers informed and calm.</p>
-                        </div>
-                        <div class="surface p-8">
-                            <div class="w-10 h-10 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center mb-6">
-                                <i data-lucide="headphones" class="w-5 h-5"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">Counter Management</h3>
-                            <p class="text-sm text-secondary leading-relaxed">Staff dashboards with one-click call, complete, and no-show actions. Optimized for high-volume environments.</p>
-                        </div>
-                        <div class="surface p-8">
-                            <div class="w-10 h-10 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center mb-6">
-                                <i data-lucide="brain" class="w-5 h-5"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">AI Forecasting</h3>
-                            <p class="text-sm text-secondary leading-relaxed">Predictive models analyze historical data to anticipate peak hours and suggest optimal staff allocation.</p>
-                        </div>
-                        <div class="surface p-8">
-                            <div class="w-10 h-10 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center mb-6">
-                                <i data-lucide="building-2" class="w-5 h-5"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">Multi-Branch Control</h3>
-                            <p class="text-sm text-secondary leading-relaxed">Centralized administration for hundreds of locations with granular, role-based access control.</p>
-                        </div>
-                        <div class="surface p-8">
-                            <div class="w-10 h-10 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center mb-6">
-                                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">Deep Analytics</h3>
-                            <p class="text-sm text-secondary leading-relaxed">Track wait times, completion rates, and service performance with exportable, compliance-ready reports.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                        <!-- Interactive Preview Card -->
+                        <div class="relative animate-slide-up" style="animation-delay: 0.15s;">
+                            <div class="relative p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-[var(--border)] shadow-2xl shadow-slate-200/40 dark:shadow-black/30">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold shadow-md shadow-brand-600/15 text-sm">Q</div>
+                                        <div>
+                                            <div class="font-semibold text-[var(--text-primary)] text-sm">Sandton City Branch</div>
+                                            <div class="text-xs text-[var(--text-tertiary)] font-medium">Live Queue Status</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold border border-emerald-200/60 dark:border-emerald-800/40">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+                                    </div>
+                                </div>
 
-            <!-- Intelligence -->
-            <section id="intelligence" class="border-b border-subtle py-24">
-                <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <p class="text-sm font-semibold text-accent uppercase tracking-widest mb-4">AI Intelligence</p>
-                        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-6">Mathematical precision, not guesswork.</h2>
-                        <p class="text-lg text-secondary leading-relaxed mb-8">
-                            Smart Q doesn't just track the queue; it understands it. Our engine calculates wait times based on live counter status, service complexity, and historical throughput.
-                        </p>
-                        <ul class="space-y-4">
-                            <li class="flex items-start gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-accent mt-0.5 shrink-0"></i>
+                                <div class="grid grid-cols-3 gap-3 mb-6">
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-center border border-[var(--border-light)]">
+                                        <div class="text-xl font-bold text-[var(--text-primary)] font-mono tracking-tight" data-live="hero-serving">A104</div>
+                                        <div class="text-[10px] text-[var(--text-tertiary)] font-semibold mt-1.5 uppercase tracking-widest">Now Serving</div>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-center border border-[var(--border-light)]">
+                                        <div class="text-xl font-bold text-brand-600 dark:text-brand-400 font-mono tracking-tight" data-live="hero-waiting">12</div>
+                                        <div class="text-[10px] text-[var(--text-tertiary)] font-semibold mt-1.5 uppercase tracking-widest">Waiting</div>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-center border border-[var(--border-light)]">
+                                        <div class="text-xl font-bold text-[var(--text-primary)] font-mono tracking-tight" data-live="hero-eta">8m</div>
+                                        <div class="text-[10px] text-[var(--text-tertiary)] font-semibold mt-1.5 uppercase tracking-widest">Avg Wait</div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2.5">
+                                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-brand-50/70 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-800/30 transition-all">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/60 flex items-center justify-center font-mono font-bold text-brand-700 dark:text-brand-300 text-xs">A105</div>
+                                            <div class="text-sm font-semibold text-[var(--text-primary)]">Next in Queue</div>
+                                        </div>
+                                        <div class="text-[10px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Priority</div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-[var(--border-light)] transition-all">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-mono font-bold text-slate-600 dark:text-slate-300 text-xs">A106</div>
+                                            <div class="text-sm font-semibold text-[var(--text-primary)]">General Inquiry</div>
+                                        </div>
+                                        <div class="text-xs font-semibold text-[var(--text-tertiary)]">~15 min</div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-[var(--border-light)] transition-all">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-mono font-bold text-slate-600 dark:text-slate-300 text-xs">A107</div>
+                                            <div class="text-sm font-semibold text-[var(--text-primary)]">Account Opening</div>
+                                        </div>
+                                        <div class="text-xs font-semibold text-[var(--text-tertiary)]">~28 min</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Floating badge -->
+                            <div class="absolute -top-5 -right-5 p-4 rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-[var(--border)] animate-float hidden lg:flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
+                                    <i data-lucide="check" class="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400"></i>
+                                </div>
                                 <div>
-                                    <h4 class="font-semibold">Dynamic ETA Calculation</h4>
-                                    <p class="text-sm text-secondary mt-1">Adjusts in real-time based on counter speed and queue length.</p>
+                                    <div class="text-xs font-bold text-[var(--text-primary)] whitespace-nowrap">Service Complete</div>
+                                    <div class="text-[10px] text-[var(--text-tertiary)] font-medium">Counter 2 • 12m</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trusted By -->
+            <div class="border-t border-[var(--border-light)] bg-white dark:bg-slate-900/60">
+                <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-14">
+                    <p class="text-center text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-widest mb-10">Trusted by leading institutions across Africa</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-items-center">
+                        <div class="text-base font-bold text-[var(--text-tertiary)] tracking-tight opacity-70 hover:opacity-100 transition-opacity">Standard Bank</div>
+                        <div class="text-base font-bold text-[var(--text-tertiary)] tracking-tight opacity-70 hover:opacity-100 transition-opacity">Netcare</div>
+                        <div class="text-base font-bold text-[var(--text-tertiary)] tracking-tight opacity-70 hover:opacity-100 transition-opacity">City of Joburg</div>
+                        <div class="text-base font-bold text-[var(--text-tertiary)] tracking-tight opacity-70 hover:opacity-100 transition-opacity">Discovery</div>
+                        <div class="text-base font-bold text-[var(--text-tertiary)] tracking-tight opacity-70 hover:opacity-100 transition-opacity">Woolworths</div>
+                        <div class="text-base font-bold text-[var(--text-tertiary)] tracking-tight opacity-70 hover:opacity-100 transition-opacity">Home Affairs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem / Solution -->
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-24 lg:py-32">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-4 block">The Shift</span>
+                    <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text-primary)]">From chaotic lines to predictable experiences.</h2>
+                    <p class="mt-4 text-base text-[var(--text-secondary)] max-w-lg mx-auto">Physical waiting is broken. Smart Q fixes it with mathematical precision and operational intelligence.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="p-8 rounded-2xl bg-rose-50/70 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-800/30">
+                        <div class="w-11 h-11 rounded-xl bg-rose-100 dark:bg-rose-900/40 flex items-center justify-center mb-6">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600 dark:text-rose-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-rose-900 dark:text-rose-100 mb-5">The Old Way</h3>
+                        <ul class="space-y-3.5 text-sm text-rose-700/80 dark:text-rose-300/70">
+                            <li class="flex items-start gap-3"><i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i> Unpredictable wait times causing frustration</li>
+                            <li class="flex items-start gap-3"><i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i> High no-show rates and lost revenue</li>
+                            <li class="flex items-start gap-3"><i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i> Staff overwhelmed during peak hours</li>
+                            <li class="flex items-start gap-3"><i data-lucide="x" class="w-4 h-4 text-rose-500 mt-0.5 shrink-0"></i> Zero visibility into operational bottlenecks</li>
+                        </ul>
+                    </div>
+                    <div class="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-[var(--border)] shadow-xl shadow-brand-600/5 relative overflow-hidden card-hover">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-100/60 dark:bg-brand-900/15 rounded-full blur-3xl -z-0 pointer-events-none"></div>
+                        <div class="relative z-10">
+                            <div class="w-11 h-11 rounded-xl bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center mb-6">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-brand-600 dark:text-brand-400"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-[var(--text-primary)] mb-5">The Smart Q Way</h3>
+                            <ul class="space-y-3.5 text-sm text-[var(--text-secondary)]">
+                                <li class="flex items-start gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-600 dark:text-brand-400 mt-0.5 shrink-0"></i> Precise, mathematically derived ETAs</li>
+                                <li class="flex items-start gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-600 dark:text-brand-400 mt-0.5 shrink-0"></i> Digital tickets reduce no-shows by 40%</li>
+                                <li class="flex items-start gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-600 dark:text-brand-400 mt-0.5 shrink-0"></i> AI-driven capacity forecasting</li>
+                                <li class="flex items-start gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-600 dark:text-brand-400 mt-0.5 shrink-0"></i> Real-time analytics for instant optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div id="features" class="bg-white dark:bg-slate-900 border-y border-[var(--border-light)]">
+                <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-24 lg:py-32">
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-4 block">Platform</span>
+                        <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text-primary)]">Everything you need to manage physical flow.</h2>
+                        <p class="mt-4 text-base text-[var(--text-secondary)] max-w-lg mx-auto">A complete suite of tools for customers, staff, and management.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${[
+                            { icon: 'calendar-check', title: 'Intelligent Booking', desc: 'Multi-step wizard with live branch capacity and accurate service duration estimates.' },
+                            { icon: 'map-pin', title: 'Live Queue Tracking', desc: 'Real-time progress, people ahead count, and dynamic ETA recalculations.' },
+                            { icon: 'headphones', title: 'Counter Management', desc: 'Staff dashboard with one-click call, complete, and no-show actions.' },
+                            { icon: 'brain', title: 'AI Forecasting', desc: 'Predictive models anticipate peak hours and suggest optimal staff allocation.' },
+                            { icon: 'building-2', title: 'Multi-Branch', desc: 'Centralized control for hundreds of locations with role-based access.' },
+                            { icon: 'bar-chart-3', title: 'Deep Analytics', desc: 'Track wait times, completion rates, and service performance trends.' }
+                        ].map(f => `
+                            <div class="p-6 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border-light)] card-hover group cursor-default">
+                                <div class="w-11 h-11 rounded-xl bg-white dark:bg-slate-800 border border-[var(--border)] flex items-center justify-center mb-5 group-hover:border-brand-400 dark:group-hover:border-brand-500 transition-colors duration-300">
+                                    <i data-lucide="${f.icon}" class="w-5 h-5 text-[var(--text-secondary)] group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors duration-300"></i>
+                                </div>
+                                <h3 class="text-base font-bold text-[var(--text-primary)] mb-2">${f.title}</h3>
+                                <p class="text-sm text-[var(--text-secondary)] leading-relaxed">${f.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Section -->
+            <div id="ai" class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-24 lg:py-32">
+                <div class="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 text-xs font-semibold mb-6 border border-amber-200/60 dark:border-amber-800/40">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI-Powered
+                        </div>
+                        <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">Predictive, not reactive.</h2>
+                        <p class="mt-5 text-base text-[var(--text-secondary)] leading-relaxed max-w-lg">
+                            Smart Q doesn't just track the queue — it understands it. Our AI engine analyzes historical data, service durations, and counter status to provide mathematically precise wait times and operational insights.
+                        </p>
+                        <ul class="mt-8 space-y-5">
+                            <li class="flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-lg bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center shrink-0">
+                                    <i data-lucide="clock" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-[var(--text-primary)]">Dynamic ETA Calculation</h4>
+                                    <p class="text-sm text-[var(--text-secondary)] mt-1">Adjusts in real-time based on counter speed and queue length changes.</p>
                                 </div>
                             </li>
-                            <li class="flex items-start gap-3">
-                                <i data-lucide="check" class="w-5 h-5 text-accent mt-0.5 shrink-0"></i>
+                            <li class="flex items-start gap-4">
+                                <div class="w-9 h-9 rounded-lg bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center shrink-0">
+                                    <i data-lucide="trending-up" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                                </div>
                                 <div>
-                                    <h4 class="font-semibold">Peak Hour Forecasting</h4>
-                                    <p class="text-sm text-secondary mt-1">Alerts managers before bottlenecks occur, enabling proactive staffing.</p>
+                                    <h4 class="font-semibold text-[var(--text-primary)]">Peak Hour Forecasting</h4>
+                                    <p class="text-sm text-[var(--text-secondary)] mt-1">Alerts managers before bottlenecks occur, enabling proactive staffing.</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
-                    <div class="surface border border-subtle rounded-xl p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-semibold">Wait Time Forecast vs Actual</h3>
-                            <span class="text-xs font-medium text-secondary">Last 7 Days</span>
-                        </div>
-                        <div class="h-48 flex items-end justify-between gap-2 mb-6">
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <div class="w-full bg-[var(--accent)] rounded-t-md" style="height: 60%"></div>
-                                <div class="w-full bg-[var(--border)] rounded-t-md" style="height: 55%"></div>
-                                <span class="text-xs text-secondary">Mon</span>
+                    <div class="relative">
+                        <div class="p-6 rounded-2xl bg-slate-900 dark:bg-slate-800 border border-slate-700 dark:border-slate-700 shadow-2xl shadow-slate-900/20">
+                            <div class="flex items-center gap-2 mb-6">
+                                <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                <span class="text-[10px] font-mono text-slate-500 ml-3">ai_engine.log</span>
                             </div>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <div class="w-full bg-[var(--accent)] rounded-t-md" style="height: 80%"></div>
-                                <div class="w-full bg-[var(--border)] rounded-t-md" style="height: 85%"></div>
-                                <span class="text-xs text-secondary">Tue</span>
-                            </div>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <div class="w-full bg-[var(--accent)] rounded-t-md" style="height: 40%"></div>
-                                <div class="w-full bg-[var(--border)] rounded-t-md" style="height: 42%"></div>
-                                <span class="text-xs text-secondary">Wed</span>
-                            </div>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <div class="w-full bg-[var(--accent)] rounded-t-md" style="height: 90%"></div>
-                                <div class="w-full bg-[var(--border)] rounded-t-md" style="height: 88%"></div>
-                                <span class="text-xs text-secondary">Thu</span>
-                            </div>
-                            <div class="flex-1 flex flex-col items-center gap-2">
-                                <div class="w-full bg-[var(--accent)] rounded-t-md" style="height: 70%"></div>
-                                <div class="w-full bg-[var(--border)] rounded-t-md" style="height: 75%"></div>
-                                <span class="text-xs text-secondary">Fri</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-6 text-xs text-secondary">
-                            <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-sm bg-[var(--accent)]"></div>
-                                <span>Predicted</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-sm bg-[var(--border)]"></div>
-                                <span>Actual</span>
+                            <div class="space-y-4 font-mono text-sm">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-emerald-400 shrink-0">></span>
+                                    <div class="flex-1">
+                                        <span class="text-slate-400">Analyzing branch capacity...</span>
+                                        <div class="mt-2 h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                            <div class="h-full bg-emerald-500 rounded-full animate-shimmer" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-brand-400 shrink-0">></span>
+                                    <span class="text-slate-300">Predicting peak demand: <span class="text-amber-400 font-semibold">10:30 AM</span></span>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-brand-400 shrink-0">></span>
+                                    <span class="text-slate-300">Recommendation: <span class="text-emerald-400 font-semibold">Open Counter 3</span></span>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-slate-600 shrink-0">></span>
+                                    <span class="text-slate-500">ETA recalculated: <span class="text-white font-semibold">12–15 mins</span></span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- Enterprise -->
-            <section id="enterprise" class="border-b border-subtle py-24">
-                <div class="max-w-6xl mx-auto px-6 text-center max-w-3xl mx-auto">
-                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-6">Deployed with confidence.</h2>
-                    <p class="text-lg text-secondary leading-relaxed mb-12">Built for national scale. Secure, compliant, and resilient.</p>
-                    <div class="grid md:grid-cols-3 gap-8 text-left">
-                        <div>
-                            <i data-lucide="shield-check" class="w-8 h-8 mb-4"></i>
-                            <h3 class="font-semibold mb-2">POPIA Compliant</h3>
-                            <p class="text-sm text-secondary">Data handling and storage fully aligned with South African privacy regulations.</p>
-                        </div>
-                        <div>
-                            <i data-lucide="server" class="w-8 h-8 mb-4"></i>
-                            <h3 class="font-semibold mb-2">99.99% Uptime</h3>
-                            <p class="text-sm text-secondary">Enterprise-grade infrastructure with offline-first fallbacks for connectivity resilience.</p>
-                        </div>
-                        <div>
-                            <i data-lucide="lock" class="w-8 h-8 mb-4"></i>
-                            <h3 class="font-semibold mb-2">Role-Based Access</h3>
-                            <p class="text-sm text-secondary">Granular permissions for customers, staff, managers, and system administrators.</p>
-                        </div>
+            <!-- Testimonials -->
+            <div id="testimonials" class="bg-white dark:bg-slate-900 border-y border-[var(--border-light)]">
+                <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-24 lg:py-32">
+                    <div class="text-center max-w-2xl mx-auto mb-16">
+                        <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest mb-4 block">Testimonials</span>
+                        <h2 class="text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text-primary)]">Loved by operations teams.</h2>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        ${[
+                            { quote: "Smart Q reduced our patient wait times by 40%. The live tracking gives people their time back.", author: "Dr. Sarah Jenkins", role: "Hospital Administrator" },
+                            { quote: "The AI forecasting is a game changer. We now staff our counters based on data, not guesswork.", author: "David Mokoena", role: "Branch Manager, Retail Bank" },
+                            { quote: "Finally, a queue system that feels like modern software. Our customers love the digital tickets.", author: "Lerato Khumalo", role: "Customer Experience Lead" }
+                        ].map(t => `
+                            <div class="p-7 rounded-2xl bg-[var(--surface-alt)] border border-[var(--border-light)] card-hover">
+                                <div class="flex gap-1 mb-5">
+                                    ${[1,2,3,4,5].map(() => `<i data-lucide="star" class="w-4.5 h-4.5 text-amber-400 fill-current"></i>`).join('')}
+                                </div>
+                                <p class="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 italic">"${t.quote}"</p>
+                                <div class="flex items-center gap-3 pt-4 border-t border-[var(--border-light)]">
+                                    <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xs text-[var(--text-secondary)]">
+                                        ${t.author.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-[var(--text-primary)]">${t.author}</div>
+                                        <div class="text-xs text-[var(--text-tertiary)]">${t.role}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-            </section>
+            </div>
 
             <!-- CTA -->
-            <section class="py-24">
-                <div class="max-w-6xl mx-auto px-6 text-center">
-                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-6">Ready to modernize your operations?</h2>
-                    <p class="text-lg text-secondary leading-relaxed mb-10 max-w-2xl mx-auto">Join hundreds of institutions using Smart Q to deliver predictable, calm, and efficient customer experiences.</p>
-                    <button onclick="App.login('manager')" class="btn-primary px-8 py-4 text-base">Start free trial</button>
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-24 lg:py-32">
+                <div class="relative p-10 sm:p-14 lg:p-16 rounded-3xl bg-brand-600 overflow-hidden text-center shadow-2xl shadow-brand-600/25">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-500 to-brand-700 opacity-80"></div>
+                    <div class="absolute top-0 right-0 w-72 h-72 bg-white/8 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-72 h-72 bg-black/10 rounded-full blur-3xl"></div>
+                    <div class="relative z-10">
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">Ready to transform your waiting rooms?</h2>
+                        <p class="mt-4 text-base text-brand-100 max-w-xl mx-auto">Join hundreds of institutions using Smart Q to deliver predictable, calm, and efficient customer experiences.</p>
+                        <div class="mt-8 flex flex-wrap justify-center gap-3.5">
+                            <button onclick="App.login('manager')" class="px-7 py-3.5 text-sm font-semibold bg-white text-brand-700 rounded-xl hover:bg-slate-100 transition-all shadow-lg active:scale-[0.97]">Start Free Trial</button>
+                            <button onclick="App.login('customer')" class="px-7 py-3.5 text-sm font-semibold bg-brand-800/40 text-white border border-white/25 rounded-xl hover:bg-brand-800/60 transition-all active:scale-[0.97] backdrop-blur-sm">View Live Demo</button>
+                        </div>
+                    </div>
                 </div>
-            </section>
+            </div>
         </main>
 
-        <footer class="border-t border-subtle py-12">
-            <div class="max-w-6xl mx-auto px-6">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                    <div class="col-span-2 md:col-span-1">
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-7 h-7 bg-[var(--text-primary)] rounded-md flex items-center justify-center text-[var(--bg)] font-bold text-sm">Q</div>
-                            <span class="font-bold text-lg tracking-tight">Smart Q</span>
-                        </div>
-                        <p class="text-sm text-secondary">The infrastructure for physical waiting.</p>
+        <!-- Footer -->
+        <footer class="border-t border-[var(--border-light)] bg-white dark:bg-slate-950">
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-14">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                    <div class="col-span-2 md:col-span-2">
+                        <a href="#" class="flex items-center gap-2.5 mb-4">
+                            <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">Q</div>
+                            <span class="font-bold text-lg tracking-tight text-[var(--text-primary)]">Smart Q</span>
+                        </a>
+                        <p class="text-sm text-[var(--text-tertiary)] max-w-xs leading-relaxed">The operating system for physical waiting. Built for enterprise scale.</p>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider mb-4">Product</h4>
-                        <ul class="space-y-3 text-sm text-secondary">
-                            <li><a href="#" class="hover:text-primary transition-colors">Capabilities</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Pricing</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Security</a></li>
+                        <h4 class="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4">Product</h4>
+                        <ul class="space-y-3 text-sm text-[var(--text-tertiary)]">
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Features</a></li>
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Pricing</a></li>
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Security</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider mb-4">Company</h4>
-                        <ul class="space-y-3 text-sm text-secondary">
-                            <li><a href="#" class="hover:text-primary transition-colors">About</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
+                        <h4 class="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4">Company</h4>
+                        <ul class="space-y-3 text-sm text-[var(--text-tertiary)]">
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">About</a></li>
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Careers</a></li>
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Contact</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider mb-4">Legal</h4>
-                        <ul class="space-y-3 text-sm text-secondary">
-                            <li><a href="#" class="hover:text-primary transition-colors">Privacy</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">Terms</a></li>
-                            <li><a href="#" class="hover:text-primary transition-colors">POPIA</a></li>
+                        <h4 class="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4">Legal</h4>
+                        <ul class="space-y-3 text-sm text-[var(--text-tertiary)]">
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Privacy</a></li>
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">Terms</a></li>
+                            <li><a href="#" class="hover:text-[var(--text-primary)] transition-colors">POPIA</a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="pt-8 border-t border-subtle flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p class="text-sm text-secondary">© 2026 Smart Q Technologies. All rights reserved.</p>
-                    <div class="flex gap-4 text-secondary">
-                        <a href="#" class="hover:text-primary transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i></a>
-                        <a href="#" class="hover:text-primary transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
-                        <a href="#" class="hover:text-primary transition-colors"><i data-lucide="github" class="w-4 h-4"></i></a>
+                <div class="pt-8 border-t border-[var(--border-light)] flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p class="text-xs text-[var(--text-tertiary)]">© 2026 Smart Q Technologies. All rights reserved.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"><i data-lucide="twitter" class="w-4.5 h-4.5"></i></a>
+                        <a href="#" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"><i data-lucide="linkedin" class="w-4.5 h-4.5"></i></a>
+                        <a href="#" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"><i data-lucide="github" class="w-4.5 h-4.5"></i></a>
                     </div>
                 </div>
             </div>
         </footer>
     </section>
 
-    <!-- APP SHELL -->
-    <section id="app-shell" class="hidden min-h-screen flex">
-        <aside id="sidebar" class="hidden md:flex flex-col w-64 surface border-r border-subtle z-20 fixed h-full">
-            <div class="p-6 flex items-center gap-2 border-b border-subtle">
-                <div class="w-7 h-7 bg-[var(--text-primary)] rounded-md flex items-center justify-center text-[var(--bg)] font-bold text-sm">Q</div>
-                <span class="font-bold text-lg tracking-tight">Smart Q</span>
+    <!-- ========================================== -->
+    <!-- APP SHELL (Authenticated)                  -->
+    <!-- ========================================== -->
+    <section id="app-shell" class="hidden min-h-screen flex bg-[var(--surface-alt)]">
+        <aside id="sidebar" class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-900 border-r border-[var(--border)] z-20 fixed h-full">
+            <div class="p-5 flex items-center gap-3 border-b border-[var(--border-light)]">
+                <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand-600/15">Q</div>
+                <span class="font-bold text-lg tracking-tight text-[var(--text-primary)]">Smart Q</span>
             </div>
-            <nav id="sidebar-nav" class="flex-1 p-4 space-y-1 overflow-y-auto"></nav>
-            <div class="p-4 border-t border-subtle">
+            <nav id="sidebar-nav" class="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar"></nav>
+            <div class="p-4 border-t border-[var(--border-light)]">
                 <div class="flex items-center gap-3 px-3 py-2 mb-3">
-                    <div id="user-avatar" class="w-8 h-8 rounded-full bg-[var(--bg)] border border-subtle flex items-center justify-center text-xs font-bold"></div>
+                    <div id="user-avatar" class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-[var(--text-secondary)]"></div>
                     <div class="flex-1 min-w-0">
-                        <p id="user-name" class="text-sm font-semibold truncate"></p>
-                        <p id="user-role" class="text-xs text-secondary capitalize"></p>
+                        <p id="user-name" class="text-sm font-semibold text-[var(--text-primary)] truncate"></p>
+                        <p id="user-role" class="text-xs text-[var(--text-tertiary)] capitalize"></p>
                     </div>
                 </div>
-                <button onclick="App.logout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--error)] hover:bg-[var(--bg)] rounded-md transition-colors">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> Sign out
+                <button onclick="App.logout()" class="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
                 </button>
             </div>
         </aside>
 
         <div class="flex-1 flex flex-col min-w-0 md:ml-64">
-            <header class="md:hidden flex items-center justify-between p-4 surface border-b border-subtle z-20 sticky top-0">
+            <header class="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b border-[var(--border)] z-20 sticky top-0">
                 <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-[var(--text-primary)] rounded-md flex items-center justify-center text-[var(--bg)] font-bold text-sm">Q</div>
-                    <span class="font-bold text-lg">Smart Q</span>
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">Q</div>
+                    <span class="font-bold text-lg text-[var(--text-primary)]">Smart Q</span>
                 </div>
-                <button onclick="App.logout()" class="p-2 text-secondary"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                <button onclick="App.logout()" class="p-2 text-[var(--text-secondary)]"><i data-lucide="log-out" class="w-5 h-5"></i></button>
             </header>
-
-            <main id="main-content" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 md:pb-8"></main>
-            
-            <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 surface border-t border-subtle flex justify-around p-2 z-30 hidden"></nav>
+            <main id="main-content" class="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 pb-24 md:pb-8"></main>
+            <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-[var(--border)] flex justify-around p-2 z-30 pb-safe hidden"></nav>
         </div>
     </section>
 
     <script>
-        // ==========================================
-        // 1. SIMULATION ENGINE
-        // ==========================================
         const Simulator = {
             state: {
                 currentUser: null,
@@ -424,14 +631,15 @@
                 theme: localStorage.getItem('theme') || 'light',
                 isQueuePaused: false,
                 lastUpdateMessage: '',
+                bookingStep: 1,
                 services: [
-                    { id: 'svc_1', name: 'General Inquiry', avgTime: 12, icon: 'help-circle' },
-                    { id: 'svc_2', name: 'Account Opening', avgTime: 25, icon: 'briefcase' },
-                    { id: 'svc_3', name: 'Loan Consultation', avgTime: 45, icon: 'banknote' }
+                    { id: 'svc_1', name: 'General Inquiry', avgTime: 12, icon: 'help-circle', color: 'blue' },
+                    { id: 'svc_2', name: 'Account Opening', avgTime: 25, icon: 'briefcase', color: 'indigo' },
+                    { id: 'svc_3', name: 'Loan Consultation', avgTime: 45, icon: 'banknote', color: 'emerald' }
                 ],
                 branches: [
-                    { id: 'b_1', name: 'Sandton City Branch', address: 'Sandton City, Johannesburg' },
-                    { id: 'b_2', name: 'Rosebank Mall Branch', address: 'Rosebank Mall, Johannesburg' }
+                    { id: 'b_1', name: 'Sandton City Branch', address: 'Sandton City, Johannesburg', open: '08:00', close: '17:00' },
+                    { id: 'b_2', name: 'Rosebank Mall Branch', address: 'Rosebank Mall, Johannesburg', open: '09:00', close: '18:00' }
                 ],
                 counters: [
                     { id: 'c_1', name: 'Counter 1', branch: 'b_1', service: 'svc_1', status: 'open', currentTicket: 'A104' },
@@ -451,28 +659,31 @@
                 ],
                 userTicket: null,
                 bookings: [
-                    { id: 'bk_1', service: 'Account Opening', branch: 'Sandton City Branch', date: '2026-07-22', time: '10:00 AM', status: 'upcoming' },
-                    { id: 'bk_2', service: 'General Inquiry', branch: 'Rosebank Mall Branch', date: '2026-07-15', time: '02:30 PM', status: 'completed' }
+                    { id: 'bk_1', service: 'Account Opening', branch: 'Sandton City Branch', date: '2026-07-22', time: '10:00 AM',
+                        status: 'upcoming' },
+                    { id: 'bk_2', service: 'General Inquiry', branch: 'Rosebank Mall Branch', date: '2026-07-15',
+                        time: '02:30 PM', status: 'completed' }
                 ],
                 notifications: [
-                    { id: 'n_1', text: 'Counter 3 is currently on break. Your wait time has increased by ~25 mins.', time: '2 min ago', unread: true, type: 'warning' },
-                    { id: 'n_2', text: 'Your booking for Account Opening on 22 July is confirmed.', time: '1 hour ago', unread: false, type: 'success' }
+                    { id: 'n_1', text: 'Counter 3 is currently on break. Your wait time has increased by ~25 mins.',
+                        time: '2 min ago', unread: true, type: 'warning' },
+                    { id: 'n_2', text: 'Your booking for Account Opening on 22 July is confirmed.', time: '1 hour ago',
+                        unread: false, type: 'success' }
                 ],
-                analytics: { dailyVolume: 142, avgWaitTime: 18, completionRate: 94, noShowRate: 4 }
+                analytics: { dailyVolume: 142, avgWaitTime: 18, completionRate: 94, noShowRate: 4,
+                peakHour: '10:00 - 11:30' }
             },
 
             calculateMetrics(serviceId, isPriority) {
                 const service = this.state.services.find(s => s.id === serviceId);
-                const relevantCounters = this.state.counters.filter(c => c.branch === 'b_1' && c.status === 'open' && (c.service === serviceId || c.service === 'any'));
+                const relevantCounters = this.state.counters.filter(c => c.branch === 'b_1' && c.status === 'open' && (
+                    c.service === serviceId || c.service === 'any'));
                 const activeCounterCount = Math.max(1, relevantCounters.length);
-                
                 const serviceQueue = this.state.queue.filter(q => q.service === serviceId && q.status === 'waiting');
                 const priorityQueue = serviceQueue.filter(q => q.isPriority);
                 const normalQueue = serviceQueue.filter(q => !q.isPriority);
-                
                 let position = 0;
                 let peopleAhead = 0;
-
                 if (this.state.userTicket) {
                     if (this.state.userTicket.isPriority) {
                         position = priorityQueue.findIndex(q => q.id === this.state.userTicket.id);
@@ -482,22 +693,18 @@
                         peopleAhead = (position >= 0 ? position : normalQueue.length) + priorityQueue.length;
                     }
                 }
-
                 const rawEta = (peopleAhead * service.avgTime) / activeCounterCount;
                 const buffer = rawEta * 0.15;
                 const minEta = Math.max(5, Math.round((rawEta - buffer) / 5) * 5);
                 const maxEta = Math.max(10, Math.round((rawEta + buffer) / 5) * 5);
-                
-                return { peopleAhead, activeCounterCount, etaRange: `${minEta}-${maxEta}`, minEta, maxEta, totalServiceDuration: service.avgTime };
+                return { peopleAhead, activeCounterCount, etaRange: `${minEta}-${maxEta}`, minEta, maxEta,
+                    totalServiceDuration: service.avgTime, priorityQueueLength: priorityQueue.length };
             },
 
             tick() {
                 if (!this.state.currentUser || this.state.isQueuePaused) return;
-
                 const roll = Math.random();
-                if (roll < 0.15) {
-                    this.advanceQueue();
-                } else if (roll > 0.95) {
+                if (roll < 0.15) { this.advanceQueue(); } else if (roll > 0.95) {
                     const openCounters = this.state.counters.filter(c => c.status === 'open');
                     if (openCounters.length > 1) {
                         const target = openCounters[Math.floor(Math.random() * openCounters.length)];
@@ -516,9 +723,9 @@
                         UI.updateLiveElements();
                     }
                 }
-
                 if (this.state.userTicket && this.state.userTicket.status === 'waiting') {
-                    const metrics = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket.isPriority);
+                    const metrics = this.calculateMetrics(this.state.userTicket.service, this.state.userTicket
+                        .isPriority);
                     this.state.userTicket.position = metrics.peopleAhead + 1;
                     this.state.userTicket.etaDisplay = metrics.etaRange;
                     UI.updateLiveElements();
@@ -528,16 +735,16 @@
             advanceQueue() {
                 for (const counter of this.state.counters) {
                     if (counter.status === 'open' && !counter.currentTicket) {
-                        let nextTicket = this.state.queue.find(q => q.service === counter.service && q.status === 'waiting' && q.isPriority);
+                        let nextTicket = this.state.queue.find(q => q.service === counter.service && q.status ===
+                            'waiting' && q.isPriority);
                         if (!nextTicket) {
-                            nextTicket = this.state.queue.find(q => q.service === counter.service && q.status === 'waiting' && !q.isPriority);
+                            nextTicket = this.state.queue.find(q => q.service === counter.service && q.status ===
+                                'waiting' && !q.isPriority);
                         }
-                        
                         if (nextTicket) {
                             nextTicket.status = 'serving';
                             nextTicket.counter = counter.id;
                             counter.currentTicket = nextTicket.number;
-                            
                             if (this.state.userTicket && this.state.userTicket.id === nextTicket.id) {
                                 this.state.userTicket.status = 'serving';
                                 this.state.userTicket.counter = counter.name;
@@ -553,32 +760,22 @@
             completeTicket(ticketId, outcome = 'completed') {
                 const ticket = this.state.queue.find(q => q.id === ticketId);
                 if (!ticket) return;
-
                 const counter = this.state.counters.find(c => c.id === ticket.counter);
                 if (counter) counter.currentTicket = null;
-
                 ticket.status = outcome;
-                
                 if (this.state.userTicket && this.state.userTicket.id === ticketId) {
                     this.state.userTicket.status = outcome;
                     if (outcome === 'completed') {
                         UI.showToast('Service completed. Thank you!', 'success');
                         setTimeout(() => UI.showFeedbackModal(), 1500);
-                    } else {
-                        UI.showToast('Ticket marked as No-Show.', 'error');
-                    }
+                    } else { UI.showToast('Ticket marked as No-Show.', 'error'); }
                 }
                 UI.updateLiveElements();
             },
 
-            startSimulation() {
-                setInterval(() => this.tick(), 4000);
-            }
+            startSimulation() { setInterval(() => this.tick(), 4000); }
         };
 
-        // ==========================================
-        // 2. UI & COMPONENTS
-        // ==========================================
         const UI = {
             showToast: (message, type = 'info') => {
                 const container = document.getElementById('toast-container');
@@ -587,786 +784,240 @@
                     success: 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/80 dark:text-emerald-100 dark:border-emerald-800',
                     error: 'bg-rose-50 text-rose-900 border-rose-200 dark:bg-rose-950/80 dark:text-rose-100 dark:border-rose-800',
                     warning: 'bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-950/80 dark:text-amber-100 dark:border-amber-800',
-                    info: 'bg-blue-50 text-blue-900 border-blue-200 dark:bg-blue-950/80 dark:text-blue-100 dark:border-blue-800'
+                    info: 'bg-brand-50 text-brand-900 border-brand-200 dark:bg-brand-950/80 dark:text-brand-100 dark:border-brand-800'
                 };
-                const icons = { success: 'check-circle', error: 'x-circle', warning: 'alert-triangle', info: 'info' };
-                
-                el.className = `pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-lg border shadow-lg ${styles[type]} animate-fade-in`;
-                el.innerHTML = `
-                    <i data-lucide="${icons[type]}" class="w-5 h-5 mt-0.5 shrink-0"></i>
-                    <div class="flex-1"><p class="text-sm font-medium leading-snug">${message}</p></div>
-                `;
+                const icons = { success: 'check-circle', error: 'x-circle', warning: 'alert-triangle',
+                info: 'info' };
+                el.className =
+                    `pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-lg ${styles[type]} animate-slide-down`;
+                el.innerHTML =
+                    `<i data-lucide="${icons[type]}" class="w-5 h-5 mt-0.5 shrink-0"></i><div class="flex-1"><p class="text-sm font-medium leading-snug">${message}</p></div>`;
                 container.appendChild(el);
                 lucide.createIcons();
-                setTimeout(() => {
-                    el.style.opacity = '0'; el.style.transform = 'translateY(-10px)';
-                    setTimeout(() => el.remove(), 300);
-                }, 4000);
+                setTimeout(() => { el.style.opacity = '0';
+                    el.style.transform = 'translateY(-10px) scale(0.95)';
+                    setTimeout(() => el.remove(), 300); }, 4000);
             },
-
             showFeedbackModal: () => {
                 const modal = document.getElementById('modal-container');
                 modal.classList.remove('hidden');
                 modal.innerHTML = `
-                    <div class="surface border border-subtle rounded-xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-[var(--border)] w-full max-w-md p-6 animate-scale-in">
                         <div class="text-center mb-6">
-                            <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i data-lucide="check-circle" class="w-8 h-8 text-emerald-600 dark:text-emerald-400"></i>
                             </div>
-                            <h3 class="text-xl font-bold">Service Completed</h3>
-                            <p class="text-secondary mt-2">How was your experience at Sandton City Branch?</p>
+                            <h3 class="text-xl font-bold text-[var(--text-primary)]">Service Completed</h3>
+                            <p class="text-[var(--text-secondary)] mt-2 text-sm">How was your experience at Sandton City Branch?</p>
                         </div>
                         <div class="flex justify-center gap-2 mb-6" id="star-rating">
-                            ${[1,2,3,4,5].map(i => `<button onclick="UI.rateService(${i})" class="p-2 text-gray-300 hover:text-amber-400 transition-colors"><i data-lucide="star" class="w-8 h-8 fill-current"></i></button>`).join('')}
+                            ${[1,2,3,4,5].map(i => `<button onclick="UI.rateService(${i})" class="p-2 text-slate-300 hover:text-amber-400 transition-colors"><i data-lucide="star" class="w-8 h-8 fill-current"></i></button>`).join('')}
                         </div>
-                        <textarea placeholder="Any additional comments? (Optional)" class="w-full p-3 rounded-lg border border-subtle bg-[var(--bg)] text-sm mb-4 focus:ring-2 focus:ring-[var(--accent)] outline-none resize-none" rows="3"></textarea>
-                        <button onclick="UI.closeModal(); Simulator.state.userTicket = null; App.navigate('customer-dashboard');" class="w-full btn-primary py-3">Submit Feedback</button>
-                    </div>
-                `;
+                        <textarea placeholder="Any additional comments? (Optional)" class="w-full p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-alt)] text-sm mb-4 focus:ring-2 focus:ring-brand-500 outline-none resize-none" rows="3"></textarea>
+                        <button onclick="UI.closeModal(); Simulator.state.userTicket = null; App.navigate('customer-dashboard');" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold transition-all active:scale-[0.97] text-sm">Submit Feedback</button>
+                    </div>`;
                 lucide.createIcons();
             },
-
             rateService: (stars) => {
                 const btns = document.querySelectorAll('#star-rating button');
-                btns.forEach((btn, idx) => {
-                    btn.className = idx < stars ? 'p-2 text-amber-400 transition-colors' : 'p-2 text-gray-300 hover:text-amber-400 transition-colors';
-                });
+                btns.forEach((btn, idx) => { btn.className = idx < stars ?
+                        'p-2 text-amber-400 transition-colors' :
+                        'p-2 text-slate-300 hover:text-amber-400 transition-colors'; });
             },
-
-            closeModal: () => {
-                document.getElementById('modal-container').classList.add('hidden');
-            },
-
+            closeModal: () => { document.getElementById('modal-container').classList.add('hidden'); },
             updateLiveElements: () => {
                 const s = Simulator.state;
                 if (!s.currentUser) return;
-
+                const waitingCount = s.queue.filter(q => q.status === 'waiting').length;
+                const servingTicket = s.counters.find(c => c.status === 'open' && c.currentTicket)?.currentTicket ||
+                    '--';
+                const avgWait = Math.round(s.queue.filter(q => q.status === 'serving').reduce((acc, q) => acc + s.services
+                    .find(sv => sv.id === q.service).avgTime, 0) / Math.max(1, s.counters.filter(c => c.status ===
+                    'open').length));
+                document.querySelectorAll('[data-live="hero-serving"]').forEach(el => el.textContent = servingTicket);
+                document.querySelectorAll('[data-live="hero-waiting"]').forEach(el => el.textContent = waitingCount);
+                document.querySelectorAll('[data-live="hero-eta"]').forEach(el => el.textContent = `${avgWait}m`);
                 if (s.userTicket) {
-                    document.querySelectorAll('[data-live="position"]').forEach(el => el.textContent = Math.max(0, s.userTicket.position - 1));
+                    document.querySelectorAll('[data-live="position"]').forEach(el => el.textContent = Math.max(0, s
+                        .userTicket.position - 1));
                     document.querySelectorAll('[data-live="eta"]').forEach(el => el.textContent = `~${s.userTicket.etaDisplay}`);
-                    document.querySelectorAll('[data-live="counter"]').forEach(el => el.textContent = s.userTicket.counter || 'TBD');
-                    
+                    document.querySelectorAll('[data-live="counter"]').forEach(el => el.textContent = s.userTicket
+                        .counter || 'TBD');
                     const progress = Math.max(0, 100 - (s.userTicket.position - 1) * 15);
                     document.querySelectorAll('[data-live="progress"]').forEach(el => el.style.width = `${progress}%`);
-                    document.querySelectorAll('[data-live="progress-text"]').forEach(el => el.textContent = `${progress}%`);
                 }
-
                 s.counters.forEach(c => {
                     const el = document.querySelector(`[data-counter-status="${c.id}"]`);
-                    if (el) {
-                        el.textContent = c.currentTicket || '--';
-                    }
+                    if (el) { el.textContent = c.currentTicket || '--'; if (c.currentTicket) el.classList.add(
+                            'animate-pulse-soft');
+                        else el.classList.remove('animate-pulse-soft'); }
                 });
             },
-
-            Card: (content, className = '') => `
-                <div class="surface border border-subtle rounded-xl ${className}">${content}</div>
-            `,
-
+            Button: (text, onClick, variant = 'primary', icon = null, className = '') => {
+                const base =
+                    "inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.97] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
+                const variants = {
+                    primary: "bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-600/20",
+                    secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700",
+                    ghost: "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800",
+                    destructive: "bg-rose-600 text-white hover:bg-rose-700 shadow-sm shadow-rose-600/20",
+                    success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-600/20"
+                };
+                return `<button onclick="${onClick}" class="${base} ${variants[variant]} ${className}">${icon ? `<i data-lucide="${icon}" class="w-4 h-4"></i>` : ''} ${text}</button>`;
+            },
+            Card: (content, className = '') =>
+                `<div class="bg-white dark:bg-slate-900 border border-[var(--border)] rounded-2xl shadow-sm ${className}">${content}</div>`,
             Badge: (text, variant = 'default') => {
                 const v = {
-                    default: "bg-[var(--bg)] border border-subtle text-secondary",
+                    default: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
                     success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
                     warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-                    primary: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                    primary: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400",
+                    destructive: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
+                    info: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
                 };
-                return `<span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${v[variant]}">${text}</span>`;
+                return `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold tracking-wide ${v[variant]}">${text}</span>`;
             }
         };
 
-        // ==========================================
-        // 3. VIEWS
-        // ==========================================
         const Views = {
             'customer-dashboard': () => {
                 const s = Simulator.state;
-                const hasActiveTicket = s.userTicket && s.userTicket.status !== 'completed' && s.userTicket.status !== 'no-show';
-                
+                const hasActiveTicket = s.userTicket && s.userTicket.status !== 'completed' && s.userTicket.status !==
+                    'no-show';
                 return `
                     <div class="space-y-6 animate-fade-in max-w-5xl mx-auto">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                                <h1 class="text-2xl font-bold">Good morning, ${s.currentUser.name}</h1>
-                                <p class="text-secondary">Here is your queue and booking overview.</p>
-                            </div>
-                            <button onclick="App.navigate('booking-wizard')" class="btn-accent flex items-center gap-2">
-                                <i data-lucide="plus" class="w-4 h-4"></i> Book Appointment
-                            </button>
+                            <div><h1 class="text-2xl font-bold text-[var(--text-primary)]">Good morning, ${s.currentUser.name}</h1><p class="text-[var(--text-secondary)] text-sm">Here is your queue and booking overview.</p></div>
+                            ${UI.Button('Book Appointment', "App.navigate('booking-wizard')", 'primary', 'plus')}
                         </div>
-
                         ${hasActiveTicket ? `
                             <div class="grid lg:grid-cols-3 gap-6">
-                                <div class="lg:col-span-2">
-                                    ${UI.Card(`
-                                        <div class="p-6">
-                                            <div class="flex items-center justify-between mb-6">
-                                                <div>
-                                                    <h3 class="font-semibold">Active Queue Ticket</h3>
-                                                    <p class="text-sm text-secondary">Sandton City • ${s.services.find(sv => sv.id === s.userTicket.service).name}</p>
-                                                </div>
-                                                ${UI.Badge(s.userTicket.status === 'serving' ? 'Now Serving' : 'Waiting', s.userTicket.status === 'serving' ? 'success' : 'warning')}
-                                            </div>
-                                            
-                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                                                <div>
-                                                    <p class="text-xs font-medium text-secondary uppercase tracking-wider mb-1">Your Number</p>
-                                                    <p class="text-2xl font-bold font-mono">${s.userTicket.number}</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-xs font-medium text-secondary uppercase tracking-wider mb-1">People Ahead</p>
-                                                    <p class="text-2xl font-bold font-mono" data-live="position">${Math.max(0, s.userTicket.position - 1)}</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-xs font-medium text-secondary uppercase tracking-wider mb-1">Est. Wait</p>
-                                                    <p class="text-2xl font-bold font-mono" data-live="eta">~${s.userTicket.etaDisplay}</p>
-                                                </div>
-                                                <div>
-                                                    <p class="text-xs font-medium text-secondary uppercase tracking-wider mb-1">Counter</p>
-                                                    <p class="text-2xl font-bold font-mono" data-live="counter">${s.userTicket.counter || 'TBD'}</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-6">
-                                                <div class="flex justify-between text-xs font-medium text-secondary mb-2">
-                                                    <span>Queue Progress</span>
-                                                    <span data-live="progress-text">25%</span>
-                                                </div>
-                                                <div class="h-1.5 bg-[var(--bg)] rounded-full overflow-hidden">
-                                                    <div class="h-full bg-[var(--accent)] rounded-full transition-all duration-1000" data-live="progress" style="width: 25%"></div>
-                                                </div>
-                                            </div>
-
-                                            ${s.lastUpdateMessage ? `
-                                                <div class="mb-6 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3">
-                                                    <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
-                                                    <p class="text-sm text-amber-900 dark:text-amber-100 font-medium">${s.lastUpdateMessage}</p>
-                                                </div>
-                                            ` : ''}
-
-                                            <div class="flex gap-3">
-                                                <button onclick="App.navigate('queue-tracker')" class="btn-primary flex items-center gap-2">
-                                                    <i data-lucide="map-pin" class="w-4 h-4"></i> Track Live
-                                                </button>
-                                                <button onclick="App.navigate('my-bookings')" class="btn-secondary flex items-center gap-2">
-                                                    <i data-lucide="calendar" class="w-4 h-4"></i> Reschedule
-                                                </button>
-                                            </div>
+                                <div class="lg:col-span-2">${UI.Card(`
+                                    <div class="p-6 sm:p-8">
+                                        <div class="flex items-center justify-between mb-6">
+                                            <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center"><i data-lucide="ticket" class="w-6 h-6 text-brand-600 dark:text-brand-400"></i></div><div><h3 class="font-bold text-lg text-[var(--text-primary)]">Active Queue Ticket</h3><p class="text-sm text-[var(--text-tertiary)]">Sandton City • ${s.services.find(sv=>sv.id===s.userTicket.service).name}</p></div></div>
+                                            ${UI.Badge(s.userTicket.status==='serving'?'Now Serving':'Waiting', s.userTicket.status==='serving'?'success':'warning')}
                                         </div>
-                                    `)}
-                                </div>
-
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                                            <div class="text-center p-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)]"><div class="text-3xl font-bold text-brand-600 dark:text-brand-400 font-mono tracking-tight">${s.userTicket.number}</div><div class="text-xs font-medium text-[var(--text-tertiary)] mt-1 uppercase tracking-wider">Your Number</div></div>
+                                            <div class="text-center p-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)]"><div class="text-3xl font-bold text-[var(--text-primary)] font-mono tracking-tight" data-live="position">${Math.max(0,s.userTicket.position-1)}</div><div class="text-xs font-medium text-[var(--text-tertiary)] mt-1 uppercase tracking-wider">People Ahead</div></div>
+                                            <div class="text-center p-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)]"><div class="text-3xl font-bold text-[var(--text-primary)] font-mono tracking-tight" data-live="eta">~${s.userTicket.etaDisplay}</div><div class="text-xs font-medium text-[var(--text-tertiary)] mt-1 uppercase tracking-wider">Est. Wait</div></div>
+                                            <div class="text-center p-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)]"><div class="text-3xl font-bold text-[var(--text-primary)] font-mono tracking-tight" data-live="counter">${s.userTicket.counter||'TBD'}</div><div class="text-xs font-medium text-[var(--text-tertiary)] mt-1 uppercase tracking-wider">Counter</div></div>
+                                        </div>
+                                        <div class="mb-6"><div class="flex justify-between text-sm font-medium mb-2"><span class="text-[var(--text-secondary)]">Queue Progress</span><span class="text-brand-600 dark:text-brand-400">${Math.max(0,100-(s.userTicket.position-1)*15)}%</span></div><div class="h-2 bg-[var(--border-light)] rounded-full overflow-hidden"><div class="h-full bg-brand-600 rounded-full transition-all duration-1000 ease-out" data-live="progress" style="width:${Math.max(0,100-(s.userTicket.position-1)*15)}%"></div></div></div>
+                                        ${s.lastUpdateMessage?`<div class="mb-6 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 flex items-start gap-3 animate-pulse-soft"><i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i><p class="text-sm text-amber-900 dark:text-amber-100 font-medium">${s.lastUpdateMessage}</p></div>`:''}
+                                        <div class="flex flex-wrap gap-3">${UI.Button('Track Live Progress',"App.navigate('queue-tracker')",'primary','map-pin')} ${UI.Button('Reschedule',"App.navigate('my-bookings')",'secondary','calendar')}</div>
+                                    </div>`)}</div>
                                 <div class="space-y-6">
-                                    ${UI.Card(`
-                                        <div class="p-6">
-                                            <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i> AI Insight
-                                            </h3>
-                                            <p class="text-sm text-secondary mb-4 leading-relaxed">
-                                                Based on current branch traffic, your wait time is stable. Counter 3 is on break, but Counter 2 is clearing the queue efficiently.
-                                            </p>
-                                            <div class="w-full bg-[var(--bg)] rounded-full h-1.5 mb-2">
-                                                <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 75%"></div>
-                                            </div>
-                                            <p class="text-xs text-secondary text-right font-medium">Queue Health: Good (75/100)</p>
-                                        </div>
-                                    `)}
-
-                                    ${UI.Card(`
-                                        <div class="p-6">
-                                            <div class="flex items-center justify-between mb-4">
-                                                <h3 class="font-semibold">Notifications</h3>
-                                                <span class="text-xs font-medium text-accent cursor-pointer" onclick="UI.showToast('All marked as read', 'success')">Mark all read</span>
-                                            </div>
-                                            <div class="space-y-4">
-                                                ${s.notifications.slice(0, 3).map(n => `
-                                                    <div class="flex gap-3 items-start ${n.unread ? 'opacity-100' : 'opacity-60'}">
-                                                        <div class="w-2 h-2 rounded-full ${n.unread ? 'bg-[var(--accent)]' : 'bg-transparent'} mt-2 shrink-0"></div>
-                                                        <div>
-                                                            <p class="text-sm leading-snug">${n.text}</p>
-                                                            <p class="text-xs text-secondary mt-1">${n.time}</p>
-                                                        </div>
-                                                    </div>
-                                                `).join('')}
-                                            </div>
-                                        </div>
-                                    `)}
+                                    ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i> AI Insight</h3><p class="text-sm text-[var(--text-secondary)] mb-4 leading-relaxed">Based on current branch traffic, your wait time is stable. Counter 3 is on break, but Counter 2 is clearing the queue efficiently.</p><div class="w-full bg-[var(--border-light)] rounded-full h-2 mb-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:75%"></div></div><p class="text-xs text-[var(--text-tertiary)] text-right font-medium">Queue Health: Good (75/100)</p></div>`)}
+                                    ${UI.Card(`<div class="p-6"><div class="flex items-center justify-between mb-4"><h3 class="font-bold text-[var(--text-primary)]">Notifications</h3><span class="text-xs font-semibold text-brand-600 dark:text-brand-400 cursor-pointer" onclick="UI.showToast('All marked as read','success')">Mark all read</span></div><div class="space-y-4">${s.notifications.slice(0,3).map(n=>`<div class="flex gap-3 items-start ${n.unread?'opacity-100':'opacity-60'}"><div class="w-2 h-2 rounded-full ${n.unread?'bg-brand-600':'bg-transparent'} mt-2 shrink-0"></div><div><p class="text-sm text-[var(--text-secondary)] leading-snug">${n.text}</p><p class="text-xs text-[var(--text-tertiary)] mt-1">${n.time}</p></div></div>`).join('')}</div></div>`)}
                                 </div>
-                            </div>
-                        ` : `
-                            ${UI.Card(`
-                                <div class="p-10 text-center">
-                                    <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <i data-lucide="check-circle" class="w-10 h-10 text-emerald-600 dark:text-emerald-400"></i>
-                                    </div>
-                                    <h3 class="text-2xl font-bold mb-2">No Active Queue</h3>
-                                    <p class="text-secondary mb-8 max-w-md mx-auto">You are all caught up. Book a new appointment or walk in to get a new ticket.</p>
-                                    <div class="flex flex-col sm:flex-row justify-center gap-3">
-                                        <button onclick="App.navigate('booking-wizard')" class="btn-accent flex items-center gap-2">
-                                            <i data-lucide="calendar" class="w-4 h-4"></i> Book New Appointment
-                                        </button>
-                                        <button onclick="App.joinWalkIn()" class="btn-secondary flex items-center gap-2">
-                                            <i data-lucide="qr-code" class="w-4 h-4"></i> Simulate Walk-in
-                                        </button>
-                                    </div>
-                                </div>
-                            `)}
-                        `}
-                    </div>
-                `;
+                            </div>` : UI.Card(`<div class="p-10 text-center"><div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="check-circle" class="w-10 h-10 text-emerald-600 dark:text-emerald-400"></i></div><h3 class="text-2xl font-bold text-[var(--text-primary)] mb-2">No Active Queue</h3><p class="text-[var(--text-secondary)] mb-8 max-w-md mx-auto">You are all caught up. Book a new appointment or walk in to get a new ticket.</p><div class="flex flex-col sm:flex-row justify-center gap-3">${UI.Button('Book New Appointment',"App.navigate('booking-wizard')",'primary','calendar')} ${UI.Button('Simulate Walk-in',"App.joinWalkIn()",'secondary','qr-code')}</div></div>`)}
+                    </div>`;
             },
-
             'queue-tracker': () => {
                 const s = Simulator.state;
-                if (!s.userTicket) return `<div class="p-8 text-center">No active ticket. <button onclick="App.navigate('customer-dashboard')" class="btn-primary ml-2">Go to Dashboard</button></div>`;
-                
+                if (!s.userTicket) return `<div class="p-8 text-center">No active ticket. ${UI.Button('Go to Dashboard',"App.navigate('customer-dashboard')",'primary')}</div>`;
                 const isServing = s.userTicket.status === 'serving';
                 const isCompleted = s.userTicket.status === 'completed';
-                
                 return `
-                    <div class="max-w-2xl mx-auto animate-fade-in space-y-6">
-                        <button onclick="App.navigate('customer-dashboard')" class="flex items-center gap-2 text-sm font-medium text-secondary hover:text-primary transition-colors">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
-                        </button>
-
-                        ${UI.Card(`
-                            <div class="p-6 sm:p-8">
-                                <div class="text-center mb-8">
-                                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-bold mb-6 ${isServing ? 'animate-pulse-dot' : ''}">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 
-                                        ${isServing ? 'Now Serving' : 'Live Updates Active'}
-                                    </div>
-                                    <h2 class="text-secondary font-medium mb-2">Your Queue Number</h2>
-                                    <div class="text-7xl sm:text-8xl font-bold font-mono tracking-tighter mb-2">${s.userTicket.number}</div>
-                                    <p class="text-lg text-secondary font-medium">${s.services.find(sv => sv.id === s.userTicket.service).name}</p>
-                                </div>
-
-                                ${!isCompleted ? `
-                                    <div class="grid grid-cols-2 gap-4 mb-8">
-                                        <div class="p-5 rounded-xl bg-[var(--bg)] border border-subtle text-center">
-                                            <div class="text-4xl font-bold text-accent font-mono" data-live="position">${Math.max(0, s.userTicket.position - 1)}</div>
-                                            <div class="text-sm font-medium text-secondary mt-1">People Ahead</div>
-                                        </div>
-                                        <div class="p-5 rounded-xl bg-[var(--bg)] border border-subtle text-center">
-                                            <div class="text-4xl font-bold text-accent font-mono" data-live="eta">~${s.userTicket.etaDisplay}</div>
-                                            <div class="text-sm font-medium text-secondary mt-1">Estimated Wait</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="relative pl-2 space-y-8 mb-8">
-                                        <div class="absolute top-2 bottom-2 left-[15px] w-px bg-[var(--border)]"></div>
-                                        ${[
-                                            { label: 'Ticket Issued', time: '10:00 AM', done: true },
-                                            { label: 'Waiting in Queue', time: s.userTicket.position > 1 ? 'In progress' : 'Done', done: s.userTicket.position <= 1 },
-                                            { label: '5 Minutes Away', time: s.userTicket.position <= 2 ? 'In progress' : 'Pending', done: s.userTicket.position <= 2 },
-                                            { label: 'Proceed to Counter', time: isServing ? 'Now' : 'Pending', done: isServing, highlight: isServing }
-                                        ].map((step) => `
-                                            <div class="relative flex items-start gap-4 z-10">
-                                                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 ${step.done ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : step.highlight ? 'bg-[var(--surface)] border-[var(--accent)] text-[var(--accent)] animate-pulse-dot' : 'bg-[var(--surface)] border-[var(--border)] text-secondary'}">
-                                                    ${step.done ? '<i data-lucide="check" class="w-4 h-4"></i>' : '<div class="w-2 h-2 rounded-full bg-current"></div>'}
-                                                </div>
-                                                <div class="pt-1">
-                                                    <p class="font-semibold ${step.highlight ? 'text-accent' : ''}">${step.label}</p>
-                                                    <p class="text-sm text-secondary">${step.time}</p>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                ` : `
-                                    <div class="text-center py-8">
-                                        <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-4">Service Completed Successfully</p>
-                                        <button onclick="UI.showFeedbackModal()" class="btn-accent flex items-center gap-2 mx-auto">
-                                            <i data-lucide="star" class="w-4 h-4"></i> Rate Your Experience
-                                        </button>
-                                    </div>
-                                `}
-                            </div>
-                        `)}
-                    </div>
-                `;
+                    <div class="max-w-2xl mx-auto animate-slide-up space-y-6">
+                        <button onclick="App.navigate('customer-dashboard')" class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard</button>
+                        ${UI.Card(`<div class="p-6 sm:p-8"><div class="text-center mb-8"><div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-bold mb-6 ${isServing?'animate-pulse-soft':''}"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${isServing?'Now Serving':'Live Updates Active'}</div><h2 class="text-[var(--text-tertiary)] font-medium mb-2">Your Queue Number</h2><div class="text-7xl sm:text-8xl font-bold text-[var(--text-primary)] font-mono tracking-tighter mb-2">${s.userTicket.number}</div><p class="text-lg text-[var(--text-secondary)] font-medium">${s.services.find(sv=>sv.id===s.userTicket.service).name}</p></div>
+                        ${!isCompleted?`<div class="grid grid-cols-2 gap-4 mb-8"><div class="p-5 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)] text-center"><div class="text-4xl font-bold text-brand-600 dark:text-brand-400 font-mono" data-live="position">${Math.max(0,s.userTicket.position-1)}</div><div class="text-sm font-medium text-[var(--text-tertiary)] mt-1">People Ahead</div></div><div class="p-5 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)] text-center"><div class="text-4xl font-bold text-brand-600 dark:text-brand-400 font-mono" data-live="eta">~${s.userTicket.etaDisplay}</div><div class="text-sm font-medium text-[var(--text-tertiary)] mt-1">Estimated Wait</div></div></div>
+                        <div class="relative pl-2 space-y-8 mb-8">${[{label:'Ticket Issued',time:'10:00 AM',done:true},{label:'Waiting in Queue',time:s.userTicket.position>1?'In progress':'Done',done:s.userTicket.position<=1},{label:'5 Minutes Away',time:s.userTicket.position<=2?'In progress':'Pending',done:s.userTicket.position<=2},{label:'Proceed to Counter',time:isServing?'Now':'Pending',done:isServing,highlight:isServing}].map((step,idx)=>`<div class="relative flex items-start gap-4 z-10"><div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 ${step.done?'bg-brand-600 border-brand-600 text-white':step.highlight?'bg-white dark:bg-slate-900 border-brand-600 text-brand-600 animate-pulse':'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-400'}">${step.done?'<i data-lucide="check" class="w-4 h-4"></i>':'<div class="w-2 h-2 rounded-full bg-current"></div>'}</div><div class="pt-1"><p class="font-semibold text-[var(--text-primary)] ${step.highlight?'text-brand-600 dark:text-brand-400':''}">${step.label}</p><p class="text-sm text-[var(--text-tertiary)]">${step.time}</p></div></div>`).join('')}</div>`:`<div class="text-center py-8"><p class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-4">Service Completed Successfully</p>${UI.Button('Rate Your Experience',"UI.showFeedbackModal()",'primary','star')}</div>`}</div>`)}
+                    </div>`;
             },
-
             'booking-wizard': () => {
                 const step = Simulator.state.bookingStep || 1;
                 return `
-                    <div class="max-w-2xl mx-auto animate-fade-in">
-                        <button onclick="App.navigate('customer-dashboard')" class="mb-6 flex items-center gap-2 text-sm font-medium text-secondary hover:text-primary transition-colors">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Cancel Booking
-                        </button>
-                        
-                        ${UI.Card(`
-                            <div class="p-6 sm:p-8">
-                                <div class="mb-8">
-                                    <h2 class="text-2xl font-bold mb-2">Book an Appointment</h2>
-                                    <div class="flex items-center gap-4 mt-4">
-                                        ${[1, 2, 3, 4].map(i => `
-                                            <div class="flex-1 flex items-center gap-2">
-                                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i <= step ? 'bg-[var(--text-primary)] text-[var(--bg)]' : 'bg-[var(--bg)] border border-subtle text-secondary'}">${i}</div>
-                                                ${i < 4 ? `<div class="flex-1 h-px ${i < step ? 'bg-[var(--text-primary)]' : 'bg-[var(--border)]'}"></div>` : ''}
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                    <p class="text-sm text-secondary mt-3 text-center">
-                                        ${step === 1 ? 'Select your nearest branch' : step === 2 ? 'Choose the service you need' : step === 3 ? 'Pick an available date' : 'Select a time slot'}
-                                    </p>
-                                </div>
-
-                                ${step === 1 ? `
-                                    <div class="space-y-3">
-                                        ${Simulator.state.branches.map(b => `
-                                            <label class="flex items-center gap-4 p-4 rounded-lg border border-subtle hover:border-[var(--accent)] cursor-pointer transition-all group bg-[var(--bg)]/50">
-                                                <input type="radio" name="branch" class="w-5 h-5 text-[var(--accent)] focus:ring-[var(--accent)]" checked>
-                                                <div class="flex-1">
-                                                    <div class="font-semibold group-hover:text-[var(--accent)] transition-colors">${b.name}</div>
-                                                    <div class="text-sm text-secondary flex items-center gap-2 mt-1">
-                                                        <i data-lucide="map-pin" class="w-3 h-3"></i> ${b.address}
-                                                    </div>
-                                                </div>
-                                                <div class="text-right">
-                                                    <div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">8-12 min</div>
-                                                    <div class="text-xs text-secondary">current wait</div>
-                                                </div>
-                                            </label>
-                                        `).join('')}
-                                    </div>
-                                ` : step === 2 ? `
-                                    <div class="space-y-3">
-                                        ${Simulator.state.services.map(svc => `
-                                            <label class="flex items-start gap-4 p-4 rounded-lg border border-subtle hover:border-[var(--accent)] cursor-pointer transition-all group bg-[var(--bg)]/50">
-                                                <input type="radio" name="service" class="w-5 h-5 text-[var(--accent)] focus:ring-[var(--accent)] mt-1" checked>
-                                                <div class="w-12 h-12 rounded-lg bg-[var(--surface)] border border-subtle flex items-center justify-center shrink-0 group-hover:border-[var(--accent)] transition-colors">
-                                                    <i data-lucide="${svc.icon}" class="w-6 h-6 text-secondary group-hover:text-[var(--accent)]"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="font-semibold">${svc.name}</div>
-                                                    <div class="text-sm text-secondary mt-1 flex items-center gap-2">
-                                                        <i data-lucide="clock" class="w-3 h-3"></i> Avg. duration: ${svc.avgTime} minutes
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        `).join('')}
-                                    </div>
-                                ` : step === 3 ? `
-                                    <div class="space-y-6">
-                                        <div class="grid grid-cols-7 gap-2 text-center text-sm font-medium text-secondary mb-2">
-                                            ${['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => `<div>${d}</div>`).join('')}
-                                        </div>
-                                        <div class="grid grid-cols-7 gap-2">
-                                            ${Array.from({length: 31}, (_, i) => {
-                                                const day = i + 1;
-                                                const isPast = day < 18;
-                                                const isSelected = day === 22;
-                                                const isFull = day === 25;
-                                                return `
-                                                    <button class="aspect-square rounded-lg flex flex-col items-center justify-center text-sm font-medium transition-all relative
-                                                        ${isPast ? 'text-gray-300 dark:text-gray-700 cursor-not-allowed' : 
-                                                          isSelected ? 'bg-[var(--text-primary)] text-[var(--bg)]' : 
-                                                          isFull ? 'text-secondary cursor-not-allowed line-through' :
-                                                          'hover:bg-[var(--bg)]'}">
-                                                        ${day}
-                                                        ${isFull ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-[var(--error)] rounded-full"></span>' : ''}
-                                                    </button>
-                                                `;
-                                            }).join('')}
-                                        </div>
-                                        <p class="text-xs text-secondary flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[var(--error)]"></span> Fully booked due to counter capacity</p>
-                                    </div>
-                                ` : `
-                                    <div class="space-y-4">
-                                        <h3 class="font-semibold text-lg">Available Time Slots</h3>
-                                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                                            ${['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00'].map((t, i) => `
-                                                <button class="py-3 px-2 rounded-lg border text-sm font-semibold transition-all ${i === 2 ? 'border-[var(--accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--accent)] ring-1 ring-[var(--accent)]' : i === 4 ? 'border-subtle text-secondary cursor-not-allowed bg-[var(--bg)]/50' : 'border-subtle hover:border-[var(--accent)] hover:bg-[var(--bg)]'}">
-                                                    ${t}
-                                                    ${i === 4 ? '<div class="text-[10px] mt-1">Full</div>' : ''}
-                                                </button>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                `}
-
-                                <div class="flex justify-between mt-8 pt-6 border-t border-subtle">
-                                    ${step > 1 ? `<button onclick="Simulator.state.bookingStep--; App.renderView()" class="btn-secondary">Back</button>` : '<div></div>'}
-                                    ${step < 4 ? `<button onclick="Simulator.state.bookingStep++; App.renderView()" class="btn-primary flex items-center gap-2">Continue <i data-lucide="arrow-right" class="w-4 h-4"></i></button>` : `<button onclick="App.confirmBooking()" class="btn-accent flex items-center gap-2 px-8"><i data-lucide="check" class="w-4 h-4"></i> Confirm Booking</button>`}
-                                </div>
-                            </div>
-                        `)}
-                    </div>
-                `;
+                    <div class="max-w-2xl mx-auto animate-slide-up">
+                        <button onclick="App.navigate('customer-dashboard')" class="mb-6 flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"><i data-lucide="arrow-left" class="w-4 h-4"></i> Cancel Booking</button>
+                        ${UI.Card(`<div class="p-6 sm:p-8"><div class="mb-8"><h2 class="text-2xl font-bold text-[var(--text-primary)] mb-2">Book an Appointment</h2><div class="flex items-center gap-4 mt-4">${[1,2,3,4].map(i=>`<div class="flex-1 flex items-center gap-2"><div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i<=step?'bg-brand-600 text-white':'bg-[var(--border-light)] text-[var(--text-tertiary)]'}">${i}</div>${i<4?`<div class="flex-1 h-1 rounded-full ${i<step?'bg-brand-600':'bg-[var(--border-light)]'}"></div>`:''}</div>`).join('')}</div><p class="text-sm text-[var(--text-tertiary)] mt-3 text-center">${step===1?'Select your nearest branch':step===2?'Choose the service you need':step===3?'Pick an available date':'Select a time slot'}</p></div>
+                        ${step===1?`<div class="space-y-3">${Simulator.state.branches.map(b=>`<label class="flex items-center gap-4 p-4 rounded-xl border border-[var(--border)] hover:border-brand-500 dark:hover:border-brand-500 cursor-pointer transition-all group bg-[var(--surface-alt)]"><input type="radio" name="branch" class="w-5 h-5 text-brand-600 focus:ring-brand-500" checked><div class="flex-1"><div class="font-semibold text-[var(--text-primary)] group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${b.name}</div><div class="text-sm text-[var(--text-tertiary)] flex items-center gap-2 mt-1"><i data-lucide="map-pin" class="w-3 h-3"></i> ${b.address}</div></div><div class="text-right"><div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">8-12 min</div><div class="text-xs text-[var(--text-tertiary)]">current wait</div></div></label>`).join('')}</div>`:step===2?`<div class="space-y-3">${Simulator.state.services.map(svc=>`<label class="flex items-start gap-4 p-4 rounded-xl border border-[var(--border)] hover:border-brand-500 dark:hover:border-brand-500 cursor-pointer transition-all group bg-[var(--surface-alt)]"><input type="radio" name="service" class="w-5 h-5 text-brand-600 focus:ring-brand-500 mt-1" checked><div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 border border-[var(--border)] flex items-center justify-center shrink-0 group-hover:border-brand-500 transition-colors"><i data-lucide="${svc.icon}" class="w-6 h-6 text-[var(--text-secondary)] group-hover:text-brand-600 dark:group-hover:text-brand-400"></i></div><div class="flex-1"><div class="font-semibold text-[var(--text-primary)]">${svc.name}</div><div class="text-sm text-[var(--text-tertiary)] mt-1 flex items-center gap-2"><i data-lucide="clock" class="w-3 h-3"></i> Avg. duration: ${svc.avgTime} minutes</div></div></label>`).join('')}</div>`:step===3?`<div class="space-y-6"><div class="grid grid-cols-7 gap-2 text-center text-sm font-medium text-[var(--text-tertiary)] mb-2">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div>${d}</div>`).join('')}</div><div class="grid grid-cols-7 gap-2">${Array.from({length:31},(_,i)=>{const day=i+1;const isPast=day<18;const isSelected=day===22;const isFull=day===25;return`<button class="aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-medium transition-all relative ${isPast?'text-slate-300 dark:text-slate-700 cursor-not-allowed':isSelected?'bg-brand-600 text-white shadow-lg shadow-brand-600/20':isFull?'text-slate-400 cursor-not-allowed line-through':'text-[var(--text-primary)] hover:bg-[var(--border-light)]'}">${day}${isFull?'<span class="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full"></span>':''}</button>`;}).join('')}</div><p class="text-xs text-[var(--text-tertiary)] flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Fully booked due to counter capacity</p></div>`:`<div class="space-y-4"><h3 class="font-semibold text-lg text-[var(--text-primary)]">Available Time Slots</h3><div class="grid grid-cols-3 sm:grid-cols-4 gap-3">${['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00'].map((t,i)=>`<button class="py-3 px-2 rounded-xl border text-sm font-semibold transition-all ${i===2?'border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400 ring-1 ring-brand-600':i===4?'border-[var(--border)] text-slate-400 cursor-not-allowed bg-[var(--surface-alt)]':'border-[var(--border)] text-[var(--text-primary)] hover:border-brand-500 dark:hover:border-brand-500 hover:bg-[var(--surface-alt)]'}">${t}${i===4?'<div class="text-[10px] mt-1">Full</div>':''}</button>`).join('')}</div></div>`}
+                        <div class="flex justify-between mt-8 pt-6 border-t border-[var(--border-light)]">${step>1?UI.Button('Back',"Simulator.state.bookingStep--;App.renderView()",'secondary'):'<div></div>'}${step<4?UI.Button('Continue',"Simulator.state.bookingStep++;App.renderView()",'primary','arrow-right'):UI.Button('Confirm Booking',"App.confirmBooking()",'success','check','px-8')}</div></div>`)}
+                    </div>`;
             },
-
             'counter-dashboard': () => {
                 const s = Simulator.state;
                 const myCounter = s.counters.find(c => c.id === 'c_2');
                 const queueForCounter = s.queue.filter(q => q.service === myCounter.service && q.status === 'waiting');
-                
                 return `
                     <div class="max-w-5xl mx-auto space-y-6 animate-fade-in">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                                <h1 class="text-2xl font-bold">${myCounter.name} Dashboard</h1>
-                                <p class="text-secondary">Welcome, ${s.currentUser.name}</p>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse-dot"></span>
-                                <span class="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Active & Serving</span>
-                            </div>
-                        </div>
-
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h1 class="text-2xl font-bold text-[var(--text-primary)]">${myCounter.name} Dashboard</h1><p class="text-[var(--text-secondary)] text-sm">Welcome, ${s.currentUser.name}</p></div><div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Active & Serving</span></div></div>
                         <div class="grid lg:grid-cols-3 gap-6">
                             <div class="lg:col-span-2 space-y-6">
-                                ${UI.Card(`
-                                    <div class="p-8 text-center border-b border-subtle">
-                                        <h3 class="text-sm font-bold text-secondary uppercase tracking-widest mb-4">Now Serving</h3>
-                                        ${myCounter.currentTicket ? `
-                                            <div class="text-8xl sm:text-9xl font-bold text-accent font-mono tracking-tighter mb-2 animate-pulse-dot" data-counter-status="${myCounter.id}">${myCounter.currentTicket}</div>
-                                            <p class="text-xl font-semibold">${s.services.find(sv => sv.id === myCounter.service).name}</p>
-                                            <p class="text-sm text-secondary mt-2">Serving time: ~${s.services.find(sv => sv.id === myCounter.service).avgTime} mins</p>
-                                        ` : `
-                                            <div class="text-4xl font-bold text-gray-300 dark:text-gray-700 font-mono mb-2" data-counter-status="${myCounter.id}">--</div>
-                                            <p class="text-secondary">No active customer</p>
-                                        `}
-                                    </div>
-                                    <div class="p-6 grid grid-cols-3 gap-4">
-                                        <button onclick="Simulator.advanceQueue()" class="btn-accent py-5 text-lg font-bold flex flex-col items-center gap-2">
-                                            <i data-lucide="user-plus" class="w-5 h-5"></i> Call Next
-                                        </button>
-                                        <button onclick="Simulator.completeTicket('t_105', 'completed')" class="btn-secondary py-5 text-lg font-bold flex flex-col items-center gap-2 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400">
-                                            <i data-lucide="check-circle" class="w-5 h-5"></i> Complete
-                                        </button>
-                                        <button onclick="Simulator.completeTicket('t_105', 'no-show')" class="btn-secondary py-5 text-lg font-bold flex flex-col items-center gap-2 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400">
-                                            <i data-lucide="x-circle" class="w-5 h-5"></i> No Show
-                                        </button>
-                                    </div>
-                                `)}
-
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold mb-4 flex items-center justify-between">
-                                            <span>Upcoming Queue (${queueForCounter.length} waiting)</span>
-                                            ${UI.Badge('Live', 'primary')}
-                                        </h3>
-                                        <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
-                                            ${queueForCounter.length === 0 ? '<p class="text-sm text-secondary text-center py-4">Queue is empty</p>' : ''}
-                                            ${queueForCounter.map((q, idx) => `
-                                                <div class="flex items-center justify-between p-4 rounded-lg bg-[var(--bg)] border border-subtle ${q.isPriority ? 'ring-1 ring-amber-400 bg-amber-50/50 dark:bg-amber-900/10' : ''}">
-                                                    <div class="flex items-center gap-4">
-                                                        <div class="w-10 h-10 rounded-lg bg-[var(--surface)] border border-subtle flex items-center justify-center font-mono font-bold">
-                                                            ${q.number}
-                                                        </div>
-                                                        <div>
-                                                            <div class="font-semibold flex items-center gap-2">
-                                                                ${q.isPriority ? '<i data-lucide="star" class="w-3 h-3 text-amber-500 fill-current"></i>' : ''}
-                                                                Customer ${100 + idx}
-                                                            </div>
-                                                            <div class="text-xs text-secondary">Waiting for ~${(idx + 1) * 25} mins</div>
-                                                        </div>
-                                                    </div>
-                                                    ${q.isPriority ? UI.Badge('Priority', 'warning') : UI.Badge('Standard')}
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                `)}
+                                ${UI.Card(`<div class="p-8 text-center border-b border-[var(--border-light)]"><h3 class="text-sm font-bold text-[var(--text-tertiary)] uppercase tracking-widest mb-4">Now Serving</h3>${myCounter.currentTicket?`<div class="text-8xl sm:text-9xl font-bold text-brand-600 dark:text-brand-400 font-mono tracking-tighter mb-2 animate-pulse-soft" data-counter-status="${myCounter.id}">${myCounter.currentTicket}</div><p class="text-xl text-[var(--text-primary)] font-semibold">${s.services.find(sv=>sv.id===myCounter.service).name}</p><p class="text-sm text-[var(--text-tertiary)] mt-2">Serving time: ~${s.services.find(sv=>sv.id===myCounter.service).avgTime} mins</p>`:`<div class="text-4xl font-bold text-slate-300 dark:text-slate-700 font-mono mb-2" data-counter-status="${myCounter.id}">--</div><p class="text-[var(--text-tertiary)]">No active customer</p>`}</div><div class="p-6 grid grid-cols-3 gap-4">${UI.Button('Call Next',"Simulator.advanceQueue()",'primary','user-plus','py-5 text-lg font-bold')} ${UI.Button('Complete',"Simulator.completeTicket('t_105','completed')",'success','check-circle','py-5 text-lg font-bold')} ${UI.Button('No Show',"Simulator.completeTicket('t_105','no-show')",'destructive','x-circle','py-5 text-lg font-bold')}</div>`)}
+                                ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4 flex items-center justify-between"><span>Upcoming Queue (${queueForCounter.length} waiting)</span>${UI.Badge('Live','primary')}</h3><div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar pr-2">${queueForCounter.length===0?'<p class="text-sm text-[var(--text-tertiary)] text-center py-4">Queue is empty</p>':''}${queueForCounter.map((q,idx)=>`<div class="flex items-center justify-between p-4 rounded-xl bg-[var(--surface-alt)] border border-[var(--border-light)] ${q.isPriority?'ring-1 ring-amber-400 bg-amber-50/50 dark:bg-amber-900/10':''}"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 border border-[var(--border)] flex items-center justify-center font-mono font-bold text-[var(--text-primary)]">${q.number}</div><div><div class="font-semibold text-[var(--text-primary)] flex items-center gap-2">${q.isPriority?'<i data-lucide="star" class="w-3 h-3 text-amber-500 fill-current"></i>':''}Customer ${100+idx}</div><div class="text-xs text-[var(--text-tertiary)]">Waiting for ~${(idx+1)*25} mins</div></div></div>${q.isPriority?UI.Badge('Priority','warning'):UI.Badge('Standard','default')}</div>`).join('')}</div></div>`)}
                             </div>
-
                             <div class="space-y-6">
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold mb-4">Counter Status</h3>
-                                        <div class="space-y-3">
-                                            <button onclick="App.toggleCounterStatus('c_2', 'open')" class="w-full flex items-center justify-between p-3 rounded-lg border ${myCounter.status === 'open' ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800' : 'border-subtle'}">
-                                                <span class="font-medium text-sm">Open for Service</span>
-                                                ${myCounter.status === 'open' ? '<i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>' : ''}
-                                            </button>
-                                            <button onclick="App.toggleCounterStatus('c_2', 'break')" class="w-full flex items-center justify-between p-3 rounded-lg border ${myCounter.status === 'break' ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800' : 'border-subtle'}">
-                                                <span class="font-medium text-sm">On Break / Paused</span>
-                                                ${myCounter.status === 'break' ? '<i data-lucide="pause-circle" class="w-5 h-5 text-amber-600"></i>' : ''}
-                                            </button>
-                                        </div>
-                                    </div>
-                                `)}
-                                
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold mb-4">Today's Stats</h3>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div class="text-center p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
-                                                <div class="text-3xl font-bold text-emerald-700 dark:text-emerald-400">24</div>
-                                                <div class="text-xs font-semibold text-emerald-600/70 dark:text-emerald-400/70 uppercase mt-1">Completed</div>
-                                            </div>
-                                            <div class="text-center p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                                                <div class="text-3xl font-bold text-blue-700 dark:text-blue-400">18m</div>
-                                                <div class="text-xs font-semibold text-blue-600/70 dark:text-blue-400/70 uppercase mt-1">Avg Wait</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `)}
+                                ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4">Counter Status</h3><div class="space-y-3"><button onclick="App.toggleCounterStatus('c_2','open')" class="w-full flex items-center justify-between p-3 rounded-lg border ${myCounter.status==='open'?'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800':'border-[var(--border)]'}"><span class="font-medium text-sm">Open for Service</span>${myCounter.status==='open'?'<i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>':''}</button><button onclick="App.toggleCounterStatus('c_2','break')" class="w-full flex items-center justify-between p-3 rounded-lg border ${myCounter.status==='break'?'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800':'border-[var(--border)]'}"><span class="font-medium text-sm">On Break / Paused</span>${myCounter.status==='break'?'<i data-lucide="pause-circle" class="w-5 h-5 text-amber-600"></i>':''}</button></div></div>`)}
+                                ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4">Today's Stats</h3><div class="grid grid-cols-2 gap-4"><div class="text-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20"><div class="text-3xl font-bold text-emerald-700 dark:text-emerald-400">24</div><div class="text-xs font-semibold text-emerald-600/70 dark:text-emerald-400/70 uppercase mt-1">Completed</div></div><div class="text-center p-4 rounded-xl bg-brand-50 dark:bg-brand-900/20"><div class="text-3xl font-bold text-brand-700 dark:text-brand-400">18m</div><div class="text-xs font-semibold text-brand-600/70 dark:text-brand-400/70 uppercase mt-1">Avg Wait</div></div></div></div>`)}
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             },
-
             'manager-dashboard': () => {
                 const s = Simulator.state;
                 return `
                     <div class="space-y-6 animate-fade-in max-w-6xl mx-auto">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                                <h1 class="text-2xl font-bold">Branch Operations Overview</h1>
-                                <p class="text-secondary">Sandton City Branch • Live Monitoring</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="UI.showToast('PDF Report downloaded', 'success')" class="btn-secondary flex items-center gap-2">
-                                    <i data-lucide="download" class="w-4 h-4"></i> Export
-                                </button>
-                                <button onclick="App.toggleCounterStatus('c_3', 'open')" class="btn-accent flex items-center gap-2">
-                                    <i data-lucide="plus" class="w-4 h-4"></i> Open Counter 3
-                                </button>
-                            </div>
-                        </div>
-
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h1 class="text-2xl font-bold text-[var(--text-primary)]">Branch Operations Overview</h1><p class="text-[var(--text-secondary)] text-sm">Sandton City Branch • Live Monitoring</p></div><div class="flex gap-2">${UI.Button('Export Report',"UI.showToast('PDF Report downloaded','success')",'secondary','download')} ${UI.Button('Open Counter 3',"App.toggleCounterStatus('c_3','open')",'primary','plus')}</div></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            ${[ 
-                                { label: 'Currently Waiting', value: s.queue.filter(q => q.status === 'waiting').length, trend: '+2', icon: 'users', color: 'blue' },
-                                { label: 'Avg. Wait Time', value: '18m', trend: '-3m', icon: 'clock', color: 'emerald' },
-                                { label: 'Completed Today', value: s.analytics.dailyVolume, trend: '+12%', icon: 'check-circle', color: 'indigo' },
-                                { label: 'No-Show Rate', value: s.analytics.noShowRate + '%', trend: '-1%', icon: 'x-circle', color: 'rose' }
-                            ].map(stat => `
-                                ${UI.Card(`
-                                    <div class="p-5 flex items-start justify-between">
-                                        <div>
-                                            <p class="text-xs font-semibold text-secondary uppercase tracking-wider">${stat.label}</p>
-                                            <h3 class="text-3xl font-bold mt-2">${stat.value}</h3>
-                                            <p class="text-xs font-bold text-${stat.color}-600 dark:text-${stat.color}-400 mt-2 flex items-center gap-1">
-                                                <i data-lucide="${stat.trend.includes('+') ? 'trending-up' : 'trending-down'}" class="w-3 h-3"></i>
-                                                ${stat.trend} vs yesterday
-                                            </p>
-                                        </div>
-                                        <div class="p-3 rounded-lg bg-${stat.color}-50 dark:bg-${stat.color}-900/20">
-                                            <i data-lucide="${stat.icon}" class="w-6 h-6 text-${stat.color}-600 dark:text-${stat.color}-400"></i>
-                                        </div>
-                                    </div>
-                                `)}
-                            `).join('')}
+                            ${[{label:'Currently Waiting',value:s.queue.filter(q=>q.status==='waiting').length,trend:'+2',icon:'users',color:'blue'},{label:'Avg. Wait Time',value:'18m',trend:'-3m',icon:'clock',color:'emerald'},{label:'Completed Today',value:s.analytics.dailyVolume,trend:'+12%',icon:'check-circle',color:'indigo'},{label:'No-Show Rate',value:s.analytics.noShowRate+'%',trend:'-1%',icon:'x-circle',color:'rose'}].map(stat=>UI.Card(`<div class="p-5 flex items-start justify-between"><div><p class="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">${stat.label}</p><h3 class="text-3xl font-bold text-[var(--text-primary)] mt-2">${stat.value}</h3><p class="text-xs font-bold text-${stat.color}-600 dark:text-${stat.color}-400 mt-2 flex items-center gap-1"><i data-lucide="${stat.trend.includes('+')?'trending-up':'trending-down'}" class="w-3 h-3"></i>${stat.trend} vs yesterday</p></div><div class="p-3 rounded-xl bg-${stat.color}-50 dark:bg-${stat.color}-900/20"><i data-lucide="${stat.icon}" class="w-6 h-6 text-${stat.color}-600 dark:text-${stat.color}-400"></i></div></div>`)).join('')}
                         </div>
-
                         <div class="grid lg:grid-cols-3 gap-6">
-                            <div class="lg:col-span-2">
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <div class="flex items-center justify-between mb-6">
-                                            <h3 class="font-bold">Live Counter Utilisation</h3>
-                                            ${UI.Badge('Real-time', 'primary')}
-                                        </div>
-                                        <div class="space-y-6">
-                                            ${s.counters.filter(c => c.branch === 'b_1').map(c => {
-                                                const load = c.status === 'open' ? Math.floor(Math.random() * 40) + 60 : 0;
-                                                return `
-                                                    <div>
-                                                        <div class="flex justify-between items-center mb-2">
-                                                            <div class="flex items-center gap-3">
-                                                                <span class="font-semibold">${c.name}</span>
-                                                                ${c.status === 'break' ? UI.Badge('On Break', 'warning') : UI.Badge('Active', 'success')}
-                                                                ${c.currentTicket ? `<span class="text-sm font-mono text-secondary">Serving: ${c.currentTicket}</span>` : ''}
-                                                            </div>
-                                                            <span class="text-sm font-bold">${c.status === 'open' ? load : 0}% Capacity</span>
-                                                        </div>
-                                                        <div class="h-2 bg-[var(--bg)] rounded-full overflow-hidden">
-                                                            <div class="h-full rounded-full transition-all duration-1000 ${c.status === 'break' ? 'bg-amber-400 w-0' : load > 80 ? 'bg-rose-500' : 'bg-[var(--accent)]'}" style="width: ${c.status === 'break' ? 0 : load}%"></div>
-                                                        </div>
-                                                    </div>
-                                                `;
-                                            }).join('')}
-                                        </div>
-                                    </div>
-                                `)}
-                            </div>
-
+                            <div class="lg:col-span-2">${UI.Card(`<div class="p-6"><div class="flex items-center justify-between mb-6"><h3 class="font-bold text-[var(--text-primary)]">Live Counter Utilisation</h3>${UI.Badge('Real-time','primary')}</div><div class="space-y-6">${s.counters.filter(c=>c.branch==='b_1').map(c=>{const load=c.status==='open'?Math.floor(Math.random()*40)+60:0;return`<div><div class="flex justify-between items-center mb-2"><div class="flex items-center gap-3"><span class="font-semibold text-[var(--text-primary)]">${c.name}</span>${c.status==='break'?UI.Badge('On Break','warning'):UI.Badge('Active','success')}${c.currentTicket?`<span class="text-sm font-mono text-[var(--text-tertiary)]">Serving: ${c.currentTicket}</span>`:''}</div><span class="text-sm font-bold text-[var(--text-primary)]">${c.status==='open'?load:0}% Capacity</span></div><div class="h-3 bg-[var(--border-light)] rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-1000 ${c.status==='break'?'bg-amber-400 w-0':load>80?'bg-rose-500':'bg-brand-600'}" style="width:${c.status==='break'?0:load}%"></div></div></div>`;}).join('')}</div></div>`)}</div>
                             <div class="space-y-6">
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <div class="flex items-center gap-2 mb-4">
-                                            <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
-                                            <h3 class="font-bold">AI Operational Insight</h3>
-                                        </div>
-                                        <div class="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 mb-4">
-                                            <p class="text-sm font-bold text-amber-900 dark:text-amber-100 mb-1">Peak Demand Predicted</p>
-                                            <p class="text-sm text-amber-800 dark:text-amber-200/80 leading-relaxed">Wait times for "Account Opening" will increase by 22% between 10:00 - 11:30 AM based on historical booking data.</p>
-                                        </div>
-                                        <button onclick="App.toggleCounterStatus('c_3', 'open'); UI.showToast('Counter 3 opened. ETA recalculated.', 'success')" class="btn-accent w-full flex items-center justify-center gap-2">
-                                            <i data-lucide="plus" class="w-4 h-4"></i> Open Counter 3
-                                        </button>
-                                    </div>
-                                `)}
-
-                                ${UI.Card(`
-                                    <div class="p-6">
-                                        <h3 class="font-bold mb-4">Service Performance</h3>
-                                        <div class="space-y-4">
-                                            ${s.services.map(sv => `
-                                                <div class="flex items-center justify-between p-3 rounded-lg bg-[var(--bg)]">
-                                                    <div class="flex items-center gap-3">
-                                                        <div class="w-8 h-8 rounded-lg bg-[var(--surface)] border border-subtle flex items-center justify-center">
-                                                            <i data-lucide="${sv.icon}" class="w-4 h-4 text-secondary"></i>
-                                                        </div>
-                                                        <div>
-                                                            <div class="text-sm font-semibold">${sv.name}</div>
-                                                            <div class="text-xs text-secondary">Target: ${sv.avgTime}m</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">${sv.avgTime + 2}m</div>
-                                                        <div class="text-xs text-secondary">Actual Avg</div>
-                                                    </div>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                `)}
+                                ${UI.Card(`<div class="p-6"><div class="flex items-center gap-2 mb-4"><i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i><h3 class="font-bold text-[var(--text-primary)]">AI Operational Insight</h3></div><div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 mb-4"><p class="text-sm font-bold text-amber-900 dark:text-amber-100 mb-1">Peak Demand Predicted</p><p class="text-sm text-amber-800 dark:text-amber-200/80 leading-relaxed">Wait times for "Account Opening" will increase by 22% between 10:00 - 11:30 AM based on historical booking data.</p></div>${UI.Button('Pre-emptively Open Counter 3',"App.toggleCounterStatus('c_3','open');UI.showToast('Counter 3 opened. ETA recalculated.','success')",'primary','plus','w-full')}</div>`)}
+                                ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4">Service Performance</h3><div class="space-y-4">${s.services.map(sv=>`<div class="flex items-center justify-between p-3 rounded-lg bg-[var(--surface-alt)]"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-[var(--border)] flex items-center justify-center"><i data-lucide="${sv.icon}" class="w-4 h-4 text-[var(--text-secondary)]"></i></div><div><div class="text-sm font-semibold text-[var(--text-primary)]">${sv.name}</div><div class="text-xs text-[var(--text-tertiary)]">Target: ${sv.avgTime}m</div></div></div><div class="text-right"><div class="text-sm font-bold text-emerald-600 dark:text-emerald-400">${sv.avgTime+2}m</div><div class="text-xs text-[var(--text-tertiary)]">Actual Avg</div></div></div>`).join('')}</div></div>`)}
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             },
-
             'my-bookings': () => `
                 <div class="max-w-4xl mx-auto space-y-6 animate-fade-in">
-                    <h1 class="text-2xl font-bold">My Bookings</h1>
-                    
-                    <div class="flex gap-2 border-b border-subtle pb-1 mb-6">
-                        ${['Upcoming', 'Past', 'Cancelled'].map((tab, i) => `
-                            <button class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${i === 0 ? 'border-[var(--text-primary)] text-[var(--text-primary)]' : 'border-transparent text-secondary hover:text-primary'}">
-                                ${tab}
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <div class="space-y-4">
-                        ${Simulator.state.bookings.filter(b => b.status === 'upcoming' || b.status === 'completed').map(b => `
-                            ${UI.Card(`
-                                <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div class="flex items-start gap-4">
-                                        <div class="w-12 h-12 rounded-lg bg-[var(--bg)] border border-subtle flex items-center justify-center shrink-0">
-                                            <i data-lucide="${b.service.includes('Account') ? 'briefcase' : 'help-circle'}" class="w-6 h-6 text-secondary"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold">${b.service}</h3>
-                                            <p class="text-sm text-secondary">${b.branch}</p>
-                                            <div class="flex items-center gap-3 mt-2 text-sm text-secondary">
-                                                <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${b.date}</span>
-                                                <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${b.time}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col sm:items-end gap-3">
-                                        ${UI.Badge(b.status === 'upcoming' ? 'Upcoming' : 'Completed', b.status === 'upcoming' ? 'primary' : 'success')}
-                                        ${b.status === 'upcoming' ? `
-                                            <div class="flex gap-2">
-                                                <button onclick="App.navigate('queue-tracker')" class="btn-secondary py-1.5 text-xs flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> View</button>
-                                                <button onclick="UI.showToast('Booking cancelled', 'error')" class="btn-secondary py-1.5 text-xs flex items-center gap-1 border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400"><i data-lucide="x" class="w-3 h-3"></i> Cancel</button>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            `)}
-                        `).join('')}
-                    </div>
-                </div>
-            `,
-
+                    <h1 class="text-2xl font-bold text-[var(--text-primary)]">My Bookings</h1>
+                    <div class="flex gap-2 border-b border-[var(--border-light)] pb-1 mb-6">${['Upcoming','Past','Cancelled'].map((tab,i)=>`<button class="px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${i===0?'border-brand-600 text-brand-600 dark:text-brand-400':'border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'}">${tab}</button>`).join('')}</div>
+                    <div class="space-y-4">${Simulator.state.bookings.filter(b=>b.status==='upcoming'||b.status==='completed').map(b=>UI.Card(`<div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div class="flex items-start gap-4"><div class="w-12 h-12 rounded-xl bg-[var(--surface-alt)] flex items-center justify-center shrink-0"><i data-lucide="${b.service.includes('Account')?'briefcase':'help-circle'}" class="w-6 h-6 text-[var(--text-secondary)]"></i></div><div><h3 class="font-bold text-[var(--text-primary)]">${b.service}</h3><p class="text-sm text-[var(--text-tertiary)]">${b.branch}</p><div class="flex items-center gap-3 mt-2 text-sm text-[var(--text-secondary)]"><span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> ${b.date}</span><span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${b.time}</span></div></div></div><div class="flex flex-col sm:items-end gap-3">${UI.Badge(b.status==='upcoming'?'Upcoming':'Completed',b.status==='upcoming'?'primary':'success')}${b.status==='upcoming'?`<div class="flex gap-2">${UI.Button('View',"App.navigate('queue-tracker')",'secondary','eye','py-1.5 text-xs')} ${UI.Button('Cancel',"UI.showToast('Booking cancelled','error')",'destructive','x','py-1.5 text-xs')}</div>`:''}</div></div>`)).join('')}</div>
+                </div>`,
             'admin-dashboard': () => `
                 <div class="space-y-6 animate-fade-in max-w-6xl mx-auto">
-                    <h1 class="text-2xl font-bold">System Administration</h1>
-                    
+                    <h1 class="text-2xl font-bold text-[var(--text-primary)]">System Administration</h1>
                     <div class="grid md:grid-cols-3 gap-6">
-                        ${UI.Card(`
-                            <div class="p-6">
-                                <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-accent"></i> Branches</h3>
-                                <p class="text-sm text-secondary mb-4">Manage locations, operating hours, and regional settings.</p>
-                                <div class="space-y-2">
-                                    ${Simulator.state.branches.map(b => `<div class="flex justify-between text-sm p-2 rounded bg-[var(--bg)]"><span class="font-medium">${b.name}</span> ${UI.Badge('Active', 'success')}</div>`).join('')}
-                                </div>
-                                <button onclick="UI.showToast('Add branch modal opened', 'info')" class="btn-secondary w-full mt-4 flex items-center justify-center gap-2">
-                                    <i data-lucide="plus" class="w-4 h-4"></i> Add Branch
-                                </button>
-                            </div>
-                        `)}
-                        ${UI.Card(`
-                            <div class="p-6">
-                                <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-accent"></i> Services</h3>
-                                <p class="text-sm text-secondary mb-4">Configure service types, average durations, and priority rules.</p>
-                                <div class="space-y-2">
-                                    ${Simulator.state.services.map(s => `<div class="flex justify-between text-sm p-2 rounded bg-[var(--bg)]"><span class="font-medium">${s.name}</span> <span class="text-secondary">${s.avgTime}m</span></div>`).join('')}
-                                </div>
-                                <button onclick="UI.showToast('Service config opened', 'info')" class="btn-secondary w-full mt-4 flex items-center justify-center gap-2">
-                                    <i data-lucide="settings" class="w-4 h-4"></i> Configure
-                                </button>
-                            </div>
-                        `)}
-                        ${UI.Card(`
-                            <div class="p-6">
-                                <h3 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="shield" class="w-5 h-5 text-accent"></i> Platform Health</h3>
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-secondary">API Latency</span>
-                                        <span class="text-sm font-bold text-emerald-600">24ms</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-secondary">Uptime</span>
-                                        <span class="text-sm font-bold text-emerald-600">99.99%</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm text-secondary">Active Sessions</span>
-                                        <span class="text-sm font-bold text-accent">1,240</span>
-                                    </div>
-                                </div>
-                                <button onclick="UI.showToast('Audit logs loaded', 'info')" class="btn-secondary w-full mt-4 flex items-center justify-center gap-2">
-                                    <i data-lucide="file-text" class="w-4 h-4"></i> Audit Logs
-                                </button>
-                            </div>
-                        `)}
+                        ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2"><i data-lucide="building-2" class="w-5 h-5 text-brand-600"></i> Branches</h3><p class="text-sm text-[var(--text-tertiary)] mb-4">Manage locations, operating hours, and regional settings.</p><div class="space-y-2">${Simulator.state.branches.map(b=>`<div class="flex justify-between text-sm p-2 rounded bg-[var(--surface-alt)]"><span class="font-medium">${b.name}</span>${UI.Badge('Active','success')}</div>`).join('')}</div>${UI.Button('Add Branch',"UI.showToast('Add branch modal opened','info')",'secondary','plus','w-full mt-4')}</div>`)}
+                        ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2"><i data-lucide="settings" class="w-5 h-5 text-brand-600"></i> Services</h3><p class="text-sm text-[var(--text-tertiary)] mb-4">Configure service types, durations, and priority rules.</p><div class="space-y-2">${Simulator.state.services.map(s=>`<div class="flex justify-between text-sm p-2 rounded bg-[var(--surface-alt)]"><span class="font-medium">${s.name}</span><span class="text-[var(--text-tertiary)]">${s.avgTime}m</span></div>`).join('')}</div>${UI.Button('Configure',"UI.showToast('Service config opened','info')",'secondary','settings','w-full mt-4')}</div>`)}
+                        ${UI.Card(`<div class="p-6"><h3 class="font-bold text-[var(--text-primary)] mb-4 flex items-center gap-2"><i data-lucide="shield" class="w-5 h-5 text-brand-600"></i> Platform Health</h3><div class="space-y-4"><div class="flex justify-between items-center"><span class="text-sm text-[var(--text-secondary)]">API Latency</span><span class="text-sm font-bold text-emerald-600">24ms</span></div><div class="flex justify-between items-center"><span class="text-sm text-[var(--text-secondary)]">Uptime</span><span class="text-sm font-bold text-emerald-600">99.99%</span></div><div class="flex justify-between items-center"><span class="text-sm text-[var(--text-secondary)]">Active Sessions</span><span class="text-sm font-bold text-brand-600">1,240</span></div></div>${UI.Button('View Audit Logs',"UI.showToast('Audit logs loaded','info')",'secondary','file-text','w-full mt-4')}</div>`)}
                     </div>
-                </div>
-            `
+                </div>`
         };
 
-        // ==========================================
-        // 4. APP CONTROLLER
-        // ==========================================
         const App = {
             init: () => {
                 document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
                 Simulator.startSimulation();
                 lucide.createIcons();
             },
-
             toggleTheme: () => {
                 Simulator.state.theme = Simulator.state.theme === 'light' ? 'dark' : 'light';
                 localStorage.setItem('theme', Simulator.state.theme);
                 document.documentElement.classList.toggle('dark', Simulator.state.theme === 'dark');
             },
-
             login: (role) => {
                 const names = { customer: 'Thabo M.', staff: 'Sarah J.', manager: 'David K.', admin: 'System Admin' };
                 Simulator.state.currentUser = { name: names[role], role };
                 Simulator.state.bookingStep = 1;
-                
                 if (role === 'customer') {
-                    Simulator.state.userTicket = { 
-                        id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting', counter: null, 
-                        position: 4, etaDisplay: '45-55', joinedAt: new Date() 
-                    };
+                    Simulator.state.userTicket = { id: 't_107', number: 'A107', service: 'svc_2', status: 'waiting',
+                        counter: null, position: 4, etaDisplay: '45-55', joinedAt: new Date() };
                 }
-                
                 document.getElementById('landing-page').classList.add('hidden');
                 document.getElementById('app-shell').classList.remove('hidden');
-                
                 this.renderSidebar(role);
-                this.navigate(role === 'customer' ? 'customer-dashboard' : role === 'staff' ? 'counter-dashboard' : role === 'manager' ? 'manager-dashboard' : 'admin-dashboard');
+                this.navigate(role === 'customer' ? 'customer-dashboard' : role === 'staff' ? 'counter-dashboard' :
+                    role === 'manager' ? 'manager-dashboard' : 'admin-dashboard');
                 UI.showToast(`Welcome, ${Simulator.state.currentUser.name}`, 'success');
             },
-
             logout: () => {
                 Simulator.state.currentUser = null;
                 Simulator.state.userTicket = null;
@@ -1374,74 +1025,39 @@
                 document.getElementById('landing-page').classList.remove('hidden');
                 UI.updateLiveElements();
             },
-
             renderSidebar: (role) => {
                 const navItems = {
-                    customer: [
-                        { id: 'customer-dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
-                        { id: 'booking-wizard', icon: 'calendar-plus', label: 'Book' },
-                        { id: 'queue-tracker', icon: 'map-pin', label: 'Tracker' },
-                        { id: 'my-bookings', icon: 'list', label: 'Bookings' }
-                    ],
-                    staff: [
-                        { id: 'counter-dashboard', icon: 'headphones', label: 'My Counter' },
-                        { id: 'manager-dashboard', icon: 'users', label: 'Branch Queue' }
-                    ],
-                    manager: [
-                        { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Overview' },
-                        { id: 'counter-dashboard', icon: 'users', label: 'Staff Allocation' }
-                    ],
-                    admin: [
-                        { id: 'admin-dashboard', icon: 'shield', label: 'System Admin' },
-                        { id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Analytics' }
-                    ]
+                    customer: [{ id: 'customer-dashboard', icon: 'layout-dashboard', label: 'Dashboard' }, { id: 'booking-wizard',
+                            icon: 'calendar-plus', label: 'Book' }, { id: 'queue-tracker', icon: 'map-pin',
+                            label: 'Tracker' }, { id: 'my-bookings', icon: 'list', label: 'Bookings' }],
+                    staff: [{ id: 'counter-dashboard', icon: 'headphones', label: 'My Counter' }, { id: 'manager-dashboard',
+                            icon: 'users', label: 'Branch Queue' }],
+                    manager: [{ id: 'manager-dashboard', icon: 'bar-chart-2', label: 'Overview' },
+                    { id: 'counter-dashboard', icon: 'users', label: 'Staff Allocation' }],
+                    admin: [{ id: 'admin-dashboard', icon: 'shield', label: 'System Admin' }, { id: 'manager-dashboard',
+                            icon: 'bar-chart-2', label: 'Analytics' }]
                 };
-
                 const items = navItems[role] || navItems.customer;
                 const sidebarNav = document.getElementById('sidebar-nav');
                 const mobileNav = document.getElementById('mobile-nav');
-                
-                sidebarNav.innerHTML = items.map(item => `
-                    <button onclick="App.navigate('${item.id}')" class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${Simulator.state.view === item.id ? 'bg-[var(--bg)] text-[var(--text-primary)]' : 'text-secondary hover:text-primary hover:bg-[var(--bg)]'}">
-                        <i data-lucide="${item.icon}" class="w-4 h-4"></i> ${item.label}
-                    </button>
-                `).join('');
-
+                sidebarNav.innerHTML = items.map(item =>
+                    `<button onclick="App.navigate('${item.id}')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${Simulator.state.view===item.id?'bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400':'text-[var(--text-secondary)] hover:bg-[var(--surface-alt)]'}"><i data-lucide="${item.icon}" class="w-5 h-5"></i> ${item.label}</button>`
+                    ).join('');
                 if (role === 'customer') {
                     mobileNav.classList.remove('hidden');
-                    mobileNav.innerHTML = items.map(item => `
-                        <button onclick="App.navigate('${item.id}')" class="flex flex-col items-center gap-1 p-2 rounded-md w-full ${Simulator.state.view === item.id ? 'text-[var(--text-primary)]' : 'text-secondary'}">
-                            <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-                            <span class="text-[10px] font-medium">${item.label}</span>
-                        </button>
-                    `).join('');
-                } else {
-                    mobileNav.classList.add('hidden');
-                }
-
+                    mobileNav.innerHTML = items.map(item =>
+                        `<button onclick="App.navigate('${item.id}')" class="flex flex-col items-center gap-1 p-2 rounded-xl w-full ${Simulator.state.view===item.id?'text-brand-600 dark:text-brand-400':'text-[var(--text-tertiary)]'}"><i data-lucide="${item.icon}" class="w-5 h-5"></i><span class="text-[10px] font-bold">${item.label}</span></button>`
+                        ).join('');
+                } else { mobileNav.classList.add('hidden'); }
                 document.getElementById('user-avatar').textContent = Simulator.state.currentUser.name.charAt(0);
                 document.getElementById('user-name').textContent = Simulator.state.currentUser.name;
                 document.getElementById('user-role').textContent = Simulator.state.currentUser.role;
-                
                 lucide.createIcons();
             },
-
             navigate: (view) => {
                 Simulator.state.view = view;
                 this.renderView();
-                
-                document.querySelectorAll('#sidebar-nav button, #mobile-nav button').forEach(btn => {
-                    const isActive = btn.getAttribute('onclick')?.includes(view);
-                    if (isActive) {
-                        btn.classList.add('bg-[var(--bg)]', 'text-[var(--text-primary)]');
-                        btn.classList.remove('text-secondary', 'hover:bg-[var(--bg)]');
-                    } else {
-                        btn.classList.remove('bg-[var(--bg)]', 'text-[var(--text-primary)]');
-                        btn.classList.add('text-secondary', 'hover:bg-[var(--bg)]');
-                    }
-                });
             },
-
             renderView: () => {
                 const mainContent = document.getElementById('main-content');
                 const renderer = Views[Simulator.state.view] || Views['customer-dashboard'];
@@ -1449,47 +1065,39 @@
                 lucide.createIcons();
                 UI.updateLiveElements();
             },
-
             toggleCounterStatus: (counterId, status) => {
                 const counter = Simulator.state.counters.find(c => c.id === counterId);
                 if (counter) {
                     counter.status = status;
-                    const msg = status === 'open' ? `${counter.name} is now open. Wait times decreasing.` : `${counter.name} is on break. Wait times adjusted.`;
+                    const msg = status === 'open' ? `${counter.name} is now open. Wait times decreasing.` :
+                        `${counter.name} is on break. Wait times adjusted.`;
                     Simulator.state.lastUpdateMessage = msg;
                     UI.showToast(msg, status === 'open' ? 'success' : 'warning');
                     UI.updateLiveElements();
-                    if (Simulator.state.view === 'manager-dashboard' || Simulator.state.view === 'counter-dashboard') {
-                        this.renderView();
-                    }
+                    if (Simulator.state.view === 'manager-dashboard' || Simulator.state.view ===
+                        'counter-dashboard') { this.renderView(); }
                 }
             },
-
             joinWalkIn: () => {
                 const newId = 't_' + Math.floor(Math.random() * 1000);
-                Simulator.state.userTicket = {
-                    id: newId, number: 'A' + Math.floor(Math.random() * 900 + 100), service: 'svc_1', 
-                    status: 'waiting', counter: null, position: 6, etaDisplay: '30-40', joinedAt: new Date()
-                };
+                Simulator.state.userTicket = { id: newId, number: 'A' + Math.floor(Math.random() * 900 + 100),
+                    service: 'svc_1', status: 'waiting', counter: null, position: 6, etaDisplay: '30-40',
+                    joinedAt: new Date() };
                 Simulator.state.queue.push(Simulator.state.userTicket);
                 UI.showToast('Walk-in ticket issued successfully!', 'success');
                 this.navigate('queue-tracker');
             },
-
             confirmBooking: () => {
                 Simulator.state.bookingStep = 1;
-                Simulator.state.userTicket = {
-                    id: 't_new', number: 'A115', service: 'svc_2', status: 'waiting', counter: null,
-                    position: 5, etaDisplay: '50-60', joinedAt: new Date()
-                };
+                Simulator.state.userTicket = { id: 't_new', number: 'A115', service: 'svc_2', status: 'waiting',
+                    counter: null, position: 5, etaDisplay: '50-60', joinedAt: new Date() };
                 Simulator.state.queue.push(Simulator.state.userTicket);
                 UI.showToast('Appointment booked and queue joined!', 'success');
                 this.navigate('customer-dashboard');
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            App.init();
-        });
+        document.addEventListener('DOMContentLoaded', () => { App.init(); });
     </script>
 </body>
 </html>
