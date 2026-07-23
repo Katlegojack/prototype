@@ -3283,6 +3283,7 @@
             document.getElementById('userDropdown').classList.toggle('active', appState.userDropdownOpen);
         }
 
+        // ---------- FIX: navigateTo with robust error handling ----------
         function navigateTo(page) {
             appState.currentPage = page;
             appState.userDropdownOpen = false;
@@ -3291,9 +3292,11 @@
             updateBreadcrumb(page);
 
             const content = document.getElementById('pageContent');
+            // Show loading spinner
             content.innerHTML =
                 '<div style="display:flex;justify-content:center;align-items:center;height:300px;"><div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;"></div></div>';
 
+            // Use setTimeout to allow rendering
             setTimeout(() => {
                 const pageRenderers = {
                     'dashboard': renderCustomerDashboard,
@@ -3328,22 +3331,52 @@
 
                 const renderer = pageRenderers[page];
                 if (renderer) {
-                    content.innerHTML = renderer();
-                    if (page === 'manager-dashboard' || page === 'admin-dashboard' || page === 'service-analytics' ||
-                        page === 'system-analytics') {
-                        setTimeout(initCharts, 100);
-                    }
-                    if (page === 'manager-dashboard' || page === 'queue-overview' || page === 'staff-dashboard' ||
-                        page === 'waiting-queue') {
-                        startQueueSimulation();
-                    } else {
-                        stopQueueSimulation();
+                    try {
+                        const html = renderer();
+                        if (html && typeof html === 'string') {
+                            content.innerHTML = html;
+                        } else {
+                            throw new Error('Renderer returned invalid content');
+                        }
+                        // Re-initialize charts if needed - FIX: added 'peak-hours' and 'daily-stats'
+                        if (['manager-dashboard', 'admin-dashboard', 'service-analytics', 'system-analytics', 'peak-hours',
+                                'daily-stats'
+                            ].includes(page)) {
+                            setTimeout(initCharts, 150);
+                        }
+                        // Start or stop simulation
+                        if (['manager-dashboard', 'queue-overview', 'staff-dashboard', 'waiting-queue'].includes(page)) {
+                            startQueueSimulation();
+                        } else {
+                            stopQueueSimulation();
+                        }
+                    } catch (e) {
+                        console.error('Error rendering page:', e);
+                        content.innerHTML = `
+                            <div class="alert alert-danger" style="margin-top: 20px;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <strong>Oops! Something went wrong.</strong>
+                                    <p style="margin-top: 8px;">Unable to load this page. Please try again or go back to the <a href="#" onclick="navigateTo('${appState.currentUser.role === 'customer' ? 'dashboard' : appState.currentUser.role === 'staff' ? 'staff-dashboard' : appState.currentUser.role === 'manager' ? 'manager-dashboard' : 'admin-dashboard'}")">dashboard</a>.</p>
+                                </div>
+                            </div>
+                        `;
                     }
                 } else {
-                    content.innerHTML =
-                        `<div class="page-header"><h1>Page Not Found</h1><p>The page you're looking for doesn't exist.</p></div>`;
+                    // Fallback for missing page
+                    content.innerHTML = `
+                        <div class="page-header">
+                            <h1>Page Not Found</h1>
+                            <p>The page you're looking for doesn't exist.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <button class="btn btn-accent" onclick="navigateTo('${appState.currentUser.role === 'customer' ? 'dashboard' : appState.currentUser.role === 'staff' ? 'staff-dashboard' : appState.currentUser.role === 'manager' ? 'manager-dashboard' : 'admin-dashboard'}")">Go to Dashboard</button>
+                            </div>
+                        </div>
+                    `;
                 }
-            }, 300);
+            }, 150);
         }
 
         function updateBreadcrumb(page) {
@@ -3421,6 +3454,7 @@
             }
         }
 
+        // ---------- FIX: safe simulation refresh ----------
         function simulateQueueMovement() {
             // Update wait times
             mockData.queue.forEach(item => {
@@ -3432,7 +3466,6 @@
             // Randomly move a waiting customer to serving if a counter is free
             const activeCounters = mockData.counters.filter(c => c.status === 'active');
             activeCounters.forEach(counter => {
-                // Only if counter has no current ticket and there are waiting customers
                 if (!counter.currentTicket) {
                     const branchQueue = mockData.queue.filter(q =>
                         q.branchId === counter.branchId &&
@@ -3443,7 +3476,8 @@
                         const next = branchQueue[0];
                         counter.currentTicket = next.ticket;
                         next.status = 'serving';
-                        showToast('Customer Called', `${next.ticket} - ${next.customerName} now at ${counter.name}`, 'info');
+                        // Optionally notify
+                        // showToast('Customer Called', `${next.ticket} - ${next.customerName} now at ${counter.name}`, 'info');
                     }
                 }
             });
@@ -3460,11 +3494,11 @@
                 }
             });
 
-            // Refresh current page if it's a queue-related page
+            // Refresh current page if it's a queue-related page, but only if content is still visible
             const queuePages = ['staff-dashboard', 'waiting-queue', 'manager-dashboard', 'queue-overview'];
             if (queuePages.includes(appState.currentPage)) {
                 const content = document.getElementById('pageContent');
-                if (content) {
+                if (content && !content.querySelector('.alert-danger')) { // avoid overwriting error messages
                     const rendererMap = {
                         'staff-dashboard': renderStaffDashboard,
                         'waiting-queue': renderWaitingQueue,
@@ -3473,7 +3507,14 @@
                     };
                     const renderer = rendererMap[appState.currentPage];
                     if (renderer) {
-                        content.innerHTML = renderer();
+                        try {
+                            const html = renderer();
+                            if (html && typeof html === 'string') {
+                                content.innerHTML = html;
+                            }
+                        } catch (e) {
+                            console.warn('Simulation refresh failed, keeping existing content');
+                        }
                     }
                 }
             }
@@ -5017,7 +5058,7 @@
                 showToast('Counter Opened', 'Your counter is now active and ready to serve customers', 'success');
                 navigateTo('staff-dashboard');
             } else {
-                showToast('Already Open', 'Counter is already ${myCounter.status}', 'info');
+                showToast('Already Open', `Counter is already ${myCounter.status}`, 'info');
             }
         }
 
@@ -5560,6 +5601,7 @@
                 `;
         }
 
+        // ===================== PEAK HOURS (FIXED - charts now initialize) =====================
         function renderPeakHours() {
             return `
                     <div class="animate-fade-in">
